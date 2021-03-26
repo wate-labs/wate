@@ -7,7 +7,7 @@ import * as path from 'path'
 const {bold} = Chalk
 
 export default class Requests extends Command {
-  static description = 'list the available requests'
+  static description = 'list the available collections and requests'
 
   static examples = ['$ artes list:requests']
 
@@ -20,14 +20,12 @@ export default class Requests extends Command {
   async run() {
     this.parse(Requests)
     if (!fs.existsSync('requests')) {
-      this.log('Could not find requests directory')
-      this.exit(1)
+      this.error('Could not find requests directory')
     }
 
     const collectionsAndRequests = this.listCollectionsAndRequests(Requests.dir)
     if (collectionsAndRequests.length === 0) {
-      this.warn('no collections or requests found')
-      this.exit(1)
+      this.error('no collections or requests found')
     }
     const description = 'The following collections and requests were found.'
     const collections = this.listCollections(collectionsAndRequests)
