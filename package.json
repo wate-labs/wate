@@ -10,7 +10,9 @@
   "dependencies": {
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
+    "@oclif/plugin-autocomplete": "^0.3.0",
     "@oclif/plugin-help": "^3.2.2",
+    "chalk": "^4.1.0",
     "tslib": "^1.14.1"
   },
   "devDependencies": {
@@ -47,9 +49,18 @@
   "oclif": {
     "commands": "./lib/commands",
     "bin": "artes",
+    "topics": {
+      "list": {
+        "description": "list requests, tests or suites"
+      }
+    },
     "plugins": [
-      "@oclif/plugin-help"
-    ]
+      "@oclif/plugin-help",
+      "@oclif/plugin-autocomplete"
+    ],
+    "macos": {
+      "identifier": "org.artes.cli"
+    }
   },
   "repository": "scflode/artes",
   "scripts": {

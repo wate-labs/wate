@@ -28,8 +28,32 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
 * [`artes hello [FILE]`](#artes-hello-file)
 * [`artes help [COMMAND]`](#artes-help-command)
+
+## `artes autocomplete [SHELL]`
+
+display autocomplete installation instructions
+
+```
+USAGE
+  $ artes autocomplete [SHELL]
+
+ARGUMENTS
+  SHELL  shell type
+
+OPTIONS
+  -r, --refresh-cache  Refresh cache (ignores displaying instructions)
+
+EXAMPLES
+  $ artes autocomplete
+  $ artes autocomplete bash
+  $ artes autocomplete zsh
+  $ artes autocomplete --refresh-cache
+```
+
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
 
 ## `artes hello [FILE]`
 
