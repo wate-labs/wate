@@ -29,8 +29,9 @@ USAGE
 # Commands
 <!-- commands -->
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-* [`artes hello [FILE]`](#artes-hello-file)
 * [`artes help [COMMAND]`](#artes-help-command)
+* [`artes init`](#artes-init)
+* [`artes list:requests`](#artes-listrequests)
 
 ## `artes autocomplete [SHELL]`
 
@@ -55,26 +56,6 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
 
-## `artes hello [FILE]`
-
-describe the command here
-
-```
-USAGE
-  $ artes hello [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
-
-EXAMPLE
-  $ artes hello
-  hello world from ./src/hello.ts!
-```
-
-_See code: [src/commands/hello.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/hello.ts)_
-
 ## `artes help [COMMAND]`
 
 display help for artes
@@ -91,4 +72,38 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
+
+## `artes init`
+
+Initialize new artes project
+
+```
+USAGE
+  $ artes init
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes init
+```
+
+_See code: [src/commands/init.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/init.ts)_
+
+## `artes list:requests`
+
+list the available requests
+
+```
+USAGE
+  $ artes list:requests
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes list:requests
+```
+
+_See code: [src/commands/list/requests.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/requests.ts)_
 <!-- commandsstop -->
