@@ -10,7 +10,7 @@ export default class Init extends Command {
 
   static suitesDir = 'suites'
 
-  static envDir = 'envs'
+  static environmentsDir = 'environments'
 
   static flags = {
     help: flags.help({char: 'h'}),
@@ -18,7 +18,11 @@ export default class Init extends Command {
 
   async run() {
     this.parse(Init)
-    const requiredDirs = [Init.requestsDir, Init.suitesDir, Init.envDir]
+    const requiredDirs = [
+      Init.requestsDir,
+      Init.suitesDir,
+      Init.environmentsDir,
+    ]
     requiredDirs.forEach(dir => {
       if (fs.existsSync(dir)) {
         this.log(`Found existing ${dir} directory. Exiting.`)

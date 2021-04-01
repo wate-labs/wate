@@ -13,7 +13,7 @@ describe('init', () => {
   .command(['init'])
   .it('initializes directories', ctx => {
     expect(ctx.stdout).to.contain(
-      'Setting up requests directory\nSetting up suites directory\nSetting up envs directory\nSetup finished.\n\n'
+      'Setting up requests directory\nSetting up suites directory\nSetting up environments directory\nSetup finished.\n\n'
     )
   })
 
@@ -35,7 +35,7 @@ describe('init', () => {
 
   test
   .do(() => {
-    fs.mock({envs: null})
+    fs.mock({environments: null})
   })
   .finally(() => {
     fs.restore()
@@ -43,8 +43,10 @@ describe('init', () => {
   .stdout()
   .command(['init'])
   .exit(1)
-  .it('notes that the envs directory does already existing', ctx => {
-    expect(ctx.stdout).to.contain('Found existing envs directory. Exiting.')
+  .it('notes that the environments directory does already existing', ctx => {
+    expect(ctx.stdout).to.contain(
+      'Found existing environments directory. Exiting.'
+    )
   })
 
   test

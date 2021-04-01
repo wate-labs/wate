@@ -4,7 +4,7 @@ import fs from '../../mockfs'
 describe('list:environments', () => {
   test
   .do(() => {
-    fs.mock({envs: {env_1: '', env_2: ''}})
+    fs.mock({environments: {env_1: '', env_2: ''}})
   })
   .finally(() => {
     fs.restore()
@@ -27,7 +27,7 @@ describe('list:environments', () => {
   test
   .do(() => {
     fs.mock({
-      envs: {
+      environments: {
         collection: {env_1: '', env_2: ''},
       },
     })
@@ -53,7 +53,7 @@ describe('list:environments', () => {
   test
   .do(() => {
     fs.mock({
-      envs: {
+      environments: {
         meta_collection: {
           nested_collection_1: {env_1: ''},
           nested_collection_2: {env_2: ''},
@@ -91,13 +91,13 @@ describe('list:environments', () => {
   .stderr()
   .command(['list:environments'])
   .catch(error => {
-    expect(error.message).to.equal('Could not find envs directory')
+    expect(error.message).to.equal('Could not find environments directory')
   })
-  .it('notes that the envs directory is absent')
+  .it('notes that the environments directory is absent')
 
   test
   .do(() => {
-    fs.mock({envs: null})
+    fs.mock({environments: null})
   })
   .finally(() => {
     fs.restore()

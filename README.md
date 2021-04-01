@@ -103,7 +103,7 @@ OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes list:envs
+  $ artes list:environments
 ```
 
 _See code: [src/commands/list/environments.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/environments.ts)_

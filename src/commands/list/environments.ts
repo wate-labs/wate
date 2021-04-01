@@ -9,9 +9,9 @@ const {bold} = Chalk
 export default class Environments extends Command {
   static description = 'list the available environments'
 
-  static examples = ['$ artes list:envs']
+  static examples = ['$ artes list:environments']
 
-  static dir = 'envs'
+  static dir = 'environments'
 
   static flags = {
     help: flags.help({char: 'h'}),
@@ -20,7 +20,7 @@ export default class Environments extends Command {
   async run() {
     this.parse(Environments)
     if (!fs.existsSync(Environments.dir)) {
-      this.error('Could not find envs directory')
+      this.error('Could not find environments directory')
     }
 
     const collectionsAndEnvironments = this.listCollectionsAndEnvironments(
