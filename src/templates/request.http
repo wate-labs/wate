@@ -1,0 +1,8 @@
+GET /get?query_param=value HTTP/1.1
+Host: postman-echo.com
+Content-Type: text/plain
+Content-Length: 27
+
+{
+    "property": "value"
+}

@@ -29,6 +29,7 @@ USAGE
 # Commands
 <!-- commands -->
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
+* [`artes create:request [REQUESTNAME]`](#artes-createrequest-requestname)
 * [`artes help [COMMAND]`](#artes-help-command)
 * [`artes init`](#artes-init)
 * [`artes list:environments`](#artes-listenvironments)
@@ -57,6 +58,26 @@ EXAMPLES
 ```
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
+
+## `artes create:request [REQUESTNAME]`
+
+create new request
+
+```
+USAGE
+  $ artes create:request [REQUESTNAME]
+
+ARGUMENTS
+  REQUESTNAME  name of the request
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes create:request
+```
+
+_See code: [src/commands/create/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/request.ts)_
 
 ## `artes help [COMMAND]`
 
