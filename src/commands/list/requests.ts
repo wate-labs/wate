@@ -25,7 +25,7 @@ export default class Requests extends Command {
 
     const collectionsAndRequests = this.listCollectionsAndRequests(Requests.dir)
     if (collectionsAndRequests.length === 0) {
-      this.error('no collections or requests found')
+      this.error('No collections or requests found')
     }
     const description = 'The following collections and requests were found.'
     const collections = this.listCollections(collectionsAndRequests)
