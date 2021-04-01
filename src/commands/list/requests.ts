@@ -19,7 +19,7 @@ export default class Requests extends Command {
 
   async run() {
     this.parse(Requests)
-    if (!fs.existsSync('requests')) {
+    if (!fs.existsSync(Requests.dir)) {
       this.error('Could not find requests directory')
     }
 
