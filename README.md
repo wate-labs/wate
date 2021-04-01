@@ -31,6 +31,7 @@ USAGE
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
 * [`artes help [COMMAND]`](#artes-help-command)
 * [`artes init`](#artes-init)
+* [`artes list:environments`](#artes-listenvironments)
 * [`artes list:requests`](#artes-listrequests)
 
 ## `artes autocomplete [SHELL]`
@@ -75,7 +76,7 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2
 
 ## `artes init`
 
-Initialize new artes project
+initialize new artes project
 
 ```
 USAGE
@@ -90,9 +91,26 @@ EXAMPLE
 
 _See code: [src/commands/init.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/init.ts)_
 
+## `artes list:environments`
+
+list the available environments
+
+```
+USAGE
+  $ artes list:environments
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes list:envs
+```
+
+_See code: [src/commands/list/environments.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/environments.ts)_
+
 ## `artes list:requests`
 
-list the available requests
+list the available collections and requests
 
 ```
 USAGE
