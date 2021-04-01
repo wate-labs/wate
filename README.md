@@ -33,6 +33,7 @@ USAGE
 * [`artes init`](#artes-init)
 * [`artes list:environments`](#artes-listenvironments)
 * [`artes list:requests`](#artes-listrequests)
+* [`artes list:suites`](#artes-listsuites)
 
 ## `artes autocomplete [SHELL]`
 
@@ -124,4 +125,21 @@ EXAMPLE
 ```
 
 _See code: [src/commands/list/requests.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/requests.ts)_
+
+## `artes list:suites`
+
+list the available suites
+
+```
+USAGE
+  $ artes list:suites
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes list:suites
+```
+
+_See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/suites.ts)_
 <!-- commandsstop -->
