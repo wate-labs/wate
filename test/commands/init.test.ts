@@ -13,7 +13,12 @@ describe('init', () => {
   .command(['init'])
   .it('initializes directories', ctx => {
     expect(ctx.stdout).to.contain(
-      'Setting up requests directory\nSetting up suites directory\nSetting up environments directory\nSetup finished.\n\n'
+      [
+        'Creating requests directory',
+        'Creating suites directory',
+        'Creating environments directory',
+        'Setup finished.',
+      ].join('\n')
     )
   })
 
@@ -24,14 +29,12 @@ describe('init', () => {
   .finally(() => {
     fs.restore()
   })
-  .stdout()
+  .stderr()
   .command(['init'])
-  .exit(1)
-  .it('notes that the requests directory does already existing', ctx => {
-    expect(ctx.stdout).to.contain(
-      'Found existing requests directory. Exiting.'
-    )
+  .catch(error => {
+    expect(error.message).to.equal('Found existing requests directory.')
   })
+  .it('errors out when the requests directory does already exist')
 
   test
   .do(() => {
@@ -40,14 +43,12 @@ describe('init', () => {
   .finally(() => {
     fs.restore()
   })
-  .stdout()
+  .stderr()
   .command(['init'])
-  .exit(1)
-  .it('notes that the environments directory does already existing', ctx => {
-    expect(ctx.stdout).to.contain(
-      'Found existing environments directory. Exiting.'
-    )
+  .catch(error => {
+    expect(error.message).to.equal('Found existing environments directory.')
   })
+  .it('errors out when the environments directory does already exist')
 
   test
   .do(() => {
@@ -56,10 +57,10 @@ describe('init', () => {
   .finally(() => {
     fs.restore()
   })
-  .stdout()
+  .stderr()
   .command(['init'])
-  .exit(1)
-  .it('notes that the suites directory does already existing', ctx => {
-    expect(ctx.stdout).to.contain('Found existing suites directory. Exiting.')
+  .catch(error => {
+    expect(error.message).to.equal('Found existing suites directory.')
   })
+  .it('errors out when the suites directory does already existing')
 })

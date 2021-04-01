@@ -91,7 +91,7 @@ describe('list:suites', () => {
   .stderr()
   .command(['list:suites'])
   .catch(error => {
-    expect(error.message).to.equal('Could not find suites directory')
+    expect(error.message).to.equal('Could not find suites directory.')
   })
   .it('notes that the suites directory is absent')
 
@@ -105,7 +105,7 @@ describe('list:suites', () => {
   .stderr()
   .command(['list:suites'])
   .catch(error => {
-    expect(error.message).to.equal('No collections or suites found')
+    expect(error.message).to.equal('No collections or suites found.')
   })
   .it('notes when no collections or suites could be found')
 })

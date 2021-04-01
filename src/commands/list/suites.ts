@@ -20,12 +20,12 @@ export default class Suites extends Command {
   async run() {
     this.parse(Suites)
     if (!fs.existsSync(Suites.dir)) {
-      this.error('Could not find suites directory')
+      this.error('Could not find suites directory.')
     }
 
     const collectionsAndSuites = this.listCollectionsAndSuites(Suites.dir)
     if (collectionsAndSuites.length === 0) {
-      this.error('No collections or suites found')
+      this.error('No collections or suites found.')
     }
     const description = 'The following collections and suites were found.'
     const collections = this.listCollections(collectionsAndSuites)

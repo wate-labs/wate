@@ -70,7 +70,7 @@
     "posttest": "eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "test-all": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "test": "nyc --extension .ts mocha  --forbid-only --bail",
+    "test": "mocha  --forbid-only",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"

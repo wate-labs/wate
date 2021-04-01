@@ -25,16 +25,15 @@ export default class Init extends Command {
     ]
     requiredDirs.forEach(dir => {
       if (fs.existsSync(dir)) {
-        this.log(`Found existing ${dir} directory. Exiting.`)
-        this.exit(1)
+        this.error(`Found existing ${dir} directory.`)
       }
     })
     requiredDirs.forEach(dir => {
-      this.log(`Setting up ${dir} directory`)
+      this.log(`Creating ${dir} directory`)
       fs.mkdirSync(dir)
     })
     this.log(`Setup finished.
 
-Next please add new requests by running: artes new request "my request"`)
+Next please add new requests by running: artes create:request "my request"`)
   }
 }
