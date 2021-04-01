@@ -2,7 +2,7 @@ import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 
 export default class Init extends Command {
-  static description = 'Initialize new artes project'
+  static description = 'initialize new artes project'
 
   static examples = ['$ artes init']
 

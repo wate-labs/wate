@@ -12,7 +12,9 @@
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-autocomplete": "^0.3.0",
     "@oclif/plugin-help": "^3.2.2",
+    "@types/mock-fs": "^4.13.0",
     "chalk": "^4.1.0",
+    "mock-fs": "^4.13.0",
     "tslib": "^1.14.1"
   },
   "devDependencies": {
