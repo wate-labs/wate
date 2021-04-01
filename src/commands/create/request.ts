@@ -25,7 +25,7 @@ export default class Request extends Command {
     if (fs.existsSync(requestPath)) {
       this.error(`Request "${requestName}" (${requestPath}) already exists.`)
     }
-    fs.mkdirSync(requestPath)
+    fs.mkdirSync(requestPath, {recursive: true})
     fs.copyFileSync(
       path.join(__dirname, '../../', 'templates', 'request.http'),
       path.join(requestPath, 'request.http')
