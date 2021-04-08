@@ -12,8 +12,11 @@
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-autocomplete": "^0.3.0",
     "@oclif/plugin-help": "^3.2.2",
+    "@types/http-string-parser": "0.0.29",
     "@types/mock-fs": "^4.13.0",
+    "axios": "^0.21.1",
     "chalk": "^4.1.0",
+    "http-string-parser": "0.0.6",
     "mock-fs": "^4.13.0",
     "tslib": "^1.14.1"
   },
@@ -52,8 +55,14 @@
     "commands": "./lib/commands",
     "bin": "artes",
     "topics": {
+      "create": {
+        "description": "create requests, environments or suites"
+      },
       "list": {
         "description": "list requests, environments, tests or suites"
+      },
+      "run": {
+        "description": "run requests, tests or suites"
       }
     },
     "plugins": [
