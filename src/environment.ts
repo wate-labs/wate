@@ -7,7 +7,7 @@ export default class EnvironmentLoader {
     }
     const content = JSON.parse(fs.readFileSync(filePath).toString())
     const scheme = content.scheme ?? 'https'
-    const host = content.host
+    const host = content.host ?? null
 
     return {
       scheme,
@@ -16,7 +16,7 @@ export default class EnvironmentLoader {
   }
 }
 
-interface Environment {
+export interface Environment {
   scheme: string;
   host: string;
 }
