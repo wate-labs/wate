@@ -1,3 +1,4 @@
+import Request from '../request'
 import {Environment} from '../environment'
 import * as fs from 'fs'
 import * as parser from 'http-string-parser'
@@ -6,6 +7,7 @@ export default class RequestBuilder {
   public static build(requestPath: string, environment: Environment): Request {
     const request = RequestBuilder.load(requestPath)
     const host = environment.host ?? request.headers.Host
+
     return {
       url: request.uri,
       baseURL: environment.scheme + '://' + host,
@@ -27,12 +29,4 @@ export default class RequestBuilder {
       Host: environment.host ?? headers.Host,
     }
   }
-}
-
-export interface Request {
-  url: string;
-  baseURL: string;
-  method: string;
-  headers: any;
-  data: any;
 }
