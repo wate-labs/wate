@@ -28,7 +28,7 @@ export default class Request extends Command {
     const environment = EnvironmentLoader.load(Request.envDir, envName)
     this.loadReq(reqName)
     this.log(
-      `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`
+      `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
   }
 

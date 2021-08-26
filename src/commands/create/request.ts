@@ -28,15 +28,15 @@ export default class Request extends Command {
     fs.mkdirSync(requestPath, {recursive: true})
     fs.copyFileSync(
       path.join(__dirname, '../../', 'templates', 'request.http'),
-      path.join(requestPath, 'request.http')
+      path.join(requestPath, 'request.http'),
     )
     fs.copyFileSync(
       path.join(__dirname, '../../', 'templates', 'pre-request.js'),
-      path.join(requestPath, 'pre-request.js')
+      path.join(requestPath, 'pre-request.js'),
     )
     fs.copyFileSync(
       path.join(__dirname, '../../', 'templates', 'post-response.js'),
-      path.join(requestPath, 'post-response.js')
+      path.join(requestPath, 'post-response.js'),
     )
     this.log(`Created "${requestName}" located under ${requestPath}`)
   }

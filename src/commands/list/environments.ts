@@ -24,7 +24,7 @@ export default class Environments extends Command {
     }
 
     const collectionsAndEnvironments = this.listCollectionsAndEnvironments(
-      Environments.dir
+      Environments.dir,
     )
     if (collectionsAndEnvironments.length === 0) {
       this.error('No collections or environments found')
@@ -39,7 +39,7 @@ export default class Environments extends Command {
   }
 
   listCollectionsAndEnvironments(
-    currentPath: string
+    currentPath: string,
   ): Array<CollectionOrEnvironments> {
     const entries: Array<CollectionOrEnvironments> = []
     fs.readdirSync(currentPath).forEach(entry => {
@@ -49,7 +49,7 @@ export default class Environments extends Command {
       if (fs.lstatSync(newPath).isDirectory()) {
         collectionOrEnvironment.type = 'collection'
         collectionOrEnvironment.children = this.listCollectionsAndEnvironments(
-          newPath
+          newPath,
         )
       }
       entries.push(collectionOrEnvironment)
@@ -67,7 +67,7 @@ export default class Environments extends Command {
   }
 
   listCollections(
-    collectionsAndEnvironments: Array<CollectionOrEnvironments>
+    collectionsAndEnvironments: Array<CollectionOrEnvironments>,
   ): string {
     const collections = this.extractCollections(collectionsAndEnvironments)
 
@@ -76,7 +76,7 @@ export default class Environments extends Command {
 
   extractCollections(
     collectionsAndEnvironments: Array<CollectionOrEnvironments>,
-    ind = 2
+    ind = 2,
   ) {
     let collections: Array<string> = []
     collectionsAndEnvironments.forEach(entry => {
@@ -85,7 +85,7 @@ export default class Environments extends Command {
       }
       if (entry.children.length > 0) {
         collections = collections.concat(
-          this.extractCollections(entry.children, ind + 2)
+          this.extractCollections(entry.children, ind + 2),
         )
       }
     })
@@ -94,7 +94,7 @@ export default class Environments extends Command {
   }
 
   listEnvironments(
-    collectionsAndEnvironments: Array<CollectionOrEnvironments>
+    collectionsAndEnvironments: Array<CollectionOrEnvironments>,
   ): string {
     const environments = this.extractEnvironments(collectionsAndEnvironments)
 
@@ -103,7 +103,7 @@ export default class Environments extends Command {
 
   extractEnvironments(
     collectionsAndEnvironments: Array<CollectionOrEnvironments>,
-    collection = ''
+    collection = '',
   ) {
     let environments: Array<string> = []
     collectionsAndEnvironments.forEach(entry => {
@@ -113,7 +113,7 @@ export default class Environments extends Command {
       if (entry.children.length > 0) {
         const parentCollection = collection + `${entry.name}/`
         environments = environments.concat(
-          this.extractEnvironments(entry.children, parentCollection)
+          this.extractEnvironments(entry.children, parentCollection),
         )
       }
     })

@@ -18,7 +18,7 @@ describe('init', () => {
         'Creating suites directory',
         'Creating environments directory',
         'Setup finished.',
-      ].join('\n')
+      ].join('\n'),
     )
   })
 

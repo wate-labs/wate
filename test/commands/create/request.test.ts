@@ -57,7 +57,7 @@ describe('create:request', () => {
   .command(['create:request', 'my_request'])
   .catch(error => {
     expect(error.message).to.equal(
-      'Request "my_request" (requests/my_request) already exists.'
+      'Request "my_request" (requests/my_request) already exists.',
     )
   })
   .it('errors out when a request already exists')

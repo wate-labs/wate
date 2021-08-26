@@ -20,7 +20,7 @@ describe('runner', () => {
     assert.equal(response.status, 200)
     assert.equal(
       response.headers['content-type'],
-      'application/json; charset=utf-8'
+      'application/json; charset=utf-8',
     )
     assert.isObject(response.data)
     assert.isNotEmpty(response.data)
@@ -28,7 +28,7 @@ describe('runner', () => {
 
   it('exits if host not found', async () => {
     const response = await Runner.run(
-      requestFixture({baseURL: 'https://notfound'})
+      requestFixture({baseURL: 'https://notfound'}),
     )
     assert.isTrue(response.hasError)
     assert.equal(response.error.reason, 'ENOTFOUND')

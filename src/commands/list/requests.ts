@@ -71,7 +71,7 @@ export default class Requests extends Command {
 
   extractCollections(
     collectionsAndRequests: Array<CollectionOrRequest>,
-    ind = 2
+    ind = 2,
   ) {
     let collections: Array<string> = []
     collectionsAndRequests.forEach(entry => {
@@ -80,7 +80,7 @@ export default class Requests extends Command {
       }
       if (entry.children.length > 0) {
         collections = collections.concat(
-          this.extractCollections(entry.children, ind + 2)
+          this.extractCollections(entry.children, ind + 2),
         )
       }
     })
@@ -96,7 +96,7 @@ export default class Requests extends Command {
 
   extractRequests(
     collectionsAndRequests: Array<CollectionOrRequest>,
-    collection = ''
+    collection = '',
   ) {
     let requests: Array<string> = []
     collectionsAndRequests.forEach(entry => {
@@ -106,7 +106,7 @@ export default class Requests extends Command {
       if (entry.children.length > 0) {
         const parentCollection = collection + `${entry.name}/`
         requests = requests.concat(
-          this.extractRequests(entry.children, parentCollection)
+          this.extractRequests(entry.children, parentCollection),
         )
       }
     })

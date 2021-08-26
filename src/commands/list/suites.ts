@@ -74,7 +74,7 @@ export default class Suites extends Command {
       }
       if (entry.children.length > 0) {
         collections = collections.concat(
-          this.extractCollections(entry.children, ind + 2)
+          this.extractCollections(entry.children, ind + 2),
         )
       }
     })
@@ -90,7 +90,7 @@ export default class Suites extends Command {
 
   extractSuites(
     collectionsAndSuites: Array<CollectionOrSuites>,
-    collection = ''
+    collection = '',
   ) {
     let suites: Array<string> = []
     collectionsAndSuites.forEach(entry => {
@@ -100,7 +100,7 @@ export default class Suites extends Command {
       if (entry.children.length > 0) {
         const parentCollection = collection + `${entry.name}/`
         suites = suites.concat(
-          this.extractSuites(entry.children, parentCollection)
+          this.extractSuites(entry.children, parentCollection),
         )
       }
     })
