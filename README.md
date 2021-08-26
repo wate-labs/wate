@@ -19,7 +19,7 @@ $ npm install -g artes
 $ artes COMMAND
 running command...
 $ artes (-v|--version|version)
-artes/0.0.0 darwin-x64 node-v14.16.0
+artes/0.0.0 darwin-x64 node-v14.17.3
 $ artes --help [COMMAND]
 USAGE
   $ artes COMMAND
@@ -35,7 +35,7 @@ USAGE
 * [`artes list:environments`](#artes-listenvironments)
 * [`artes list:requests`](#artes-listrequests)
 * [`artes list:suites`](#artes-listsuites)
-* [`artes run:request [ENVIRONMENT] [REQUEST]`](#artes-runrequest-environment-request)
+* [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
 
 ## `artes autocomplete [SHELL]`
 
@@ -95,7 +95,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.3/src/commands/help.ts)_
 
 ## `artes init`
 
@@ -165,13 +165,13 @@ EXAMPLE
 
 _See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/suites.ts)_
 
-## `artes run:request [ENVIRONMENT] [REQUEST]`
+## `artes run:request ENVIRONMENT REQUEST`
 
 run an existing request
 
 ```
 USAGE
-  $ artes run:request [ENVIRONMENT] [REQUEST]
+  $ artes run:request ENVIRONMENT REQUEST
 
 ARGUMENTS
   ENVIRONMENT  environment to use
