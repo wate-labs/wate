@@ -1,5 +1,6 @@
 import * as mockfs from 'mock-fs'
 import * as path from 'path'
+import * as pfs from 'fs'
 
 const fs = {
   mock(conf: any) {
@@ -17,6 +18,10 @@ const fs = {
 
   restore() {
     mockfs.restore()
+  },
+
+  fixtureFile(path: string): string {
+    return pfs.readFileSync(path).toString()
   },
 }
 

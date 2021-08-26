@@ -19,6 +19,7 @@ export default class Runner {
         reason: error.code,
       }
     }
+
     return {
       request,
       status,

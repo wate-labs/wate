@@ -14,6 +14,7 @@
     "@oclif/plugin-help": "^3.2.2",
     "@types/http-string-parser": "0.0.29",
     "@types/mock-fs": "^4.13.0",
+    "ajv": "^8.6.1",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "http-string-parser": "0.0.6",

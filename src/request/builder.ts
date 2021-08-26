@@ -1,7 +1,7 @@
 import Request from '../request'
-import {Environment} from '../environment'
 import * as fs from 'fs'
 import * as parser from 'http-string-parser'
+import Environment from '../environment'
 
 export default class RequestBuilder {
   public static build(requestPath: string, environment: Environment): Request {

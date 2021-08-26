@@ -1,11 +1,12 @@
 import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 import * as path from 'path'
+import EnvironmentLoader from '../../loader/environment'
 
 export default class Request extends Command {
   static args = [
-    {name: 'environment', description: 'environment to use'},
-    {name: 'request', description: 'name of the request'},
+    {name: 'environment', description: 'environment to use', required: true},
+    {name: 'request', description: 'name of the request', required: true},
   ]
 
   static flags = {
@@ -16,14 +17,25 @@ export default class Request extends Command {
 
   static examples = ['$ artes run:request test ping']
 
-  static dir = 'requests'
+  static envDir = 'environments'
+
+  static reqDir = 'requests'
 
   async run() {
     const {args} = this.parse(Request)
-    const requestName = args.request
-    const requestPath = path.join(Request.dir, requestName)
-    if (!fs.existsSync(requestPath)) {
-      this.error(`Request "${requestName}" not found.`)
+    const envName = args.environment
+    const reqName = args.request
+    const environment = EnvironmentLoader.load(Request.envDir, envName)
+    this.loadReq(reqName)
+    this.log(
+      `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`
+    )
+  }
+
+  loadReq(name: string) {
+    const resolvedPath = path.join(Request.reqDir, name)
+    if (!fs.existsSync(resolvedPath)) {
+      this.error(`Request "${name}" not found.`)
     }
   }
 }

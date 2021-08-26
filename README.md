@@ -35,6 +35,7 @@ USAGE
 * [`artes list:environments`](#artes-listenvironments)
 * [`artes list:requests`](#artes-listrequests)
 * [`artes list:suites`](#artes-listsuites)
+* [`artes run:request [ENVIRONMENT] [REQUEST]`](#artes-runrequest-environment-request)
 
 ## `artes autocomplete [SHELL]`
 
@@ -163,4 +164,25 @@ EXAMPLE
 ```
 
 _See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/suites.ts)_
+
+## `artes run:request [ENVIRONMENT] [REQUEST]`
+
+run an existing request
+
+```
+USAGE
+  $ artes run:request [ENVIRONMENT] [REQUEST]
+
+ARGUMENTS
+  ENVIRONMENT  environment to use
+  REQUEST      name of the request
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes run:request test ping
+```
+
+_See code: [src/commands/run/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/request.ts)_
 <!-- commandsstop -->
