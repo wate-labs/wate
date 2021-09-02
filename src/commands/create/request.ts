@@ -3,7 +3,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 export default class Request extends Command {
-  static args = [{name: 'requestName', description: 'name of the request'}]
+  static args = [
+    {
+      name: 'requestName',
+      description: 'name of the request, e.g. my_collection/my_request',
+      required: true,
+    },
+  ]
 
   static description = 'create new request'
 
