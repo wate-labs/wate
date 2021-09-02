@@ -13,7 +13,7 @@ export default class RequestBuilder {
       baseURL: environment.scheme + '://' + host,
       method: request.method,
       headers: RequestBuilder.headers(request.headers, environment),
-      data: request.body,
+      data: RequestBuilder.parse(request.body),
     }
   }
 
@@ -27,6 +27,14 @@ export default class RequestBuilder {
     return {
       ...headers,
       Host: environment.host ?? headers.Host,
+    }
+  }
+
+  private static parse(data: string) {
+    try {
+      return JSON.parse(data)
+    } catch (error) {
+      return data
     }
   }
 }

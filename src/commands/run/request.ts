@@ -1,8 +1,11 @@
 import {Command, flags} from '@oclif/command'
+import * as Chalk from 'chalk'
 import EnvironmentLoader from '../../environment/loader'
 import RequestLoader from '../../request/loader'
 import Runner from '../../runner'
 import ResponsePrinter from '../../response/printer'
+
+const {bold, italic} = Chalk
 
 export default class Request extends Command {
   static args = [
@@ -35,11 +38,23 @@ export default class Request extends Command {
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
     const request = RequestLoader.load(Request.reqDir, reqName, environment)
-    const response = await Runner.run(request)
+    const rawResponse = await Runner.run(request)
     if (flags.print) {
-      const {headers, body} = ResponsePrinter.print(response)
-      this.log(`headers: ${headers}`)
-      this.log(`body: ${body}`)
+      const {request, response} = ResponsePrinter.print(rawResponse)
+      this.log(
+        [
+          bold('REQUEST'),
+          italic('headers'),
+          request.headers,
+          italic('body'),
+          request.body,
+          bold('RESPONSE'),
+          italic('headers'),
+          response.headers,
+          italic('body'),
+          response.body,
+        ].join('\n'),
+      )
     }
   }
 }
