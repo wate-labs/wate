@@ -43,14 +43,14 @@ export default class Environments extends Command {
   ): Array<CollectionOrEnvironments> {
     const entries: Array<CollectionOrEnvironments> = []
     fs.readdirSync(currentPath).forEach(entry => {
-      const collectionOrEnvironment: CollectionOrEnvironments = this.newCollectionOrEnvironment()
+      const collectionOrEnvironment: CollectionOrEnvironments =
+        this.newCollectionOrEnvironment()
       const newPath = path.join(currentPath, entry)
-      collectionOrEnvironment.name = entry
+      collectionOrEnvironment.name = path.basename(entry, '.json')
       if (fs.lstatSync(newPath).isDirectory()) {
         collectionOrEnvironment.type = 'collection'
-        collectionOrEnvironment.children = this.listCollectionsAndEnvironments(
-          newPath,
-        )
+        collectionOrEnvironment.children =
+          this.listCollectionsAndEnvironments(newPath)
       }
       entries.push(collectionOrEnvironment)
     })
