@@ -1,7 +1,8 @@
 import {Command, flags} from '@oclif/command'
-import * as fs from 'fs'
-import * as path from 'path'
 import EnvironmentLoader from '../../loader/environment'
+import RequestLoader from '../../request/loader'
+import Runner from '../../runner'
+import ResponsePrinter from '../../response/printer'
 
 export default class Request extends Command {
   static args = [
@@ -11,6 +12,10 @@ export default class Request extends Command {
 
   static flags = {
     help: flags.help({char: 'h'}),
+    print: flags.boolean({
+      char: 'p',
+      description: 'print the raw response headers and body',
+    }),
   }
 
   static description = 'run an existing request'
@@ -22,20 +27,19 @@ export default class Request extends Command {
   static reqDir = 'requests'
 
   async run() {
-    const {args} = this.parse(Request)
+    const {args, flags} = this.parse(Request)
     const envName = args.environment
     const reqName = args.request
     const environment = EnvironmentLoader.load(Request.envDir, envName)
-    this.loadReq(reqName)
     this.log(
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
-  }
-
-  loadReq(name: string) {
-    const resolvedPath = path.join(Request.reqDir, name)
-    if (!fs.existsSync(resolvedPath)) {
-      this.error(`Request "${name}" not found.`)
+    const request = RequestLoader.load(Request.reqDir, reqName, environment)
+    const response = await Runner.run(request)
+    if (flags.print) {
+      const {headers, body} = ResponsePrinter.print(response)
+      this.log(`headers: ${headers}`)
+      this.log(`body: ${body}`)
     }
   }
 }
