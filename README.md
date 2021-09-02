@@ -1,7 +1,6 @@
-artes
-=====
+# artes
 
-A tool for automated tests for web APIs
+A tool to run automated tests against web APIs
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/artes.svg)](https://npmjs.org/package/artes)
@@ -9,10 +8,13 @@ A tool for automated tests for web APIs
 [![License](https://img.shields.io/npm/l/artes.svg)](https://github.com/scflode/artes/blob/master/package.json)
 
 <!-- toc -->
+* [artes](#artes)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+
 # Usage
+
 <!-- usage -->
 ```sh-session
 $ npm install -g artes
@@ -26,7 +28,9 @@ USAGE
 ...
 ```
 <!-- usagestop -->
+
 # Commands
+
 <!-- commands -->
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
 * [`artes create:request [REQUESTNAME]`](#artes-createrequest-requestname)
