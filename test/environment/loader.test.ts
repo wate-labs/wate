@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import * as path from 'path'
-import EnvironmentLoader from '../../src/loader/environment'
+import EnvironmentLoader from '../../src/environment/loader'
 
 const fixturePath = path.join(__dirname, '..', 'fixtures', 'environments')
 

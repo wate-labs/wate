@@ -1,5 +1,5 @@
 import {Command, flags} from '@oclif/command'
-import EnvironmentLoader from '../../loader/environment'
+import EnvironmentLoader from '../../environment/loader'
 import RequestLoader from '../../request/loader'
 import Runner from '../../runner'
 import ResponsePrinter from '../../response/printer'
