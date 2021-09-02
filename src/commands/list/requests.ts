@@ -39,7 +39,8 @@ export default class Requests extends Command {
   listCollectionsAndRequests(currentPath: string): Array<CollectionOrRequest> {
     const entries: Array<CollectionOrRequest> = []
     fs.readdirSync(currentPath).forEach(entry => {
-      const collectionOrRequest: CollectionOrRequest = this.newCollectionOrRequest()
+      const collectionOrRequest: CollectionOrRequest =
+        this.newCollectionOrRequest()
       const newPath = path.join(currentPath, entry)
       collectionOrRequest.name = entry
       if (fs.lstatSync(newPath).isDirectory()) {
