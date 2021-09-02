@@ -178,7 +178,8 @@ ARGUMENTS
   REQUEST      name of the request
 
 OPTIONS
-  -h, --help  show CLI help
+  -h, --help   show CLI help
+  -p, --print  print the raw response headers and body
 
 EXAMPLE
   $ artes run:request test ping
