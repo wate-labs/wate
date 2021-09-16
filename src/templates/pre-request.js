@@ -1,4 +1,4 @@
-module.exports = (_extracts, _variables) => {
+module.exports = (_context, _parameters) => {
   return {
     headers: {},
     body: {},

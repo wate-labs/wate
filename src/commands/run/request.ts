@@ -16,9 +16,14 @@ export default class Request extends Command {
 
   static flags = {
     help: flags.help({char: 'h'}),
-    print: flags.boolean({
-      char: 'p',
+    verbose: flags.boolean({
+      char: 'v',
       description: 'print the raw response headers and body',
+    }),
+    parameters: flags.string({
+      char: 'p',
+      description: 'use given parameter name and value in request',
+      multiple: true,
     }),
   }
 
@@ -38,9 +43,21 @@ export default class Request extends Command {
     this.log(
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
-    const request = RequestLoader.load(Request.reqDir, reqName, environment)
+    let params = {}
+    if (flags.parameters) {
+      flags.parameters.forEach((raw: string) => {
+        const [key, value] = raw.split('=')
+        params = {...params, ...{[key]: value}}
+      })
+    }
+    const request = RequestLoader.load(
+      Request.reqDir,
+      reqName,
+      environment,
+      params,
+    )
     const rawResponse = await Runner.run(request)
-    if (flags.print) {
+    if (flags.verbose) {
       this.printRaw(rawResponse)
     }
     if (rawResponse.hasError) {

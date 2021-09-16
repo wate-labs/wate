@@ -8,10 +8,8 @@ export default class RequestLoader {
     reqPath: string,
     name: string,
     environment: Environment,
+    params: {[key: string]: string} = {},
   ): Request {
-    return RequestBuilder.build(
-      path.join(reqPath, name, 'request.http'),
-      environment,
-    )
+    return RequestBuilder.build(path.join(reqPath, name), environment, params)
   }
 }
