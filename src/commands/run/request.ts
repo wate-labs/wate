@@ -2,10 +2,11 @@ import {Command, flags} from '@oclif/command'
 import * as Chalk from 'chalk'
 import EnvironmentLoader from '../../environment/loader'
 import RequestLoader from '../../request/loader'
-import Runner from '../../runner'
+import Runner from '../../request/runner'
+import Response from '../../response'
 import ResponsePrinter from '../../response/printer'
 
-const {bold, italic} = Chalk
+const {bold, dim} = Chalk
 
 export default class Request extends Command {
   static args = [
@@ -40,21 +41,37 @@ export default class Request extends Command {
     const request = RequestLoader.load(Request.reqDir, reqName, environment)
     const rawResponse = await Runner.run(request)
     if (flags.print) {
-      const {request, response} = ResponsePrinter.print(rawResponse)
-      this.log(
-        [
-          bold('REQUEST'),
-          italic('headers'),
-          request.headers,
-          italic('body'),
-          request.body,
-          bold('RESPONSE'),
-          italic('headers'),
-          response.headers,
-          italic('body'),
-          response.body,
-        ].join('\n'),
-      )
+      this.printRaw(rawResponse)
     }
+    if (rawResponse.hasError) {
+      this.error(rawResponse.error.reason)
+    }
+    this.log(
+      [
+        '',
+        dim(`Status code: ${rawResponse.status}`),
+        dim(`Took ${rawResponse.durationInMs}ms`),
+      ].join('\n'),
+    )
+  }
+
+  private printRaw(rawResponse: Response) {
+    const {request, response} = ResponsePrinter.print(rawResponse)
+    this.log(
+      [
+        '',
+        bold('REQUEST'),
+        dim('headers'),
+        request.headers,
+        dim('body'),
+        request.body,
+        '',
+        bold('RESPONSE'),
+        dim('headers'),
+        response.headers,
+        dim('body'),
+        response.body,
+      ].join('\n'),
+    )
   }
 }

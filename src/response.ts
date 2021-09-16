@@ -8,4 +8,5 @@ export default interface Response {
   data: any;
   hasError: boolean;
   error: Error;
+  durationInMs: number;
 }

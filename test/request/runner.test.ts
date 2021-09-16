@@ -1,5 +1,5 @@
-import Request from '../src/request'
-import Runner from '../src/runner'
+import Request from '../../src/request'
+import Runner from '../../src/request/runner'
 import {assert} from 'chai'
 
 const requestFixture = (config?: object): Request => {
