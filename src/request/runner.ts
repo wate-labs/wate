@@ -43,8 +43,16 @@ export default class Runner {
       ))
     } catch (error) {
       hasError = true
-      errorObject = {
-        reason: error.code || error.response.statusText,
+      if (error.response?.status) {
+        headers = error.response.headers
+        data = error.response.data
+        errorObject = {
+          reason: `Status code: ${error.response.status} (${error.response.statusText})`,
+        }
+      } else {
+        errorObject = {
+          reason: error.code,
+        }
       }
     }
 
