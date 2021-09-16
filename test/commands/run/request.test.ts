@@ -18,13 +18,13 @@ describe('run:request', () => {
     fs.mock({
       environments: {
         'env.json': fs.fixtureFile(
-          path.join(fixturePath, 'environments', 'full_env.json'),
+          path.join(fixturePath, 'environments', 'postman.json'),
         ),
       },
       requests: {
         request_1: {
           'request.http': fs.fixtureFile(
-            path.join(fixturePath, 'requests', 'request_1', 'request.http'),
+            path.join(fixturePath, 'requests', 'ping', 'request.http'),
           ),
         },
       },
@@ -38,7 +38,10 @@ describe('run:request', () => {
   .it('performs a valid request', ctx => {
     expect(ctx.stdout).to.contain(
       [
-        'Running request "request_1" with environment "env" against "my-host"',
+        'Running request "request_1" with environment "env" against "postman-echo.com"',
+        '',
+        'Status code: 200',
+        'Took',
       ].join('\n'),
     )
   })
