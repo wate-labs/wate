@@ -4,12 +4,13 @@ import * as parser from 'http-string-parser'
 import * as nunjucks from 'nunjucks'
 import Request from '../request'
 import Environment from '../environment'
+import {Param} from '../context'
 
 export default class RequestBuilder {
   public static build(
     requestPath: string,
     environment: Environment,
-    params: {[key: string]: string} = {},
+    params: Param[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
@@ -49,7 +50,7 @@ export default class RequestBuilder {
 
   private static applyParamsToAll(
     data: {[key: string]: string},
-    params: {[key: string]: string},
+    params: Param[],
   ): {[key: string]: string} {
     Object.entries(data).forEach(([key, value]) => {
       data[key] = RequestBuilder.applyParams(value, params)
@@ -57,12 +58,12 @@ export default class RequestBuilder {
     return data
   }
 
-  private static applyParams(
-    data: string,
-    params: {[key: string]: string},
-  ): string {
+  private static applyParams(data: string, params: Param[]): string {
+    const replacements = params.reduce((params, {name, value}) => {
+      return {...params, [name]: value}
+    }, {})
     nunjucks.configure({autoescape: false})
 
-    return nunjucks.renderString(data, params)
+    return nunjucks.renderString(data, replacements)
   }
 }

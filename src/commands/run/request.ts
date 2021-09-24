@@ -1,8 +1,9 @@
 import {Command, flags} from '@oclif/command'
 import * as Chalk from 'chalk'
+import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
 import RequestLoader from '../../request/loader'
-import Runner from '../../request/runner'
+import RequestRunner from '../../request/runner'
 import Response from '../../response'
 import ResponsePrinter from '../../response/printer'
 
@@ -43,20 +44,14 @@ export default class Request extends Command {
     this.log(
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
-    let params = {}
-    if (flags.parameters) {
-      flags.parameters.forEach((raw: string) => {
-        const [key, value] = raw.split('=')
-        params = {...params, ...{[key]: value}}
-      })
-    }
+    const context = this.buildContext(flags)
     const request = RequestLoader.load(
       Request.reqDir,
       reqName,
       environment,
-      params,
+      context,
     )
-    const rawResponse = await Runner.run(request)
+    const rawResponse = await RequestRunner.run(request)
     if (flags.verbose) {
       this.printRaw(rawResponse)
     }
@@ -90,5 +85,17 @@ export default class Request extends Command {
         response.body,
       ].join('\n'),
     )
+  }
+
+  private buildContext(flags: {parameters?: Array<string>}): Context {
+    const context = {params: []} as Context
+    if (flags.parameters) {
+      flags.parameters.forEach((raw: string) => {
+        const [name, value] = raw.split('=')
+        context.params.push({name, value})
+      })
+    }
+
+    return context
   }
 }

@@ -1,10 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import Ajv, {JSONSchemaType} from 'ajv'
 import Environment from '../environment'
+import SchemaValidator, {ValidationSchema} from '../validator/schema'
 
 export default class EnvironmentLoader {
-  static schema: JSONSchemaType<Environment> = {
+  static schema: ValidationSchema = {
     type: 'object',
     properties: {
       host: {type: 'string'},
@@ -23,14 +23,14 @@ export default class EnvironmentLoader {
       const content = JSON.parse(fs.readFileSync(filePath).toString())
       const scheme = content.scheme ?? 'https'
       const host = content.host ?? null
-      const ajv = new Ajv()
-      const validate = ajv.compile(EnvironmentLoader.schema)
-      if (!validate(content) && validate.errors) {
-        let message = ''
-        for (const err of validate.errors) {
-          message += `${err.message}`
-        }
-        throw new Error(message)
+      const validation = SchemaValidator.validate(
+        EnvironmentLoader.schema,
+        content,
+      )
+      if (!validation.isValid) {
+        throw new Error(
+          `"${validation.error?.path}" ${validation.error?.message}`,
+        )
       }
 
       return {

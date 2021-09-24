@@ -2,7 +2,7 @@ import Request from '../request'
 import Response from '../response'
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
 
-export default class Runner {
+export default class RequestRunner {
   public static async run(request: Request): Promise<Response> {
     let headers = null
     let data = null
@@ -39,7 +39,7 @@ export default class Runner {
     )
     try {
       ({headers, data, status, durationInMs} = await axios.request(
-        Runner.prepare(request),
+        RequestRunner.prepare(request),
       ))
     } catch (error) {
       hasError = true
