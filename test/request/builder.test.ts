@@ -10,7 +10,7 @@ describe('builder', () => {
   it('builds a request with environment', () => {
     const requestPath = path.join(fixturePath, 'request_1')
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
-    const request = RequestBuilder.build(requestPath, environment)
+    const request = RequestBuilder.build(requestPath, environment, [])
     assert.equal(request.url, '/get?query_param=value')
     assert.equal(request.baseURL, 'http://my-host')
     assert.equal(request.method, 'GET')
@@ -20,23 +20,37 @@ describe('builder', () => {
       'Content-Length': '27',
     })
   })
-  it('sets parameters to a request body', () => {
+  it('sets variables to a request body', () => {
     const requestPath = path.join(fixturePath, 'request_with_placeholders')
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
-    const request = RequestBuilder.build(requestPath, environment, {
-      placeholder: 'testValue',
-    })
+    const request = RequestBuilder.build(requestPath, environment, [
+      {
+        name: 'placeholder',
+        value: 'testValue',
+      },
+    ])
     assert.equal(request.data.propertyWithPlaceholder, 'testValue')
   })
-  it('sets parameters to a request header', () => {
+  it('sets variables to a request header', () => {
     const requestPath = path.join(
       fixturePath,
       'request_with_header_placeholder',
     )
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
-    const request = RequestBuilder.build(requestPath, environment, {
-      placeholder: 'testValue',
-    })
+    const request = RequestBuilder.build(requestPath, environment, [
+      {
+        name: 'placeholder',
+        value: 'testValue',
+      },
+    ])
     assert.equal(request.headers['X-Custom'], 'testValue')
+  })
+  it('raises if a variable is missing', () => {
+    const requestPath = path.join(fixturePath, 'request_with_placeholders')
+    const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
+    assert.throws(
+      () => RequestBuilder.build(requestPath, environment, []),
+      'The following variables are missing: placeholder',
+    )
   })
 })

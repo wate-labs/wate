@@ -20,7 +20,7 @@ describe('environment', () => {
   it('raises an error if the environment is missing the required properties', () => {
     assert.throws(() => {
       EnvironmentLoader.load(fixturePath, 'empty_env')
-    }, 'Malformed environment "empty_env": must have required property \'host\'')
+    }, 'Malformed environment "empty_env": "/" must have required property \'host\'')
   })
 
   it('raises an error if the config cannot be found', () => {

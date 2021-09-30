@@ -95,7 +95,7 @@ export default class SuiteLoader {
       requests: requests.map(({request, params}) =>
         SuiteLoader.buildRequest(
           request,
-          Object.entries(params).map(([name, value]) => {
+          Object.entries(params || []).map(([name, value]) => {
             return {name, value}
           }),
           context,

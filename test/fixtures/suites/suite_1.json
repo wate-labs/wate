@@ -5,7 +5,7 @@
       "name": "My test case",
       "requests": [
         {
-          "request": "my_request"
+          "request": "request_1"
         }
       ]
     }
