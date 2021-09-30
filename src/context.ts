@@ -1,7 +1,7 @@
 import Environment from './environment'
 
 export default interface Context {
-  requestsFolder: string;
+  requestsLocation: string;
   environment: Environment;
   params: Param[];
 }

@@ -92,7 +92,7 @@ export default class Request extends Command {
     envName: string,
   ): Context {
     const context = {
-      requestsFolder: Request.reqDir,
+      requestsLocation: Request.reqDir,
       environment: EnvironmentLoader.load(Request.envDir, envName),
       params: [],
     } as Context

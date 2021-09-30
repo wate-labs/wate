@@ -110,7 +110,7 @@ export default class SuiteLoader {
     context: Context,
   ): Request {
     return RequestBuilder.build(
-      path.join(context.requestsFolder, request),
+      path.join(context.requestsLocation, request),
       context.environment,
       [...params, ...context.params],
     )

@@ -13,7 +13,7 @@ describe('suite loader', () => {
     const suitePath = fixturePath
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = {
-      requestsFolder: requestsPath,
+      requestsLocation: requestsPath,
       environment: environment,
       params: [],
     } as Context
