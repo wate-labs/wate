@@ -62,6 +62,18 @@ export default class SuiteLoader {
     const suiteDefinition: SuiteDefinition = JSON.parse(
       fs.readFileSync(filePath).toString(),
     )
+
+    SuiteLoader.validateSuite(suiteDefinition)
+
+    return {
+      name: suiteDefinition.name,
+      cases: suiteDefinition.cases.map(({name, requests}) =>
+        SuiteLoader.prepareCase(name, requests, context),
+      ),
+    }
+  }
+
+  private static validateSuite(suiteDefinition: SuiteDefinition) {
     const validation = SchemaValidator.validate(
       SuiteLoader.schema,
       suiteDefinition,
@@ -70,13 +82,6 @@ export default class SuiteLoader {
       throw new Error(
         `"${validation.error?.path}" ${validation.error?.message}`,
       )
-    }
-
-    return {
-      name: suiteDefinition.name,
-      cases: suiteDefinition.cases.map(({name, requests}) =>
-        SuiteLoader.prepareCase(name, requests, context),
-      ),
     }
   }
 

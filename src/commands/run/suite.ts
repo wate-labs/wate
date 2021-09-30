@@ -7,7 +7,6 @@ import SuiteLoader from '../../suite/loader'
 import Request from '../../request'
 import Response from '../../response'
 import RequestRunner from '../../request/runner'
-import {Case} from '../../suite'
 
 const {bold, dim} = Chalk
 
@@ -65,7 +64,6 @@ export default class Suite extends Command {
     suite.cases.forEach(testCase => {
       this.runRequests(testCase.requests, flags.verbose)
     })
-    // TODO Handle responses
     const caseCount = suite.cases.length
     const requestCount = 20
     const durationInMs = Date.now() - startTime
@@ -80,7 +78,7 @@ export default class Suite extends Command {
   }
 
   private buildContext(
-    flags: {parameters?: Array<string>},
+    flags: {parameters?: string[]},
     envName: string,
   ): Context {
     const context = {
@@ -98,7 +96,10 @@ export default class Suite extends Command {
     return context
   }
 
-  private runRequests(requests: Request[], verbose: boolean): Response[] {
+  private async runRequests(
+    requests: Request[],
+    verbose: boolean,
+  ): Promise<Response[]> {
     const responses: Response[] = []
     requests.forEach(async request => {
       const rawResponse = await RequestRunner.run(request)
