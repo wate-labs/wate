@@ -7,6 +7,7 @@ import SuiteLoader from '../../suite/loader'
 import Request from '../../request'
 import Response from '../../response'
 import RequestRunner from '../../request/runner'
+import {Case} from '../../suite'
 
 const {bold, dim} = Chalk
 
@@ -27,6 +28,10 @@ export default class SuiteCommand extends Command {
       description: 'use given parameter name and value in request',
       multiple: true,
     }),
+    dry: flags.boolean({
+      char: 'd',
+      description: 'perform a dry run without emitting requests',
+    }),
   }
 
   static description = 'run an existing suite'
@@ -44,34 +49,43 @@ export default class SuiteCommand extends Command {
     const envName = args.environment
     const suiteName = args.suite
     const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
-    this.log(
-      dim(
-        `Running suite "${suiteName}" with environment "${envName}" against "${environment.host}"`,
-      ),
-    )
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
     this.log(
-      bold('CASES'),
+      [
+        dim(
+          `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
+        ),
+        '',
+        bold(`Cases to be run for ${suite.name}`.toUpperCase()),
+        ...suite.cases.map(({name}) => {
+          return `  ${name}`
+        }),
+      ].join('\n'),
       '\n',
-      suite.cases
-      .map(({name}) => {
-        return name
-      })
-      .join('\n'),
     )
-    suite.cases.forEach(testCase => {
-      this.runRequests(testCase.requests, flags.verbose)
-    })
     const caseCount = suite.cases.length
-    const requestCount = 20
+    const requestCount = suite.cases.reduce(
+      (acc, suiteCase) => acc + suiteCase.requests.length,
+      0,
+    )
+    if (flags.dry) {
+      this.log(
+        dim(
+          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests`,
+        ),
+      )
+      this.exit(0)
+    }
+    for await (const suiteCase of suite.cases) {
+      await this.runCase(suiteCase, flags.verbose)
+    }
     const durationInMs = Date.now() - startTime
     this.log(
       [
-        '',
         dim(
-          `Performed ${caseCount} test cases and ${requestCount} requests in ${durationInMs}ms`,
+          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${durationInMs}ms`,
         ),
       ].join('\n'),
     )
@@ -96,29 +110,53 @@ export default class SuiteCommand extends Command {
     return context
   }
 
-  private async runRequests(
-    requests: Request[],
+  private async runCase(
+    suiteCase: Case,
     verbose: boolean,
   ): Promise<Response[]> {
+    const startTime = Date.now()
+    this.log(`Starting ${suiteCase.name}`)
     const responses: Response[] = []
-    requests.forEach(async request => {
-      const rawResponse = await RequestRunner.run(request)
-      if (verbose) {
-        this.printRaw(rawResponse)
-      }
-      if (rawResponse.hasError) {
-        this.error(rawResponse.error.reason)
-      }
-      responses.push(rawResponse)
-    })
+    for await (const request of suiteCase.requests) {
+      const response = await this.runRequest(suiteCase.name, request, verbose)
+      responses.push(response)
+    }
+    const durationInMs = Date.now() - startTime
+    this.log(`Finished ${suiteCase.name} in ${durationInMs}ms`, '\n')
 
     return responses
   }
 
-  private printRaw(rawResponse: Response) {
+  private async runRequest(
+    caseName: string,
+    request: Request,
+    verbose: boolean,
+  ) {
+    this.log(dim(`[${caseName}] Running (${request.url})`))
+    const response = await RequestRunner.run(request)
+    if (verbose) {
+      this.printRaw(request, response)
+    }
+    if (response.hasError) {
+      this.error(response.error.reason)
+    }
+    this.log(
+      [
+        dim(
+          `[${caseName}] Finished with status ${response.status} in ${response.durationInMs}ms`,
+        ),
+      ].join('\n'),
+    )
+
+    return response
+  }
+
+  private printRaw(originalRequest: Request, rawResponse: Response) {
     const {request, response} = ResponsePrinter.print(rawResponse)
     this.log(
       [
+        '',
+        dim(`URL: ${originalRequest.url}`),
         '',
         bold('REQUEST'),
         dim('headers'),
@@ -131,6 +169,7 @@ export default class SuiteCommand extends Command {
         response.headers,
         dim('body'),
         response.body,
+        '',
       ].join('\n'),
     )
   }
