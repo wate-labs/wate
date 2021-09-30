@@ -33,13 +33,16 @@ USAGE
 
 <!-- commands -->
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-* [`artes create:request [REQUESTNAME]`](#artes-createrequest-requestname)
+* [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
+* [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
+* [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
 * [`artes help [COMMAND]`](#artes-help-command)
 * [`artes init`](#artes-init)
 * [`artes list:environments`](#artes-listenvironments)
 * [`artes list:requests`](#artes-listrequests)
 * [`artes list:suites`](#artes-listsuites)
 * [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
+* [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
 
 ## `artes autocomplete [SHELL]`
 
@@ -64,16 +67,36 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
 
-## `artes create:request [REQUESTNAME]`
+## `artes create:environment ENVIRONMENTNAME`
+
+create new environment
+
+```
+USAGE
+  $ artes create:environment ENVIRONMENTNAME
+
+ARGUMENTS
+  ENVIRONMENTNAME  name of the environment, e.g. my_collection/my_environment
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes create:environment
+```
+
+_See code: [src/commands/create/environment.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/environment.ts)_
+
+## `artes create:request REQUESTNAME`
 
 create new request
 
 ```
 USAGE
-  $ artes create:request [REQUESTNAME]
+  $ artes create:request REQUESTNAME
 
 ARGUMENTS
-  REQUESTNAME  name of the request
+  REQUESTNAME  name of the request, e.g. my_collection/my_request
 
 OPTIONS
   -h, --help  show CLI help
@@ -83,6 +106,26 @@ EXAMPLE
 ```
 
 _See code: [src/commands/create/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/request.ts)_
+
+## `artes create:suite SUITENAME`
+
+create new suite
+
+```
+USAGE
+  $ artes create:suite SUITENAME
+
+ARGUMENTS
+  SUITENAME  name of the suite, e.g. my_collection/my_suite
+
+OPTIONS
+  -h, --help  show CLI help
+
+EXAMPLE
+  $ artes create:suite
+```
+
+_See code: [src/commands/create/suite.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/suite.ts)_
 
 ## `artes help [COMMAND]`
 
@@ -182,12 +225,37 @@ ARGUMENTS
   REQUEST      name of the request
 
 OPTIONS
-  -h, --help   show CLI help
-  -p, --print  print the raw response headers and body
+  -h, --help                   show CLI help
+  -p, --parameters=parameters  use given parameter name and value in request
+  -v, --verbose                print the raw response headers and body
 
 EXAMPLE
   $ artes run:request test ping
 ```
 
 _See code: [src/commands/run/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/request.ts)_
+
+## `artes run:suite ENVIRONMENT SUITE`
+
+run an existing suite
+
+```
+USAGE
+  $ artes run:suite ENVIRONMENT SUITE
+
+ARGUMENTS
+  ENVIRONMENT  environment to use
+  SUITE        name of the suite
+
+OPTIONS
+  -d, --dry                    perform a dry run without emitting requests
+  -h, --help                   show CLI help
+  -p, --parameters=parameters  use given parameter name and value in request
+  -v, --verbose                print the raw response headers and body
+
+EXAMPLE
+  $ artes run:suite test suite
+```
+
+_See code: [src/commands/run/suite.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/suite.ts)_
 <!-- commandsstop -->
