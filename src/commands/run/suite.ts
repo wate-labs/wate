@@ -82,7 +82,7 @@ export default class Suite extends Command {
     envName: string,
   ): Context {
     const context = {
-      requestsFolder: 'requests',
+      requestsFolder: Suite.reqDir,
       environment: EnvironmentLoader.load(Suite.envDir, envName),
       params: [],
     } as Context

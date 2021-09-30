@@ -44,7 +44,7 @@ export default class Request extends Command {
     this.log(
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
-    const context = this.buildContext(flags)
+    const context = this.buildContext(flags, envName)
     const request = RequestLoader.load(
       Request.reqDir,
       reqName,
@@ -87,12 +87,19 @@ export default class Request extends Command {
     )
   }
 
-  private buildContext(flags: {parameters?: Array<string>}): Context {
-    const context = {params: []} as Context
+  private buildContext(
+    flags: {parameters?: string[]},
+    envName: string,
+  ): Context {
+    const context = {
+      requestsFolder: Request.reqDir,
+      environment: EnvironmentLoader.load(Request.envDir, envName),
+      params: [],
+    } as Context
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
         const [name, value] = raw.split('=')
-        context.params.push({name, value})
+        context.params = [...context.params, {name, value}]
       })
     }
 

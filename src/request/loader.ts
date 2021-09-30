@@ -11,6 +11,10 @@ export default class RequestLoader {
     environment: Environment,
     context: Context,
   ): Request {
-    return RequestBuilder.build(path.join(reqPath, name), environment, context)
+    return RequestBuilder.build(
+      path.join(reqPath, name),
+      environment,
+      context.params,
+    )
   }
 }

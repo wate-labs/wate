@@ -55,6 +55,7 @@ export default class RequestBuilder {
     Object.entries(data).forEach(([key, value]) => {
       data[key] = RequestBuilder.applyParams(value, params)
     })
+
     return data
   }
 
@@ -62,8 +63,23 @@ export default class RequestBuilder {
     const replacements = params.reduce((params, {name, value}) => {
       return {...params, [name]: value}
     }, {})
-    nunjucks.configure({autoescape: false})
+    RequestBuilder.validateVariables(data, replacements)
+    nunjucks.configure({autoescape: false, throwOnUndefined: true})
+    const template = new nunjucks.Template(data)
 
-    return nunjucks.renderString(data, replacements)
+    return template.render(replacements)
+  }
+
+  private static validateVariables(data: string, replacements: {}) {
+    const variablesRegex = /{{\s?([\w]+)((?:\..+)|(?:\[.+)?)\s?}}/g
+    const variables = [...data.matchAll(variablesRegex)].map(
+      ([_, name]) => name,
+    )
+    const given = Object.keys(replacements)
+    const diff = variables.filter(name => !given.includes(name))
+
+    if (diff.length > 0) {
+      throw new Error(`The following variables are missing: ${diff}`)
+    }
   }
 }
