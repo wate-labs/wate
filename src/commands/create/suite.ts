@@ -2,7 +2,7 @@ import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 import * as path from 'path'
 
-export default class Suite extends Command {
+export default class SuiteCommand extends Command {
   static args = [
     {
       name: 'suiteName',
@@ -22,15 +22,15 @@ export default class Suite extends Command {
   }
 
   async run() {
-    const {args} = this.parse(Suite)
+    const {args} = this.parse(SuiteCommand)
     const name = `${args.suiteName}`
-    if (!fs.existsSync(Suite.dir)) {
-      this.error(`Directory "${Suite.dir}" not found.`)
+    if (!fs.existsSync(SuiteCommand.dir)) {
+      this.error(`Directory "${SuiteCommand.dir}" not found.`)
     }
 
     const relativePath = `${name}.json`
     const fileName = path.basename(relativePath)
-    const fullPath = path.join(Suite.dir, relativePath)
+    const fullPath = path.join(SuiteCommand.dir, relativePath)
     const suitePath = path.dirname(fullPath)
 
     if (fs.existsSync(fullPath)) {

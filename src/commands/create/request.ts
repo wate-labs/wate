@@ -2,7 +2,7 @@ import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 import * as path from 'path'
 
-export default class Request extends Command {
+export default class RequestCommand extends Command {
   static args = [
     {
       name: 'requestName',
@@ -22,12 +22,12 @@ export default class Request extends Command {
   }
 
   async run() {
-    const {args} = this.parse(Request)
+    const {args} = this.parse(RequestCommand)
     const requestName = args.requestName
-    if (!fs.existsSync(Request.dir)) {
-      this.error(`Directory "${Request.dir}" not found.`)
+    if (!fs.existsSync(RequestCommand.dir)) {
+      this.error(`Directory "${RequestCommand.dir}" not found.`)
     }
-    const requestPath = path.join(Request.dir, requestName)
+    const requestPath = path.join(RequestCommand.dir, requestName)
     if (fs.existsSync(requestPath)) {
       this.error(`Request "${requestName}" (${requestPath}) already exists.`)
     }

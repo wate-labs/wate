@@ -6,7 +6,7 @@ import * as path from 'path'
 
 const {bold} = Chalk
 
-export default class Environments extends Command {
+export default class EnvironmentsCommand extends Command {
   static description = 'list the available environments'
 
   static examples = ['$ artes list:environments']
@@ -18,13 +18,13 @@ export default class Environments extends Command {
   }
 
   async run() {
-    this.parse(Environments)
-    if (!fs.existsSync(Environments.dir)) {
+    this.parse(EnvironmentsCommand)
+    if (!fs.existsSync(EnvironmentsCommand.dir)) {
       this.error('Could not find environments directory')
     }
 
     const collectionsAndEnvironments = this.listCollectionsAndEnvironments(
-      Environments.dir,
+      EnvironmentsCommand.dir,
     )
     if (collectionsAndEnvironments.length === 0) {
       this.error('No collections or environments found')

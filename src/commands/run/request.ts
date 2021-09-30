@@ -4,12 +4,13 @@ import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
 import RequestLoader from '../../request/loader'
 import RequestRunner from '../../request/runner'
+import Request from '../../request'
 import Response from '../../response'
 import ResponsePrinter from '../../response/printer'
 
 const {bold, dim} = Chalk
 
-export default class Request extends Command {
+export default class RequestCommand extends Command {
   static args = [
     {name: 'environment', description: 'environment to use', required: true},
     {name: 'request', description: 'name of the request', required: true},
@@ -37,34 +38,44 @@ export default class Request extends Command {
   static reqDir = 'requests'
 
   async run() {
-    const {args, flags} = this.parse(Request)
+    const {args, flags} = this.parse(RequestCommand)
     const envName = args.environment
     const reqName = args.request
-    const environment = EnvironmentLoader.load(Request.envDir, envName)
+    const environment = EnvironmentLoader.load(RequestCommand.envDir, envName)
     this.log(
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
+
     const context = this.buildContext(flags, envName)
+
     const request = RequestLoader.load(
-      Request.reqDir,
+      RequestCommand.reqDir,
       reqName,
       environment,
       context,
     )
-    const rawResponse = await RequestRunner.run(request)
-    if (flags.verbose) {
-      this.printRaw(rawResponse)
-    }
-    if (rawResponse.hasError) {
-      this.error(rawResponse.error.reason)
-    }
+
+    const response = await this.runRequest(request, flags.verbose)
+
     this.log(
       [
         '',
-        dim(`Status code: ${rawResponse.status}`),
-        dim(`Took ${rawResponse.durationInMs}ms`),
+        dim(`Status code: ${response.status}`),
+        dim(`Took ${response.durationInMs}ms`),
       ].join('\n'),
     )
+  }
+
+  private async runRequest(request: Request, verbose: boolean) {
+    const response = await RequestRunner.run(request)
+    if (verbose) {
+      this.printRaw(response)
+    }
+    if (response.hasError) {
+      this.error(response.error.reason)
+    }
+
+    return response
   }
 
   private printRaw(rawResponse: Response) {
@@ -92,8 +103,8 @@ export default class Request extends Command {
     envName: string,
   ): Context {
     const context = {
-      requestsLocation: Request.reqDir,
-      environment: EnvironmentLoader.load(Request.envDir, envName),
+      requestsLocation: RequestCommand.reqDir,
+      environment: EnvironmentLoader.load(RequestCommand.envDir, envName),
       params: [],
     } as Context
     if (flags.parameters) {

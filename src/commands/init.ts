@@ -1,7 +1,7 @@
 import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 
-export default class Init extends Command {
+export default class InitCommand extends Command {
   static description = 'initialize new artes project'
 
   static examples = ['$ artes init']
@@ -17,11 +17,11 @@ export default class Init extends Command {
   }
 
   async run() {
-    this.parse(Init)
+    this.parse(InitCommand)
     const requiredDirs = [
-      Init.requestsDir,
-      Init.suitesDir,
-      Init.environmentsDir,
+      InitCommand.requestsDir,
+      InitCommand.suitesDir,
+      InitCommand.environmentsDir,
     ]
     requiredDirs.forEach(dir => {
       if (fs.existsSync(dir)) {

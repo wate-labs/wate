@@ -10,7 +10,7 @@ import RequestRunner from '../../request/runner'
 
 const {bold, dim} = Chalk
 
-export default class Suite extends Command {
+export default class SuiteCommand extends Command {
   static args = [
     {name: 'environment', description: 'environment to use', required: true},
     {name: 'suite', description: 'name of the suite', required: true},
@@ -40,10 +40,10 @@ export default class Suite extends Command {
   static suiteDir = 'suites'
 
   async run() {
-    const {args, flags} = this.parse(Suite)
+    const {args, flags} = this.parse(SuiteCommand)
     const envName = args.environment
     const suiteName = args.suite
-    const environment = EnvironmentLoader.load(Suite.envDir, envName)
+    const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
     this.log(
       dim(
         `Running suite "${suiteName}" with environment "${envName}" against "${environment.host}"`,
@@ -51,7 +51,7 @@ export default class Suite extends Command {
     )
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
-    const suite = SuiteLoader.load(Suite.suiteDir, suiteName, context)
+    const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
     this.log(
       bold('CASES'),
       '\n',
@@ -82,8 +82,8 @@ export default class Suite extends Command {
     envName: string,
   ): Context {
     const context = {
-      requestsLocation: Suite.reqDir,
-      environment: EnvironmentLoader.load(Suite.envDir, envName),
+      requestsLocation: SuiteCommand.reqDir,
+      environment: EnvironmentLoader.load(SuiteCommand.envDir, envName),
       params: [],
     } as Context
     if (flags.parameters) {

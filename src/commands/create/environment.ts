@@ -2,7 +2,7 @@ import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 import * as path from 'path'
 
-export default class Environment extends Command {
+export default class EnvironmentCommand extends Command {
   static args = [
     {
       name: 'environmentName',
@@ -22,15 +22,15 @@ export default class Environment extends Command {
   }
 
   async run() {
-    const {args} = this.parse(Environment)
+    const {args} = this.parse(EnvironmentCommand)
     const name = `${args.environmentName}`
-    if (!fs.existsSync(Environment.dir)) {
-      this.error(`Directory "${Environment.dir}" not found.`)
+    if (!fs.existsSync(EnvironmentCommand.dir)) {
+      this.error(`Directory "${EnvironmentCommand.dir}" not found.`)
     }
 
     const relativePath = `${name}.json`
     const fileName = path.basename(relativePath)
-    const fullPath = path.join(Environment.dir, relativePath)
+    const fullPath = path.join(EnvironmentCommand.dir, relativePath)
     const environmentPath = path.dirname(fullPath)
 
     if (fs.existsSync(fullPath)) {
