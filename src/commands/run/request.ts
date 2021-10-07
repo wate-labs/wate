@@ -7,6 +7,7 @@ import RequestRunner from '../../request/runner'
 import Request from '../../request'
 import Response from '../../response'
 import ResponsePrinter from '../../response/printer'
+import Environment from '../../environment'
 
 const {bold, dim} = Chalk
 
@@ -46,14 +47,9 @@ export default class RequestCommand extends Command {
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
 
-    const context = this.buildContext(flags, envName)
+    const context = this.buildContext(flags, environment)
 
-    const request = RequestLoader.load(
-      RequestCommand.reqDir,
-      reqName,
-      environment,
-      context,
-    )
+    const request = RequestLoader.load(RequestCommand.reqDir, reqName, context)
 
     const response = await this.runRequest(request, flags.verbose)
 
@@ -100,11 +96,11 @@ export default class RequestCommand extends Command {
 
   private buildContext(
     flags: {parameters?: string[]},
-    envName: string,
+    environment: Environment,
   ): Context {
     const context = {
       requestsLocation: RequestCommand.reqDir,
-      environment: EnvironmentLoader.load(RequestCommand.envDir, envName),
+      environment: environment,
       params: [],
     } as Context
     if (flags.parameters) {

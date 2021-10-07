@@ -13,6 +13,10 @@ export default class RequestBuilder {
     params: Param[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
+    params = RequestBuilder.maybeApplyPreRequestHandling(
+      path.join(requestPath, 'pre-request.js'),
+      params,
+    )
     request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
     request.body = RequestBuilder.applyParams(request.body, params)
 
@@ -48,6 +52,27 @@ export default class RequestBuilder {
     }
   }
 
+  private static maybeApplyPreRequestHandling(
+    preRequestPath: string,
+    params: Param[],
+  ): Param[] {
+    if (!fs.existsSync(preRequestPath)) {
+      return params
+    }
+    const fullPath = path.resolve(preRequestPath)
+    const preRequest = require(fullPath)
+    const computedParams: {
+      [key: string]: string | number | boolean | Array<any> | object;
+    } = preRequest(null, RequestBuilder.paramsToKV(params))
+    const normalizedParams = Object.entries(computedParams || []).map(
+      ([name, value]): Param => {
+        return {name, value}
+      },
+    )
+
+    return [...params, ...normalizedParams]
+  }
+
   private static applyParamsToAll(
     data: {[key: string]: string},
     params: Param[],
@@ -60,9 +85,7 @@ export default class RequestBuilder {
   }
 
   private static applyParams(data: string, params: Param[]): string {
-    const replacements = params.reduce((params, {name, value}) => {
-      return {...params, [name]: value}
-    }, {})
+    const replacements = RequestBuilder.paramsToKV(params)
     RequestBuilder.validateVariables(data, replacements)
     nunjucks.configure({autoescape: false, throwOnUndefined: true})
     const template = new nunjucks.Template(data)
@@ -81,5 +104,13 @@ export default class RequestBuilder {
     if (diff.length > 0) {
       throw new Error(`The following variables are missing: ${diff}`)
     }
+  }
+
+  private static paramsToKV(params: Param[]): {
+    [key: string]: string | number | boolean | Array<any> | object;
+  } {
+    return params.reduce((params, {name, value}) => {
+      return {...params, [name]: value}
+    }, {})
   }
 }
