@@ -8,10 +8,11 @@ A tool to run automated tests against web APIs
 [![License](https://img.shields.io/npm/l/artes.svg)](https://github.com/scflode/artes/blob/master/package.json)
 
 <!-- toc -->
-* [artes](#artes)
-* [Documentation](#documentation)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [artes](#artes)
+- [Documentation](#documentation)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Documentation
@@ -44,6 +45,14 @@ response hooks.
 A request is independent of a suite. It is also possible to feed in parameters
 via the CLI for easily testing things out.
 
+> Note: The header and body values become essentially nunjucks templates. This
+> means you can use whatever [nunjucks](https://mozilla.github.io/nunjucks/templating.html)
+> has to offer.
+
+> Note: `object`s and `Array<any>`s are automatically `JSON.stringify`'d but need
+> to have the [`safe`](https://mozilla.github.io/nunjucks/templating.html#safe)
+> filter applied in the template.
+
 ### Suites
 
 Suites are used to group requests together and allow chaining of requests (e.g.
@@ -59,6 +68,7 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g artes
 $ artes COMMAND
@@ -70,22 +80,24 @@ USAGE
   $ artes COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-* [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
-* [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
-* [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
-* [`artes help [COMMAND]`](#artes-help-command)
-* [`artes init`](#artes-init)
-* [`artes list:environments`](#artes-listenvironments)
-* [`artes list:requests`](#artes-listrequests)
-* [`artes list:suites`](#artes-listsuites)
-* [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
-* [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
+
+- [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
+- [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
+- [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
+- [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
+- [`artes help [COMMAND]`](#artes-help-command)
+- [`artes init`](#artes-init)
+- [`artes list:environments`](#artes-listenvironments)
+- [`artes list:requests`](#artes-listrequests)
+- [`artes list:suites`](#artes-listsuites)
+- [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
+- [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
 
 ## `artes autocomplete [SHELL]`
 
@@ -301,4 +313,5 @@ EXAMPLE
 ```
 
 _See code: [src/commands/run/suite.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/suite.ts)_
+
 <!-- commandsstop -->
