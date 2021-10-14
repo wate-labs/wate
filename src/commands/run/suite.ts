@@ -70,16 +70,8 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
-    if (flags.dry) {
-      this.log(
-        dim(
-          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests`,
-        ),
-      )
-      this.exit(0)
-    }
     for await (const suiteCase of suite.cases) {
-      await this.runCase(suiteCase, flags.verbose)
+      await this.runCase(suiteCase, flags.verbose, flags.dry)
     }
     const durationInMs = Date.now() - startTime
     this.log(
@@ -113,12 +105,25 @@ export default class SuiteCommand extends Command {
   private async runCase(
     suiteCase: Case,
     verbose: boolean,
+    dry: boolean,
   ): Promise<Response[]> {
     const startTime = Date.now()
     this.log(`Starting ${suiteCase.name}`)
     const responses: Response[] = []
     for await (const request of suiteCase.requests) {
-      const response = await this.runRequest(suiteCase.name, request, verbose)
+      let response: Response = this.emptyResponse(request)
+
+      if (!dry) {
+        response = await this.runRequest(suiteCase.name, request)
+      }
+
+      if (verbose) {
+        this.printRaw(request, response)
+      }
+      if (response.hasError) {
+        this.error(response.error.reason)
+      }
+
       responses.push(response)
     }
     const durationInMs = Date.now() - startTime
@@ -127,19 +132,21 @@ export default class SuiteCommand extends Command {
     return responses
   }
 
-  private async runRequest(
-    caseName: string,
-    request: Request,
-    verbose: boolean,
-  ) {
+  private emptyResponse(request: Request): Response {
+    return {
+      request,
+      status: 0,
+      durationInMs: 0,
+      hasError: false,
+      headers: null,
+      data: null,
+      error: {reason: ''},
+    }
+  }
+
+  private async runRequest(caseName: string, request: Request) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
     const response = await RequestRunner.run(request)
-    if (verbose) {
-      this.printRaw(request, response)
-    }
-    if (response.hasError) {
-      this.error(response.error.reason)
-    }
     this.log(
       [
         dim(
