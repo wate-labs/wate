@@ -9,9 +9,52 @@ A tool to run automated tests against web APIs
 
 <!-- toc -->
 * [artes](#artes)
+* [Documentation](#documentation)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+
+# Documentation
+
+artes is a test automation tool for web based APIs. It was originally written
+for blackbox testing 3rd party APIs.
+
+## Building blocks
+
+artes has the following building blocks:
+
+- environments
+- requests
+  - pre request hooks
+  - post respnse hooks
+- suites
+
+### Environments
+
+An environment refers to the basic setup for an API. This usually means setting
+the base URL and the HTTP scheme.
+
+### Requests
+
+The base for everything regarding artes is a request. This can be a static
+request body in the simplest case but also have computation of values in the
+pre request hooks and gathering of interesing or needed data via the post
+response hooks.
+
+A request is independent of a suite. It is also possible to feed in parameters
+via the CLI for easily testing things out.
+
+### Suites
+
+Suites are used to group requests together and allow chaining of requests (e.g.
+authentication and protected resource calls).
+
+## Setting up a new project
+
+To bootstrap a new project `artes init` can be used which will automatically
+create the folder structure needed.
+
+To bootstrap the building blocks please refer to the [commands](#commands).
 
 # Usage
 
