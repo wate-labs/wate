@@ -1,3 +1,4 @@
+import {KeyValue} from './param'
 import Request from './request'
 
 export interface SuiteDefinition {
@@ -22,5 +23,5 @@ export interface Case {
 
 export interface RequestDefinition {
   request: string;
-  params: {[key: string]: string};
+  params: KeyValue;
 }

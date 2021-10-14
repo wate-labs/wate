@@ -4,7 +4,8 @@ import * as parser from 'http-string-parser'
 import * as nunjucks from 'nunjucks'
 import Request from '../request'
 import Environment from '../environment'
-import {Param} from '../context'
+import Param, {KeyValue} from '../param'
+import ParamHelper from '../param/helper'
 
 export default class RequestBuilder {
   public static build(
@@ -13,10 +14,8 @@ export default class RequestBuilder {
     params: Param[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
-    params = RequestBuilder.maybeApplyPreRequestHandling(
-      path.join(requestPath, 'pre-request.js'),
-      params,
-    )
+    const preRequestScript = path.join(requestPath, 'pre-request.js')
+    params = RequestBuilder.applyPreRequestHandling(preRequestScript, params)
     request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
     request.body = RequestBuilder.applyParams(request.body, params)
 
@@ -52,7 +51,7 @@ export default class RequestBuilder {
     }
   }
 
-  private static maybeApplyPreRequestHandling(
+  private static applyPreRequestHandling(
     preRequestPath: string,
     params: Param[],
   ): Param[] {
@@ -61,14 +60,8 @@ export default class RequestBuilder {
     }
     const fullPath = path.resolve(preRequestPath)
     const preRequest = require(fullPath)
-    const computedParams: {
-      [key: string]: string | number | boolean | Array<any> | object;
-    } = preRequest(null, RequestBuilder.paramsToKV(params))
-    const normalizedParams = Object.entries(computedParams || []).map(
-      ([name, value]): Param => {
-        return {name, value}
-      },
-    )
+    const computedParams: KeyValue = preRequest(null, ParamHelper.toKV(params))
+    const normalizedParams = ParamHelper.toParam(computedParams)
 
     return [...params, ...normalizedParams]
   }
@@ -85,7 +78,7 @@ export default class RequestBuilder {
   }
 
   private static applyParams(data: string, params: Param[]): string {
-    const replacements = RequestBuilder.paramsToKV(params)
+    const replacements = ParamHelper.toKV(params)
     RequestBuilder.validateVariables(data, replacements)
     nunjucks.configure({autoescape: false, throwOnUndefined: true})
     const template = new nunjucks.Template(data)
@@ -104,13 +97,5 @@ export default class RequestBuilder {
     if (diff.length > 0) {
       throw new Error(`The following variables are missing: ${diff}`)
     }
-  }
-
-  private static paramsToKV(params: Param[]): {
-    [key: string]: string | number | boolean | Array<any> | object;
-  } {
-    return params.reduce((params, {name, value}) => {
-      return {...params, [name]: value}
-    }, {})
   }
 }

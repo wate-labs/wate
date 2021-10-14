@@ -3,8 +3,10 @@ import * as fs from 'fs'
 import {Suite, Case, SuiteDefinition, RequestDefinition} from '../suite'
 import Request from '../request'
 import SchemaValidator, {ValidationSchema} from '../validator/schema'
-import Context, {Param} from '../context'
+import Context from '../context'
 import RequestBuilder from '../request/builder'
+import Param from '../param'
+import ParamHelper from '../param/helper'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -93,13 +95,7 @@ export default class SuiteLoader {
     return {
       name: name,
       requests: requests.map(({request, params}) =>
-        SuiteLoader.buildRequest(
-          request,
-          Object.entries(params || []).map(([name, value]) => {
-            return {name, value}
-          }),
-          context,
-        ),
+        SuiteLoader.buildRequest(request, ParamHelper.toParam(params), context),
       ),
     }
   }
