@@ -118,7 +118,7 @@ export default class SuiteCommand extends Command {
       }
 
       if (verbose) {
-        this.printRaw(request, response)
+        this.printRaw(request, response, dry)
       }
       if (response.hasError) {
         this.error(response.error.reason)
@@ -158,7 +158,11 @@ export default class SuiteCommand extends Command {
     return response
   }
 
-  private printRaw(originalRequest: Request, rawResponse: Response) {
+  private printRaw(
+    originalRequest: Request,
+    rawResponse: Response,
+    dry: boolean,
+  ) {
     const {request, response} = ResponsePrinter.print(rawResponse)
     this.log(
       [
@@ -170,14 +174,25 @@ export default class SuiteCommand extends Command {
         request.headers,
         dim('body'),
         request.body,
-        '',
-        bold('RESPONSE'),
-        dim('headers'),
-        response.headers,
-        dim('body'),
-        response.body,
-        '',
       ].join('\n'),
     )
+
+    if (dry) {
+      this.log(['', dim('Dry runs do not have a response'), ''].join('\n'))
+    }
+
+    if (!dry) {
+      this.log(
+        [
+          '',
+          bold('RESPONSE'),
+          dim('headers'),
+          response.headers,
+          dim('body'),
+          response.body,
+          '',
+        ].join('\n'),
+      )
+    }
   }
 }
