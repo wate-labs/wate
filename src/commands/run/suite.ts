@@ -2,12 +2,13 @@ import {Command, flags} from '@oclif/command'
 import * as Chalk from 'chalk'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
-import ResponsePrinter from '../../response/printer'
 import SuiteLoader from '../../suite/loader'
 import Request from '../../request'
 import Response from '../../response'
 import RequestRunner from '../../request/runner'
 import {Case} from '../../suite'
+import Printer from '../../helpers/printer'
+import ResponseHelper from '../../helpers/response'
 
 const {bold, dim} = Chalk
 
@@ -111,14 +112,14 @@ export default class SuiteCommand extends Command {
     this.log(`Starting ${suiteCase.name}`)
     const responses: Response[] = []
     for await (const request of suiteCase.requests) {
-      let response: Response = this.emptyResponse(request)
+      let response: Response = ResponseHelper.emptyResponse(request)
 
       if (!dry) {
         response = await this.runRequest(suiteCase.name, request)
       }
 
       if (verbose) {
-        this.printRaw(request, response, dry)
+        this.log(Printer.requestAndResponse(request, response, dry))
       }
       if (response.hasError) {
         this.error(response.error.reason)
@@ -130,18 +131,6 @@ export default class SuiteCommand extends Command {
     this.log(`Finished ${suiteCase.name} in ${durationInMs}ms`, '\n')
 
     return responses
-  }
-
-  private emptyResponse(request: Request): Response {
-    return {
-      request,
-      status: 0,
-      durationInMs: 0,
-      hasError: false,
-      headers: null,
-      data: null,
-      error: {reason: ''},
-    }
   }
 
   private async runRequest(caseName: string, request: Request) {
@@ -156,43 +145,5 @@ export default class SuiteCommand extends Command {
     )
 
     return response
-  }
-
-  private printRaw(
-    originalRequest: Request,
-    rawResponse: Response,
-    dry: boolean,
-  ) {
-    const {request, response} = ResponsePrinter.print(rawResponse)
-    this.log(
-      [
-        '',
-        dim(`URL: ${originalRequest.url}`),
-        '',
-        bold('REQUEST'),
-        dim('headers'),
-        request.headers,
-        dim('body'),
-        request.body,
-      ].join('\n'),
-    )
-
-    if (dry) {
-      this.log(['', dim('Dry runs do not have a response'), ''].join('\n'))
-    }
-
-    if (!dry) {
-      this.log(
-        [
-          '',
-          bold('RESPONSE'),
-          dim('headers'),
-          response.headers,
-          dim('body'),
-          response.body,
-          '',
-        ].join('\n'),
-      )
-    }
   }
 }

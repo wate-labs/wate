@@ -6,10 +6,11 @@ import RequestLoader from '../../request/loader'
 import RequestRunner from '../../request/runner'
 import Request from '../../request'
 import Response from '../../response'
-import ResponsePrinter from '../../response/printer'
 import Environment from '../../environment'
+import Printer from '../../helpers/printer'
+import ResponseHelper from '../../helpers/response'
 
-const {bold, dim} = Chalk
+const {dim} = Chalk
 
 export default class RequestCommand extends Command {
   static args = [
@@ -27,6 +28,10 @@ export default class RequestCommand extends Command {
       char: 'p',
       description: 'use given parameter name and value in request',
       multiple: true,
+    }),
+    dry: flags.boolean({
+      char: 'd',
+      description: 'perform a dry run without emitting the request',
     }),
   }
 
@@ -51,7 +56,7 @@ export default class RequestCommand extends Command {
 
     const request = RequestLoader.load(RequestCommand.reqDir, reqName, context)
 
-    const response = await this.runRequest(request, flags.verbose)
+    const response = await this.runRequest(request, flags.verbose, flags.dry)
 
     this.log(
       [
@@ -62,36 +67,19 @@ export default class RequestCommand extends Command {
     )
   }
 
-  private async runRequest(request: Request, verbose: boolean) {
-    const response = await RequestRunner.run(request)
+  private async runRequest(request: Request, verbose: boolean, dry: boolean) {
+    let response: Response = ResponseHelper.emptyResponse(request)
+    if (!dry) {
+      response = await RequestRunner.run(request)
+    }
     if (verbose) {
-      this.printRaw(response)
+      this.log(Printer.requestAndResponse(request, response, dry))
     }
     if (response.hasError) {
       this.error(response.error.reason)
     }
 
     return response
-  }
-
-  private printRaw(rawResponse: Response) {
-    const {request, response} = ResponsePrinter.print(rawResponse)
-    this.log(
-      [
-        '',
-        bold('REQUEST'),
-        dim('headers'),
-        request.headers,
-        dim('body'),
-        request.body,
-        '',
-        bold('RESPONSE'),
-        dim('headers'),
-        response.headers,
-        dim('body'),
-        response.body,
-      ].join('\n'),
-    )
   }
 
   private buildContext(
