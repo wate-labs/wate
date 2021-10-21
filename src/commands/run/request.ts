@@ -90,6 +90,7 @@ export default class RequestCommand extends Command {
       requestsLocation: RequestCommand.reqDir,
       environment: environment,
       params: [],
+      captures: [],
     } as Context
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {

@@ -5,13 +5,15 @@ import * as nunjucks from 'nunjucks'
 import Request from '../request'
 import Environment from '../environment'
 import Param, {KeyValue} from '../param'
-import ParamHelper from '../param/helper'
+import DataHelper from '../data/helper'
+import Capture from '../capture'
 
 export default class RequestBuilder {
   public static build(
     requestPath: string,
     environment: Environment,
     params: Param[],
+    captures: Capture[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     const preRequestScript = path.join(requestPath, 'pre-request.js')
@@ -27,6 +29,7 @@ export default class RequestBuilder {
       method: request.method,
       headers: RequestBuilder.headers(request.headers, environment),
       data: RequestBuilder.parse(request.body),
+      captures,
     }
   }
 
@@ -60,8 +63,8 @@ export default class RequestBuilder {
     }
     const fullPath = path.resolve(preRequestPath)
     const preRequest = require(fullPath)
-    const computedParams: KeyValue = preRequest(null, ParamHelper.toKV(params))
-    const normalizedParams = ParamHelper.toParam(computedParams)
+    const computedParams: KeyValue = preRequest(null, DataHelper.toKV(params))
+    const normalizedParams = DataHelper.toParam(computedParams)
 
     return [...params, ...normalizedParams]
   }
@@ -78,7 +81,7 @@ export default class RequestBuilder {
   }
 
   private static applyParams(data: string, params: Param[]): string {
-    const replacements = ParamHelper.toKV(params)
+    const replacements = DataHelper.toKV(params)
     RequestBuilder.validateVariables(data, replacements)
     nunjucks.configure({autoescape: false, throwOnUndefined: true})
     const template = new nunjucks.Template(data)

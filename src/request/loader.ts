@@ -9,6 +9,7 @@ export default class RequestLoader {
       path.join(reqPath, name),
       context.environment,
       context.params,
+      [],
     )
   }
 }

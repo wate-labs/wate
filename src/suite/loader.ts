@@ -6,7 +6,8 @@ import SchemaValidator, {ValidationSchema} from '../validator/schema'
 import Context from '../context'
 import RequestBuilder from '../request/builder'
 import Param from '../param'
-import ParamHelper from '../param/helper'
+import DataHelper from '../data/helper'
+import Capture from '../capture'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -46,6 +47,10 @@ export default class SuiteLoader {
         properties: {
           request: {type: 'string'},
           params: {
+            type: 'object',
+            additionalProperties: true,
+          },
+          captures: {
             type: 'object',
             additionalProperties: true,
           },
@@ -94,8 +99,13 @@ export default class SuiteLoader {
   ): Case {
     return {
       name: name,
-      requests: requests.map(({request, params}) =>
-        SuiteLoader.buildRequest(request, ParamHelper.toParam(params), context),
+      requests: requests.map(({request, params, captures}) =>
+        SuiteLoader.buildRequest(
+          request,
+          DataHelper.toParam(params),
+          DataHelper.toCapture(captures),
+          context,
+        ),
       ),
     }
   }
@@ -103,12 +113,14 @@ export default class SuiteLoader {
   private static buildRequest(
     request: string,
     params: Param[],
+    captures: Capture[],
     context: Context,
   ): Request {
     return RequestBuilder.build(
       path.join(context.requestsLocation, request),
       context.environment,
       [...params, ...context.params],
+      captures,
     )
   }
 }
