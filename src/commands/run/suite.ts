@@ -10,6 +10,7 @@ import RequestRunner from '../../request/runner'
 import {Case} from '../../suite'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
+import {Capture} from '../../capture'
 
 const {bold, dim} = Chalk
 
@@ -80,6 +81,12 @@ export default class SuiteCommand extends Command {
       await this.runCase(suiteCase, context, flags)
     }
     const durationInMs = Date.now() - startTime
+    if (context.captures.length > 0) {
+      this.printCaptures(
+        context.captures,
+        `Summary for ${suite.name}`.toUpperCase(),
+      )
+    }
     this.log(
       [
         dim(
@@ -152,7 +159,7 @@ export default class SuiteCommand extends Command {
   ) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
     const response = await RequestRunner.run(request)
-    context.captures = {...context.captures, ...response.captures}
+    context.captures = [...context.captures, ...response.captures]
     this.log(
       [
         dim(
@@ -162,11 +169,15 @@ export default class SuiteCommand extends Command {
     )
 
     if (response.captures.length > 0 && printCaptures) {
-      this.log(['', 'Captured values'.toUpperCase(), ''].join('\n'))
-      cli.table(response.captures, {name: {}, value: {}})
-      this.log('')
+      this.printCaptures(response.captures)
     }
 
     return response
+  }
+
+  private printCaptures(captures: Capture[], title?: string) {
+    this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
+    cli.table(captures, {name: {}, value: {}})
+    this.log('')
   }
 }
