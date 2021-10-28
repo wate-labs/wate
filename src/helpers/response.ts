@@ -11,6 +11,7 @@ export default class ResponseHelper {
       headers: null,
       data: null,
       error: {reason: ''},
+      captures: [],
     }
   }
 }

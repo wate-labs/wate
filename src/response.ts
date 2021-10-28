@@ -9,4 +9,5 @@ export default interface Response {
   hasError: boolean;
   error: Error;
   durationInMs: number;
+  captures: any;
 }

@@ -7,7 +7,7 @@ import Context from '../context'
 import RequestBuilder from '../request/builder'
 import Param from '../param'
 import DataHelper from '../data/helper'
-import Capture from '../capture'
+import CaptureDefinition from '../capture'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -99,21 +99,21 @@ export default class SuiteLoader {
   ): Case {
     return {
       name: name,
-      requests: requests.map(({request, params, captures}) =>
-        SuiteLoader.buildRequest(
+      requests: requests.map(({request, params, captures}) => {
+        return SuiteLoader.buildRequest(
           request,
           DataHelper.toParam(params),
           DataHelper.toCapture(captures),
           context,
-        ),
-      ),
+        )
+      }),
     }
   }
 
   private static buildRequest(
     request: string,
     params: Param[],
-    captures: Capture[],
+    captures: CaptureDefinition[],
     context: Context,
   ): Request {
     return RequestBuilder.build(

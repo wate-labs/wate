@@ -16,6 +16,7 @@ describe('suite loader', () => {
       requestsLocation: requestsPath,
       environment: environment,
       params: [],
+      captures: [],
     } as Context
     const suite = SuiteLoader.load(suitePath, 'suite_1', context)
     assert.equal(suite.name, 'My suite name')

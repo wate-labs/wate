@@ -1,4 +1,5 @@
 import {Command, flags} from '@oclif/command'
+import {cli} from 'cli-ux'
 import * as Chalk from 'chalk'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
@@ -32,6 +33,10 @@ export default class SuiteCommand extends Command {
     dry: flags.boolean({
       char: 'd',
       description: 'perform a dry run without emitting requests',
+    }),
+    captures: flags.boolean({
+      char: 'c',
+      description: 'print captured values for each request',
     }),
   }
 
@@ -72,7 +77,7 @@ export default class SuiteCommand extends Command {
       0,
     )
     for await (const suiteCase of suite.cases) {
-      await this.runCase(suiteCase, flags.verbose, flags.dry)
+      await this.runCase(suiteCase, context, flags)
     }
     const durationInMs = Date.now() - startTime
     this.log(
@@ -92,6 +97,7 @@ export default class SuiteCommand extends Command {
       requestsLocation: SuiteCommand.reqDir,
       environment: EnvironmentLoader.load(SuiteCommand.envDir, envName),
       params: [],
+      captures: [],
     } as Context
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
@@ -105,21 +111,26 @@ export default class SuiteCommand extends Command {
 
   private async runCase(
     suiteCase: Case,
-    verbose: boolean,
-    dry: boolean,
+    context: Context,
+    flags: {verbose: boolean; dry: boolean; captures: boolean},
   ): Promise<Response[]> {
     const startTime = Date.now()
-    this.log(`Starting ${suiteCase.name}`)
+    this.log(`Starting case ${suiteCase.name}`)
     const responses: Response[] = []
     for await (const request of suiteCase.requests) {
       let response: Response = ResponseHelper.emptyResponse(request)
 
-      if (!dry) {
-        response = await this.runRequest(suiteCase.name, request)
+      if (!flags.dry) {
+        response = await this.runRequest(
+          suiteCase.name,
+          request,
+          context,
+          flags.captures,
+        )
       }
 
-      if (verbose) {
-        this.log(Printer.requestAndResponse(request, response, dry))
+      if (flags.verbose) {
+        this.log(Printer.requestAndResponse(request, response, flags.dry))
       }
       if (response.hasError) {
         this.error(response.error.reason)
@@ -128,14 +139,20 @@ export default class SuiteCommand extends Command {
       responses.push(response)
     }
     const durationInMs = Date.now() - startTime
-    this.log(`Finished ${suiteCase.name} in ${durationInMs}ms`, '\n')
+    this.log(`Finished case ${suiteCase.name} in ${durationInMs}ms`, '\n')
 
     return responses
   }
 
-  private async runRequest(caseName: string, request: Request) {
+  private async runRequest(
+    caseName: string,
+    request: Request,
+    context: Context,
+    printCaptures: boolean,
+  ) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
     const response = await RequestRunner.run(request)
+    context.captures = {...context.captures, ...response.captures}
     this.log(
       [
         dim(
@@ -143,6 +160,12 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
+
+    if (response.captures.length > 0 && printCaptures) {
+      this.log(['', 'Captured values'.toUpperCase(), ''].join('\n'))
+      cli.table(response.captures, {name: {}, value: {}})
+      this.log('')
+    }
 
     return response
   }

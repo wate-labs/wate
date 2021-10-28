@@ -1,4 +1,4 @@
-import Capture from './capture'
+import CaptureDefinition from './capture'
 
 export default interface Request {
   url: string;
@@ -6,5 +6,5 @@ export default interface Request {
   method: string;
   headers: any;
   data: any;
-  captures: Capture[];
+  captures: CaptureDefinition[];
 }

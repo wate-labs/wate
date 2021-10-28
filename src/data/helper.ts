@@ -1,5 +1,5 @@
 import Param, {KeyValue as ParamKeyValue} from '../param'
-import Capture, {KeyValue as CaptureKeyValue} from '../capture'
+import CaptureDefinition, {KeyValue as CaptureKeyValue} from '../capture'
 
 export default class DataHelper {
   public static toKV(params: Param[]): ParamKeyValue {
@@ -14,10 +14,12 @@ export default class DataHelper {
     })
   }
 
-  public static toCapture(captures: CaptureKeyValue): Capture[] {
-    return Object.entries(captures || []).map(([name, jsonPath]): Capture => {
-      return {name, jsonPath}
-    })
+  public static toCapture(captures: CaptureKeyValue): CaptureDefinition[] {
+    return Object.entries(captures || []).map(
+      ([name, jsonPath]): CaptureDefinition => {
+        return {name, jsonPath}
+      },
+    )
   }
 
   private static parse(value: any): string | boolean | number {

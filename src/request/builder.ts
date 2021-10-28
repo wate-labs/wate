@@ -6,14 +6,14 @@ import Request from '../request'
 import Environment from '../environment'
 import Param, {KeyValue} from '../param'
 import DataHelper from '../data/helper'
-import Capture from '../capture'
+import CaptureDefinition from '../capture'
 
 export default class RequestBuilder {
   public static build(
     requestPath: string,
     environment: Environment,
     params: Param[],
-    captures: Capture[],
+    captures: CaptureDefinition[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     const preRequestScript = path.join(requestPath, 'pre-request.js')

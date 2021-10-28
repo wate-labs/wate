@@ -1,17 +1,20 @@
 import Request from '../request'
 import Response from '../response'
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
+import CaptureDefinition, {Capture} from '../capture'
+import {JSONPath as jsonPath} from 'jsonpath-plus'
 
 export default class RequestRunner {
   public static async run(request: Request): Promise<Response> {
     let headers = null
-    let data = null
+    let data: any = null
     let durationInMs = 0
     let status = -1
     let hasError = false
     let errorObject = {
       reason: '',
     }
+    let captures = {}
     axios.interceptors.request.use(
       function (config) {
         (config as MetadataAwareAxiosRequestConfig).metadata = {
@@ -41,6 +44,7 @@ export default class RequestRunner {
       ({headers, data, status, durationInMs} = await axios.request(
         RequestRunner.prepare(request),
       ))
+      captures = RequestRunner.captureFromBody(data, request.captures)
     } catch (error) {
       hasError = true
       if (error.response?.status) {
@@ -49,9 +53,17 @@ export default class RequestRunner {
         errorObject = {
           reason: `Status code: ${error.response.status} (${error.response.statusText})`,
         }
-      } else {
+      } else if (error.code) {
         errorObject = {
           reason: error.code,
+        }
+      } else if (error.message) {
+        errorObject = {
+          reason: error.message,
+        }
+      } else {
+        errorObject = {
+          reason: 'An unknown error occurred in RequestRunner',
         }
       }
     }
@@ -64,11 +76,36 @@ export default class RequestRunner {
       hasError,
       error: errorObject,
       durationInMs,
+      captures,
     }
   }
 
   private static prepare(request: Request): AxiosRequestConfig {
     return request as AxiosRequestConfig
+  }
+
+  private static captureFromBody(
+    data: any,
+    captures: CaptureDefinition[],
+  ): object {
+    if (typeof data === 'object') {
+      return captures.reduce(
+        (acc, capture) => [...acc, RequestRunner.captureValue(capture, data)],
+        [] as Capture[],
+      )
+    }
+
+    throw new Error('Passed `data` is not an object')
+  }
+
+  private static captureValue(capture: CaptureDefinition, data: any): Capture {
+    const matches: Array<string> = jsonPath({
+      path: capture.jsonPath,
+      json: data,
+    })
+    const value = matches.length > 1 ? matches : matches.pop()
+
+    return {name: capture.name, value}
   }
 }
 
