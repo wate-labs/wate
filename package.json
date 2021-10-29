@@ -1,7 +1,7 @@
 {
   "name": "artes",
   "description": "A tool for automated tests for web APIs",
-  "version": "0.0.0",
+  "version": "0.1.0-dev",
   "author": "Flo Schuessel @scflode",
   "bin": {
     "artes": "./bin/run"

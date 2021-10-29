@@ -8,11 +8,10 @@ A tool to run automated tests against web APIs
 [![License](https://img.shields.io/npm/l/artes.svg)](https://github.com/scflode/artes/blob/master/package.json)
 
 <!-- toc -->
-
-- [artes](#artes)
-- [Documentation](#documentation)
-- [Usage](#usage)
-- [Commands](#commands)
+* [artes](#artes)
+* [Documentation](#documentation)
+* [Usage](#usage)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Documentation
@@ -68,36 +67,33 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g artes
 $ artes COMMAND
 running command...
 $ artes (-v|--version|version)
-artes/0.0.0 darwin-x64 node-v14.17.3
+artes/0.1.0-dev darwin-x64 node-v14.17.3
 $ artes --help [COMMAND]
 USAGE
   $ artes COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-
-- [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-- [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
-- [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
-- [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
-- [`artes help [COMMAND]`](#artes-help-command)
-- [`artes init`](#artes-init)
-- [`artes list:environments`](#artes-listenvironments)
-- [`artes list:requests`](#artes-listrequests)
-- [`artes list:suites`](#artes-listsuites)
-- [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
-- [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
+* [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
+* [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
+* [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
+* [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
+* [`artes help [COMMAND]`](#artes-help-command)
+* [`artes init`](#artes-init)
+* [`artes list:environments`](#artes-listenvironments)
+* [`artes list:requests`](#artes-listrequests)
+* [`artes list:suites`](#artes-listsuites)
+* [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
+* [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
 
 ## `artes autocomplete [SHELL]`
 
@@ -140,7 +136,7 @@ EXAMPLE
   $ artes create:environment
 ```
 
-_See code: [src/commands/create/environment.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/environment.ts)_
+_See code: [src/commands/create/environment.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/environment.ts)_
 
 ## `artes create:request REQUESTNAME`
 
@@ -160,7 +156,7 @@ EXAMPLE
   $ artes create:request
 ```
 
-_See code: [src/commands/create/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/request.ts)_
+_See code: [src/commands/create/request.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/request.ts)_
 
 ## `artes create:suite SUITENAME`
 
@@ -180,7 +176,7 @@ EXAMPLE
   $ artes create:suite
 ```
 
-_See code: [src/commands/create/suite.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/create/suite.ts)_
+_See code: [src/commands/create/suite.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/suite.ts)_
 
 ## `artes help [COMMAND]`
 
@@ -214,7 +210,7 @@ EXAMPLE
   $ artes init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/init.ts)_
 
 ## `artes list:environments`
 
@@ -231,7 +227,7 @@ EXAMPLE
   $ artes list:environments
 ```
 
-_See code: [src/commands/list/environments.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/environments.ts)_
+_See code: [src/commands/list/environments.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/environments.ts)_
 
 ## `artes list:requests`
 
@@ -248,7 +244,7 @@ EXAMPLE
   $ artes list:requests
 ```
 
-_See code: [src/commands/list/requests.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/requests.ts)_
+_See code: [src/commands/list/requests.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/requests.ts)_
 
 ## `artes list:suites`
 
@@ -265,7 +261,7 @@ EXAMPLE
   $ artes list:suites
 ```
 
-_See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/list/suites.ts)_
+_See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/suites.ts)_
 
 ## `artes run:request ENVIRONMENT REQUEST`
 
@@ -280,6 +276,8 @@ ARGUMENTS
   REQUEST      name of the request
 
 OPTIONS
+  -c, --captures=captures      capture value from response with given JSONPath expression
+  -d, --dry                    perform a dry run without emitting the request
   -h, --help                   show CLI help
   -p, --parameters=parameters  use given parameter name and value in request
   -v, --verbose                print the raw response headers and body
@@ -288,7 +286,7 @@ EXAMPLE
   $ artes run:request test ping
 ```
 
-_See code: [src/commands/run/request.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/request.ts)_
+_See code: [src/commands/run/request.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/run/request.ts)_
 
 ## `artes run:suite ENVIRONMENT SUITE`
 
@@ -303,6 +301,7 @@ ARGUMENTS
   SUITE        name of the suite
 
 OPTIONS
+  -c, --captures               print captured values for each request
   -d, --dry                    perform a dry run without emitting requests
   -h, --help                   show CLI help
   -p, --parameters=parameters  use given parameter name and value in request
@@ -312,6 +311,5 @@ EXAMPLE
   $ artes run:suite test suite
 ```
 
-_See code: [src/commands/run/suite.ts](https://github.com/scflode/artes/blob/v0.0.0/src/commands/run/suite.ts)_
-
+_See code: [src/commands/run/suite.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/run/suite.ts)_
 <!-- commandsstop -->
