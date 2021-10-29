@@ -1,8 +1,8 @@
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
+import {JSONPath as jsonPath} from 'jsonpath-plus'
 import Request from '../request'
 import Response from '../response'
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
 import CaptureDefinition, {Capture} from '../capture'
-import {JSONPath as jsonPath} from 'jsonpath-plus'
 
 export default class RequestRunner {
   public static async run(request: Request): Promise<Response> {
@@ -14,7 +14,7 @@ export default class RequestRunner {
     let errorObject = {
       reason: '',
     }
-    let captures = {}
+    let captures: Capture[] = []
     axios.interceptors.request.use(
       function (config) {
         (config as MetadataAwareAxiosRequestConfig).metadata = {
@@ -87,7 +87,7 @@ export default class RequestRunner {
   private static captureFromBody(
     data: any,
     captures: CaptureDefinition[],
-  ): object {
+  ): Capture[] {
     if (typeof data === 'object') {
       return captures.reduce(
         (acc, capture) => [...acc, RequestRunner.captureValue(capture, data)],

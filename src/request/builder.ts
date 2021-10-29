@@ -6,31 +6,41 @@ import Request from '../request'
 import Environment from '../environment'
 import Param, {KeyValue} from '../param'
 import DataHelper from '../data/helper'
-import CaptureDefinition from '../capture'
+import Context from '../context'
+import CaptureDefinition, {Capture} from '../capture'
 
 export default class RequestBuilder {
-  public static build(
+  public static prepare(
     requestPath: string,
-    environment: Environment,
+    context: Context,
     params: Param[],
     captures: CaptureDefinition[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
-    const preRequestScript = path.join(requestPath, 'pre-request.js')
-    params = RequestBuilder.applyPreRequestHandling(preRequestScript, params)
-    request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
-    request.body = RequestBuilder.applyParams(request.body, params)
-
-    const host = environment.host ?? request.headers.Host
+    const host = context.environment.host ?? request.headers.Host
 
     return {
+      path: requestPath,
       url: request.uri,
-      baseURL: environment.scheme + '://' + host,
+      baseURL: context.environment.scheme + '://' + host,
       method: request.method,
-      headers: RequestBuilder.headers(request.headers, environment),
-      data: RequestBuilder.parse(request.body),
+      headers: RequestBuilder.headers(request.headers, context.environment),
+      data: request.body,
+      params,
       captures,
     }
+  }
+
+  public static render(request: Request, context: Context): Request {
+    const preRequestScript = path.join(request.path, 'pre-request.js')
+    let params = RequestBuilder.applyCapturesToParams(request.params, context)
+    params = RequestBuilder.applyPreRequestHandling(preRequestScript, params)
+    request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
+    request.data = RequestBuilder.parse(
+      RequestBuilder.applyParams(request.data, params),
+    )
+
+    return request
   }
 
   private static load(requestPath: string): parser.ParseRequestResult {
@@ -67,6 +77,35 @@ export default class RequestBuilder {
     const normalizedParams = DataHelper.toParam(computedParams)
 
     return [...params, ...normalizedParams]
+  }
+
+  private static applyCapturesToParams(
+    params: Param[],
+    context: Context,
+  ): Param[] {
+    return params.map(param =>
+      RequestBuilder.applyCapturesToParam(param, context.captures),
+    )
+  }
+
+  private static applyCapturesToParam(
+    param: Param,
+    captures: Capture[],
+  ): Param {
+    if (
+      typeof param.value === 'string' &&
+      param.value.startsWith('$captures.')
+    ) {
+      const captureName = param.value.replace('$captures.', '')
+      const capture = captures.filter(capture => capture.name === captureName)
+      if (capture.length !== 1) {
+        throw new Error(`Capture ${captureName} ambiguous or not found`)
+      }
+
+      return {name: param.name, value: capture[0].value}
+    }
+
+    return param
   }
 
   private static applyParamsToAll(

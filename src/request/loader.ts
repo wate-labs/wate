@@ -4,12 +4,18 @@ import Request from '../request'
 import Context from '../context'
 
 export default class RequestLoader {
-  public static load(reqPath: string, name: string, context: Context): Request {
-    return RequestBuilder.build(
-      path.join(reqPath, name),
-      context.environment,
-      context.params,
+  public static load(
+    requestPath: string,
+    name: string,
+    context: Context,
+  ): Request {
+    const request = RequestBuilder.prepare(
+      path.join(requestPath, name),
+      context,
+      [],
       [],
     )
+
+    return RequestBuilder.render(request, context)
   }
 }

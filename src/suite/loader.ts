@@ -100,7 +100,7 @@ export default class SuiteLoader {
     return {
       name: name,
       requests: requests.map(({request, params, captures}) => {
-        return SuiteLoader.buildRequest(
+        return SuiteLoader.prepareRequest(
           request,
           DataHelper.toParam(params),
           DataHelper.toCapture(captures),
@@ -110,17 +110,17 @@ export default class SuiteLoader {
     }
   }
 
-  private static buildRequest(
+  private static prepareRequest(
     request: string,
     params: Param[],
-    captures: CaptureDefinition[],
+    captureDefinitions: CaptureDefinition[],
     context: Context,
   ): Request {
-    return RequestBuilder.build(
+    return RequestBuilder.prepare(
       path.join(context.requestsLocation, request),
-      context.environment,
-      [...params, ...context.params],
-      captures,
+      context,
+      params,
+      captureDefinitions,
     )
   }
 }

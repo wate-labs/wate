@@ -11,6 +11,7 @@ import {Case} from '../../suite'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
 import {Capture} from '../../capture'
+import RequestBuilder from '../../request/builder'
 
 const {bold, dim} = Chalk
 
@@ -158,6 +159,7 @@ export default class SuiteCommand extends Command {
     printCaptures: boolean,
   ) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
+    request = RequestBuilder.render(request, context)
     const response = await RequestRunner.run(request)
     context.captures = [...context.captures, ...response.captures]
     this.log(
