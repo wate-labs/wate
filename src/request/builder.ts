@@ -34,7 +34,11 @@ export default class RequestBuilder {
   public static render(request: Request, context: Context): Request {
     const preRequestScript = path.join(request.path, 'pre-request.js')
     let params = RequestBuilder.applyCapturesToParams(request.params, context)
-    params = RequestBuilder.applyPreRequestHandling(preRequestScript, params)
+    params = RequestBuilder.applyPreRequestHandling(
+      preRequestScript,
+      params,
+      context.captures,
+    )
     request.headers = RequestBuilder.applyParamsToAll(request.headers, params)
     request.data = RequestBuilder.parse(
       RequestBuilder.applyParams(request.data, params),
@@ -67,13 +71,17 @@ export default class RequestBuilder {
   private static applyPreRequestHandling(
     preRequestPath: string,
     params: Param[],
+    captures: Capture[],
   ): Param[] {
     if (!fs.existsSync(preRequestPath)) {
       return params
     }
     const fullPath = path.resolve(preRequestPath)
     const preRequest = require(fullPath)
-    const computedParams: KeyValue = preRequest(null, DataHelper.toKV(params))
+    const computedParams: KeyValue = preRequest(
+      captures,
+      DataHelper.toKV(params),
+    )
     const normalizedParams = DataHelper.toParam(computedParams)
 
     return [...params, ...normalizedParams]
