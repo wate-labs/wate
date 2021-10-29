@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import * as Chalk from 'chalk'
+import {cli} from 'cli-ux'
 import * as path from 'path'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
@@ -10,6 +11,8 @@ import Environment from '../../environment'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
 import RequestBuilder from '../../request/builder'
+import CaptureDefinition, {Capture} from '../../capture'
+import Param from '../../param'
 
 const {dim} = Chalk
 
@@ -25,14 +28,19 @@ export default class RequestCommand extends Command {
       char: 'v',
       description: 'print the raw response headers and body',
     }),
+    dry: flags.boolean({
+      char: 'd',
+      description: 'perform a dry run without emitting the request',
+    }),
     parameters: flags.string({
       char: 'p',
       description: 'use given parameter name and value in request',
       multiple: true,
     }),
-    dry: flags.boolean({
-      char: 'd',
-      description: 'perform a dry run without emitting the request',
+    captures: flags.string({
+      char: 'c',
+      description: 'capture value from response with given JSONPath expression',
+      multiple: true,
     }),
   }
 
@@ -53,11 +61,17 @@ export default class RequestCommand extends Command {
       `Running request "${reqName}" with environment "${envName}" against "${environment.host}"`,
     )
 
-    const context = this.buildContext(flags, environment)
+    const context = this.buildContext(environment)
+    const params = this.buildParams(flags)
+    const captures = this.buildCaptures(flags)
 
-    const request = this.buildRequest(reqName, context)
+    const request = this.buildRequest(reqName, params, captures, context)
 
     const response = await this.runRequest(request, flags.verbose, flags.dry)
+
+    if (response.captures.length > 0) {
+      this.printCaptures(response.captures)
+    }
 
     this.log(
       [
@@ -68,12 +82,17 @@ export default class RequestCommand extends Command {
     )
   }
 
-  private buildRequest(reqName: string, context: Context) {
+  private buildRequest(
+    reqName: string,
+    params: Param[],
+    captures: CaptureDefinition[],
+    context: Context,
+  ) {
     const request = RequestBuilder.prepare(
       path.join(RequestCommand.reqDir, reqName),
       context,
-      [],
-      [],
+      params,
+      captures,
     )
 
     return RequestBuilder.render(request, context)
@@ -94,23 +113,42 @@ export default class RequestCommand extends Command {
     return response
   }
 
-  private buildContext(
-    flags: {parameters?: string[]},
-    environment: Environment,
-  ): Context {
-    const context = {
+  private buildContext(environment: Environment): Context {
+    return {
       requestsLocation: RequestCommand.reqDir,
       environment: environment,
       params: [],
       captures: [],
     } as Context
+  }
+
+  private buildParams(flags: {parameters?: string[]}): Param[] {
+    let params: Param[] = []
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
         const [name, value] = raw.split('=')
-        context.params = [...context.params, {name, value}]
+        params = [...params, {name, value}]
       })
     }
 
-    return context
+    return params
+  }
+
+  private buildCaptures(flags: {captures?: string[]}): CaptureDefinition[] {
+    let captures: CaptureDefinition[] = []
+    if (flags.captures) {
+      flags.captures.forEach((raw: string) => {
+        const [name, jsonPath] = raw.split('=')
+        captures = [...captures, {name, jsonPath}]
+      })
+    }
+
+    return captures
+  }
+
+  private printCaptures(captures: Capture[]) {
+    this.log(['', 'Captured values'.toUpperCase(), ''].join('\n'))
+    cli.table(captures, {name: {}, value: {}})
+    this.log('')
   }
 }
