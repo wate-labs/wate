@@ -1,14 +1,15 @@
 import {Command, flags} from '@oclif/command'
 import * as Chalk from 'chalk'
+import * as path from 'path'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
-import RequestLoader from '../../request/loader'
 import RequestRunner from '../../request/runner'
 import Request from '../../request'
 import Response from '../../response'
 import Environment from '../../environment'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
+import RequestBuilder from '../../request/builder'
 
 const {dim} = Chalk
 
@@ -54,7 +55,7 @@ export default class RequestCommand extends Command {
 
     const context = this.buildContext(flags, environment)
 
-    const request = RequestLoader.load(RequestCommand.reqDir, reqName, context)
+    const request = this.buildRequest(reqName, context)
 
     const response = await this.runRequest(request, flags.verbose, flags.dry)
 
@@ -65,6 +66,17 @@ export default class RequestCommand extends Command {
         dim(`Took ${response.durationInMs}ms`),
       ].join('\n'),
     )
+  }
+
+  private buildRequest(reqName: string, context: Context) {
+    const request = RequestBuilder.prepare(
+      path.join(RequestCommand.reqDir, reqName),
+      context,
+      [],
+      [],
+    )
+
+    return RequestBuilder.render(request, context)
   }
 
   private async runRequest(request: Request, verbose: boolean, dry: boolean) {
