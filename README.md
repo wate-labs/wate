@@ -46,6 +46,8 @@ the CLI.
 
 Each request has an optional pre request script which is a plain JS module.
 
+> Note that you can do a `npm init` and add any dependencies you need.
+
 The pre request scripts is provided with the context and parameters.
 
 > Context: The context contains the environment data as well as any previously
@@ -139,7 +141,7 @@ $ npm install -g wate
 $ wate COMMAND
 running command...
 $ wate (-v|--version|version)
-wate/0.1.0-dev darwin-x64 node-v14.17.3
+wate/0.1.0 darwin-x64 node-v14.17.3
 $ wate --help [COMMAND]
 USAGE
   $ wate COMMAND
@@ -203,7 +205,7 @@ EXAMPLE
   $ wate create:environment
 ```
 
-_See code: [src/commands/create/environment.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/environment.ts)_
+_See code: [src/commands/create/environment.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -223,7 +225,7 @@ EXAMPLE
   $ wate create:request
 ```
 
-_See code: [src/commands/create/request.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/request.ts)_
+_See code: [src/commands/create/request.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -243,7 +245,7 @@ EXAMPLE
   $ wate create:suite
 ```
 
-_See code: [src/commands/create/suite.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/suite.ts)_
+_See code: [src/commands/create/suite.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
@@ -277,7 +279,7 @@ EXAMPLE
   $ wate init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -294,7 +296,7 @@ EXAMPLE
   $ wate list:environments
 ```
 
-_See code: [src/commands/list/environments.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/environments.ts)_
+_See code: [src/commands/list/environments.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -311,7 +313,7 @@ EXAMPLE
   $ wate list:requests
 ```
 
-_See code: [src/commands/list/requests.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/requests.ts)_
+_See code: [src/commands/list/requests.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -328,7 +330,7 @@ EXAMPLE
   $ wate list:suites
 ```
 
-_See code: [src/commands/list/suites.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/suites.ts)_
+_See code: [src/commands/list/suites.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -353,7 +355,7 @@ EXAMPLE
   $ wate run:request test ping
 ```
 
-_See code: [src/commands/run/request.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/run/request.ts)_
+_See code: [src/commands/run/request.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -379,5 +381,5 @@ EXAMPLE
   $ wate run:suite test suite
 ```
 
-_See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/run/suite.ts)_
+_See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/run/suite.ts)_
 <!-- commandsstop -->

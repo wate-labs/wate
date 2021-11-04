@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.1.0 (TBD)
+## 0.2.0 (TBD)
+
+## 0.1.0 (2021-11-04)
 
 - Add suite assertions
 - Add captures handling for single requests
