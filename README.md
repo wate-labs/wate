@@ -2,19 +2,9 @@
 
 A tool to run automated tests against web APIs
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/artes.svg)](https://npmjs.org/package/artes)
-[![Downloads/week](https://img.shields.io/npm/dw/artes.svg)](https://npmjs.org/package/artes)
-[![License](https://img.shields.io/npm/l/artes.svg)](https://github.com/scflode/artes/blob/master/package.json)
-
 <!-- toc -->
 * [artes](#artes)
-* [Documentation](#documentation)
-* [Usage](#usage)
-* [Commands](#commands)
 <!-- tocstop -->
-
-# Documentation
 
 artes is a test automation tool for web based APIs. It was originally written
 for blackbox testing 3rd party APIs.
@@ -145,7 +135,7 @@ create the folder structure needed.
 
 To bootstrap the building blocks please refer to the [commands](#commands).
 
-# Usage
+## Usage
 
 <!-- usage -->
 ```sh-session
@@ -161,11 +151,11 @@ USAGE
 ```
 <!-- usagestop -->
 
-# Commands
+## Commands
 
 <!-- commands -->
 * [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-* [`artes create:environment ENVIRONMENTNAME`](#artes-createenvironment-environmentname)
+* [`artes create:environment NAME`](#artes-createenvironment-name)
 * [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
 * [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
 * [`artes help [COMMAND]`](#artes-help-command)
@@ -199,16 +189,16 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
 
-## `artes create:environment ENVIRONMENTNAME`
+## `artes create:environment NAME`
 
 create new environment
 
 ```
 USAGE
-  $ artes create:environment ENVIRONMENTNAME
+  $ artes create:environment NAME
 
 ARGUMENTS
-  ENVIRONMENTNAME  name of the environment, e.g. my_collection/my_environment
+  NAME  name of the environment, e.g. my_collection/my_environment
 
 OPTIONS
   -h, --help  show CLI help

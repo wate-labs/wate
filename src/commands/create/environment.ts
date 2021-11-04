@@ -5,7 +5,7 @@ import * as path from 'path'
 export default class EnvironmentCommand extends Command {
   static args = [
     {
-      name: 'environmentName',
+      name: 'name',
       description: 'name of the environment, e.g. my_collection/my_environment',
       required: true,
     },
@@ -23,7 +23,7 @@ export default class EnvironmentCommand extends Command {
 
   async run() {
     const {args} = this.parse(EnvironmentCommand)
-    const name = `${args.environmentName}`
+    const name = `${args.name}`
     if (!fs.existsSync(EnvironmentCommand.dir)) {
       this.error(`Directory "${EnvironmentCommand.dir}" not found.`)
     }
