@@ -1,5 +1,6 @@
 import {KeyValue as ParamKeyValue} from './param'
 import {KeyValue as CaptureKeyValue} from './capture'
+import {KeyValue as AssertionKeyValue} from './assertion'
 import Request from './request'
 
 export interface SuiteDefinition {
@@ -26,4 +27,5 @@ export interface RequestDefinition {
   request: string;
   params: ParamKeyValue;
   captures: CaptureKeyValue;
+  assertions: AssertionKeyValue;
 }

@@ -1,5 +1,6 @@
 import Param, {KeyValue as ParamKeyValue} from '../param'
 import CaptureDefinition, {KeyValue as CaptureKeyValue} from '../capture'
+import AssertionDefinition, {KeyValue as AssertionKeyValue} from '../assertion'
 
 export default class DataHelper {
   public static toKV(params: Param[]): ParamKeyValue {
@@ -18,6 +19,16 @@ export default class DataHelper {
     return Object.entries(captures || []).map(
       ([name, jsonPath]): CaptureDefinition => {
         return {name, jsonPath}
+      },
+    )
+  }
+
+  public static toAssertion(
+    assertions: AssertionKeyValue,
+  ): AssertionDefinition[] {
+    return Object.entries(assertions || []).map(
+      ([name, captureName]): AssertionDefinition => {
+        return {name, expected: captureName}
       },
     )
   }

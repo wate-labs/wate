@@ -8,6 +8,7 @@ import RequestBuilder from '../request/builder'
 import Param from '../param'
 import DataHelper from '../data/helper'
 import CaptureDefinition from '../capture'
+import AssertionDefinition from '../assertion'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -51,6 +52,10 @@ export default class SuiteLoader {
             additionalProperties: true,
           },
           captures: {
+            type: 'object',
+            additionalProperties: true,
+          },
+          assertions: {
             type: 'object',
             additionalProperties: true,
           },
@@ -99,11 +104,12 @@ export default class SuiteLoader {
   ): Case {
     return {
       name: name,
-      requests: requests.map(({request, params, captures}) => {
+      requests: requests.map(({request, params, captures, assertions}) => {
         return SuiteLoader.prepareRequest(
           request,
           DataHelper.toParam(params),
           DataHelper.toCapture(captures),
+          DataHelper.toAssertion(assertions),
           context,
         )
       }),
@@ -114,6 +120,7 @@ export default class SuiteLoader {
     request: string,
     params: Param[],
     captureDefinitions: CaptureDefinition[],
+    assertionDefinitions: AssertionDefinition[],
     context: Context,
   ): Request {
     return RequestBuilder.prepare(
@@ -121,6 +128,7 @@ export default class SuiteLoader {
       context,
       params,
       captureDefinitions,
+      assertionDefinitions,
     )
   }
 }

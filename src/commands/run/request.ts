@@ -93,6 +93,7 @@ export default class RequestCommand extends Command {
       context,
       params,
       captures,
+      [],
     )
 
     return RequestBuilder.render(request, context)
@@ -119,7 +120,8 @@ export default class RequestCommand extends Command {
       environment: environment,
       params: [],
       captures: [],
-    } as Context
+      assertions: [],
+    }
   }
 
   private buildParams(flags: {parameters?: string[]}): Param[] {

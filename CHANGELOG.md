@@ -2,6 +2,7 @@
 
 ## 0.1.0 (TBD)
 
+- Add suite assertions
 - Add captures handling for single requests
 - Add injecting captures to pre-request scripts
 - Add using captures in request chain
@@ -11,7 +12,6 @@
 - Add dry run to request command
 - Add displaying verbose request on dry run for suites
 - Add pre-request script hook
-- Improve suite command output
 - Add validation of template variables
 - Add initial suite handling
 - Add creating suites
@@ -29,4 +29,3 @@
 - Add list:suites command
 - Add list:environments command
 - Add listing collections and requests
-- Initial commit

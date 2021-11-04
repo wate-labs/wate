@@ -12,6 +12,8 @@ import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
 import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
+import Asserter from '../../assertion/asserter'
+import {Assertion} from '../../assertion'
 
 const {bold, dim} = Chalk
 
@@ -39,6 +41,10 @@ export default class SuiteCommand extends Command {
     captures: flags.boolean({
       char: 'c',
       description: 'print captured values for each request',
+    }),
+    assertions: flags.boolean({
+      char: 'a',
+      description: 'print assertion results for each request',
     }),
   }
 
@@ -82,12 +88,6 @@ export default class SuiteCommand extends Command {
       await this.runCase(suiteCase, context, flags)
     }
     const durationInMs = Date.now() - startTime
-    if (context.captures.length > 0) {
-      this.printCaptures(
-        context.captures,
-        `Summary for ${suite.name}`.toUpperCase(),
-      )
-    }
     this.log(
       [
         dim(
@@ -95,18 +95,31 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
+    if (context.captures.length > 0) {
+      this.printCaptures(
+        context.captures,
+        `Summary for ${suite.name}`.toUpperCase(),
+      )
+    }
+    if (context.captures.length > 0) {
+      this.printAssertions(
+        context.assertions,
+        `Assertions for ${suite.name}`.toUpperCase(),
+      )
+    }
   }
 
   private buildContext(
     flags: {parameters?: string[]},
     envName: string,
   ): Context {
-    const context = {
+    const context: Context = {
       requestsLocation: SuiteCommand.reqDir,
       environment: EnvironmentLoader.load(SuiteCommand.envDir, envName),
       params: [],
       captures: [],
-    } as Context
+      assertions: [],
+    }
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
         const [name, value] = raw.split('=')
@@ -120,7 +133,12 @@ export default class SuiteCommand extends Command {
   private async runCase(
     suiteCase: Case,
     context: Context,
-    flags: {verbose: boolean; dry: boolean; captures: boolean},
+    flags: {
+      verbose: boolean;
+      dry: boolean;
+      captures: boolean;
+      assertions: boolean;
+    },
   ): Promise<Response[]> {
     const startTime = Date.now()
     this.log(`Starting case ${suiteCase.name}`)
@@ -134,6 +152,7 @@ export default class SuiteCommand extends Command {
           request,
           context,
           flags.captures,
+          flags.assertions,
         )
       }
 
@@ -157,6 +176,7 @@ export default class SuiteCommand extends Command {
     request: Request,
     context: Context,
     printCaptures: boolean,
+    printAssertions: boolean,
   ) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
     request = RequestBuilder.render(request, context)
@@ -174,6 +194,15 @@ export default class SuiteCommand extends Command {
       this.printCaptures(response.captures)
     }
 
+    let assertions = null
+    if (request.assertions.length > 0) {
+      assertions = Asserter.assert(request.assertions, context.captures)
+      context.assertions = [...context.assertions, ...assertions]
+      if (printAssertions) {
+        this.printAssertions(assertions)
+      }
+    }
+
     return response
   }
 
@@ -181,5 +210,31 @@ export default class SuiteCommand extends Command {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
     cli.table(captures, {name: {}, value: {}})
     this.log('')
+  }
+
+  private printAssertions(assertions: Assertion[], title?: string) {
+    const failedAssertions = assertions.filter(
+      assertion => !assertion.matched,
+    ).length
+    const printableAssertions = assertions.map(assertion => {
+      return {
+        matched: assertion.matched ? '✓' : '⨯',
+        name: assertion.name,
+        expected: assertion.expected,
+        actual: assertion.actual,
+      }
+    })
+    this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
+    cli.table(printableAssertions, {
+      matched: {},
+      name: {},
+      expected: {},
+      actual: {},
+    })
+    this.log('')
+
+    if (failedAssertions) {
+      this.error(`There were ${failedAssertions} assertion(s) that failed`)
+    }
   }
 }

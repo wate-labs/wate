@@ -1,3 +1,4 @@
+import AssertionDefinition from './assertion'
 import CaptureDefinition from './capture'
 import Param from './param'
 
@@ -10,4 +11,5 @@ export default interface Request {
   data: any;
   params: Param[];
   captures: CaptureDefinition[];
+  assertions: AssertionDefinition[];
 }

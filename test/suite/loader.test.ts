@@ -12,12 +12,13 @@ describe('suite loader', () => {
   it('loads a suite', () => {
     const suitePath = fixturePath
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
-    const context = {
+    const context: Context = {
       requestsLocation: requestsPath,
       environment: environment,
       params: [],
       captures: [],
-    } as Context
+      assertions: [],
+    }
     const suite = SuiteLoader.load(suitePath, 'suite_1', context)
     assert.equal(suite.name, 'My suite name')
     assert.lengthOf(suite.cases, 1)

@@ -8,6 +8,7 @@ import Param, {KeyValue} from '../param'
 import DataHelper from '../data/helper'
 import Context from '../context'
 import CaptureDefinition, {Capture} from '../capture'
+import AssertionDefinition from '../assertion'
 
 export default class RequestBuilder {
   public static prepare(
@@ -15,6 +16,7 @@ export default class RequestBuilder {
     context: Context,
     params: Param[],
     captures: CaptureDefinition[],
+    assertions: AssertionDefinition[],
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     const host = context.environment.host ?? request.headers.Host
@@ -28,6 +30,7 @@ export default class RequestBuilder {
       data: request.body,
       params,
       captures,
+      assertions,
     }
   }
 
