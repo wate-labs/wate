@@ -26,8 +26,12 @@ artes has the following building blocks:
 - environments
 - requests
   - pre request hooks
-  - post respnse hooks
+  - post response hooks
 - suites
+  - cases
+    - params
+    - captures
+    - assertions
 
 ### Environments
 
@@ -41,8 +45,8 @@ request body in the simplest case but also have computation of values in the
 pre request hooks and gathering of interesing or needed data via the post
 response hooks.
 
-A request is independent of a suite. It is also possible to feed in parameters
-via the CLI for easily testing things out.
+A request is independent of a suite. It is possible to provide parameters via
+the CLI.
 
 > Note: The header and body values become essentially nunjucks templates. This
 > means you can use whatever [nunjucks](https://mozilla.github.io/nunjucks/templating.html)
@@ -52,10 +56,87 @@ via the CLI for easily testing things out.
 > to have the [`safe`](https://mozilla.github.io/nunjucks/templating.html#safe)
 > filter applied in the template.
 
+#### Pre request script
+
+Each request has an optional pre request script which is a plain JS module.
+
+The pre request scripts is provided with the context and parameters.
+
+> Context: The context contains the environment data as well as any previously
+> captured values (captures).
+
+> Parameters: The parameters are either passed by the CLI or defined in a suite-
+> based request.
+
+In order to make certain calculations like getting the current date to provide
+in the request this script can be used.
+
+The expected return is a key-value object with the parameters calculated in the
+script.
+
+The parameters will get merged with the already exising statically defined or
+provided via the CLI ones.
+
+> Note: The parameters will replace existing ones that have the same name.
+
+#### Post response script
+
+TBD
+
 ### Suites
 
-Suites are used to group requests together and allow chaining of requests (e.g.
-authentication and protected resource calls).
+Suites are used to group requests via cases together and allow chaining of
+requests (e.g. authentication and protected resource calls).
+
+Suites have a name and one or more cases.
+
+#### Cases
+
+A suite consists of one or more cases. The cases have one or more requests
+defined.
+
+Cases have a name and one or more requests.
+
+##### Case requests
+
+Requests as descibe above are the building block of suite cases. Used in the
+context of a case requests have some additional functionality.
+
+###### Params
+
+Static values for requests can be defined as part of the `params` property.
+
+###### Captures
+
+Captures can be defined for a request. These [JSONPath](https://github.com/JSONPath-Plus/JSONPath)
+expressions are applied to the response of a request and stored in the context.
+
+Captures therefore can also be reused in follow-up requests as parameters with
+the prefix `$captures.` and the name of the capture (e.g.
+`"myParam": "$captures.capturedValue`)
+
+Captures are also needed if you want to do assertions. Assertions are descibed
+below.
+
+> When a suite finishes all captures throughout the lifecycle will be printed.
+> Additionally you can let the captures be printed for every single request to
+> see them in context.
+
+###### Assertions
+
+Assertions are used to test actual values captured from a response against
+expected values.
+
+Assertions are key-value pairs with the name of a previous capture and the value
+set to the expected one.
+
+> Note: Currently only matching (the actual value has to match the expected) is
+> supported.
+
+> When a suite finishes all assertions throughout the lifecycle will be printed.
+> Additionally you can let the assertions be printed for every single request to
+> see them in context.
+> If an assertions fails an error message is being displayed (exit code > 0).
 
 ## Setting up a new project
 
@@ -301,6 +382,7 @@ ARGUMENTS
   SUITE        name of the suite
 
 OPTIONS
+  -a, --assertions             print assertion results for each request
   -c, --captures               print captured values for each request
   -d, --dry                    perform a dry run without emitting requests
   -h, --help                   show CLI help
