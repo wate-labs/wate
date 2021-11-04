@@ -1,17 +1,13 @@
-# artes
+# wate
 
 A tool to run automated tests against web APIs
 
-<!-- toc -->
-* [artes](#artes)
-<!-- tocstop -->
-
-artes is a test automation tool for web based APIs. It was originally written
+`wate` is a test automation tool for web based APIs. It was originally written
 for blackbox testing 3rd party APIs.
 
 ## Building blocks
 
-artes has the following building blocks:
+`wate` has the following building blocks:
 
 - environments
 - requests
@@ -30,8 +26,8 @@ the base URL and the HTTP scheme.
 
 ### Requests
 
-The base for everything regarding artes is a request. This can be a static
-request body in the simplest case but also have computation of values in the
+The base for everything in `wate` is a request. This can be a static
+request body in the simplest case but also have replaceable values in the
 pre request hooks and gathering of interesing or needed data via the post
 response hooks.
 
@@ -130,7 +126,7 @@ set to the expected one.
 
 ## Setting up a new project
 
-To bootstrap a new project `artes init` can be used which will automatically
+To bootstrap a new project `wate init` can be used which will automatically
 create the folder structure needed.
 
 To bootstrap the building blocks please refer to the [commands](#commands).
@@ -139,14 +135,14 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 
 <!-- usage -->
 ```sh-session
-$ npm install -g artes
-$ artes COMMAND
+$ npm install -g wate
+$ wate COMMAND
 running command...
-$ artes (-v|--version|version)
-artes/0.1.0-dev darwin-x64 node-v14.17.3
-$ artes --help [COMMAND]
+$ wate (-v|--version|version)
+wate/0.1.0-dev darwin-x64 node-v14.17.3
+$ wate --help [COMMAND]
 USAGE
-  $ artes COMMAND
+  $ wate COMMAND
 ...
 ```
 <!-- usagestop -->
@@ -154,25 +150,25 @@ USAGE
 ## Commands
 
 <!-- commands -->
-* [`artes autocomplete [SHELL]`](#artes-autocomplete-shell)
-* [`artes create:environment NAME`](#artes-createenvironment-name)
-* [`artes create:request REQUESTNAME`](#artes-createrequest-requestname)
-* [`artes create:suite SUITENAME`](#artes-createsuite-suitename)
-* [`artes help [COMMAND]`](#artes-help-command)
-* [`artes init`](#artes-init)
-* [`artes list:environments`](#artes-listenvironments)
-* [`artes list:requests`](#artes-listrequests)
-* [`artes list:suites`](#artes-listsuites)
-* [`artes run:request ENVIRONMENT REQUEST`](#artes-runrequest-environment-request)
-* [`artes run:suite ENVIRONMENT SUITE`](#artes-runsuite-environment-suite)
+* [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
+* [`wate create:environment NAME`](#wate-createenvironment-name)
+* [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
+* [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
+* [`wate help [COMMAND]`](#wate-help-command)
+* [`wate init`](#wate-init)
+* [`wate list:environments`](#wate-listenvironments)
+* [`wate list:requests`](#wate-listrequests)
+* [`wate list:suites`](#wate-listsuites)
+* [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
+* [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
 
-## `artes autocomplete [SHELL]`
+## `wate autocomplete [SHELL]`
 
 display autocomplete installation instructions
 
 ```
 USAGE
-  $ artes autocomplete [SHELL]
+  $ wate autocomplete [SHELL]
 
 ARGUMENTS
   SHELL  shell type
@@ -181,21 +177,21 @@ OPTIONS
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
 
 EXAMPLES
-  $ artes autocomplete
-  $ artes autocomplete bash
-  $ artes autocomplete zsh
-  $ artes autocomplete --refresh-cache
+  $ wate autocomplete
+  $ wate autocomplete bash
+  $ wate autocomplete zsh
+  $ wate autocomplete --refresh-cache
 ```
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
 
-## `artes create:environment NAME`
+## `wate create:environment NAME`
 
 create new environment
 
 ```
 USAGE
-  $ artes create:environment NAME
+  $ wate create:environment NAME
 
 ARGUMENTS
   NAME  name of the environment, e.g. my_collection/my_environment
@@ -204,18 +200,18 @@ OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes create:environment
+  $ wate create:environment
 ```
 
-_See code: [src/commands/create/environment.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/environment.ts)_
+_See code: [src/commands/create/environment.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/environment.ts)_
 
-## `artes create:request REQUESTNAME`
+## `wate create:request REQUESTNAME`
 
 create new request
 
 ```
 USAGE
-  $ artes create:request REQUESTNAME
+  $ wate create:request REQUESTNAME
 
 ARGUMENTS
   REQUESTNAME  name of the request, e.g. my_collection/my_request
@@ -224,18 +220,18 @@ OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes create:request
+  $ wate create:request
 ```
 
-_See code: [src/commands/create/request.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/request.ts)_
+_See code: [src/commands/create/request.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/request.ts)_
 
-## `artes create:suite SUITENAME`
+## `wate create:suite SUITENAME`
 
 create new suite
 
 ```
 USAGE
-  $ artes create:suite SUITENAME
+  $ wate create:suite SUITENAME
 
 ARGUMENTS
   SUITENAME  name of the suite, e.g. my_collection/my_suite
@@ -244,18 +240,18 @@ OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes create:suite
+  $ wate create:suite
 ```
 
-_See code: [src/commands/create/suite.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/create/suite.ts)_
+_See code: [src/commands/create/suite.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/create/suite.ts)_
 
-## `artes help [COMMAND]`
+## `wate help [COMMAND]`
 
-display help for artes
+display help for wate
 
 ```
 USAGE
-  $ artes help [COMMAND]
+  $ wate help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
@@ -266,81 +262,81 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.3/src/commands/help.ts)_
 
-## `artes init`
+## `wate init`
 
-initialize new artes project
+initialize new wate project
 
 ```
 USAGE
-  $ artes init
+  $ wate init
 
 OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes init
+  $ wate init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/init.ts)_
 
-## `artes list:environments`
+## `wate list:environments`
 
 list the available environments
 
 ```
 USAGE
-  $ artes list:environments
+  $ wate list:environments
 
 OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes list:environments
+  $ wate list:environments
 ```
 
-_See code: [src/commands/list/environments.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/environments.ts)_
+_See code: [src/commands/list/environments.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/environments.ts)_
 
-## `artes list:requests`
+## `wate list:requests`
 
 list the available collections and requests
 
 ```
 USAGE
-  $ artes list:requests
+  $ wate list:requests
 
 OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes list:requests
+  $ wate list:requests
 ```
 
-_See code: [src/commands/list/requests.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/requests.ts)_
+_See code: [src/commands/list/requests.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/requests.ts)_
 
-## `artes list:suites`
+## `wate list:suites`
 
 list the available suites
 
 ```
 USAGE
-  $ artes list:suites
+  $ wate list:suites
 
 OPTIONS
   -h, --help  show CLI help
 
 EXAMPLE
-  $ artes list:suites
+  $ wate list:suites
 ```
 
-_See code: [src/commands/list/suites.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/list/suites.ts)_
+_See code: [src/commands/list/suites.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/list/suites.ts)_
 
-## `artes run:request ENVIRONMENT REQUEST`
+## `wate run:request ENVIRONMENT REQUEST`
 
 run an existing request
 
 ```
 USAGE
-  $ artes run:request ENVIRONMENT REQUEST
+  $ wate run:request ENVIRONMENT REQUEST
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -354,18 +350,18 @@ OPTIONS
   -v, --verbose                print the raw response headers and body
 
 EXAMPLE
-  $ artes run:request test ping
+  $ wate run:request test ping
 ```
 
-_See code: [src/commands/run/request.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/run/request.ts)_
+_See code: [src/commands/run/request.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/run/request.ts)_
 
-## `artes run:suite ENVIRONMENT SUITE`
+## `wate run:suite ENVIRONMENT SUITE`
 
 run an existing suite
 
 ```
 USAGE
-  $ artes run:suite ENVIRONMENT SUITE
+  $ wate run:suite ENVIRONMENT SUITE
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -380,8 +376,8 @@ OPTIONS
   -v, --verbose                print the raw response headers and body
 
 EXAMPLE
-  $ artes run:suite test suite
+  $ wate run:suite test suite
 ```
 
-_See code: [src/commands/run/suite.ts](https://github.com/scflode/artes/blob/v0.1.0-dev/src/commands/run/suite.ts)_
+_See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.1.0-dev/src/commands/run/suite.ts)_
 <!-- commandsstop -->

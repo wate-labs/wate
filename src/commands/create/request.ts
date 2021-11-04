@@ -13,7 +13,7 @@ export default class RequestCommand extends Command {
 
   static description = 'create new request'
 
-  static examples = ['$ artes create:request']
+  static examples = ['$ wate create:request']
 
   static dir = 'requests'
 

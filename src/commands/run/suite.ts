@@ -50,7 +50,7 @@ export default class SuiteCommand extends Command {
 
   static description = 'run an existing suite'
 
-  static examples = ['$ artes run:suite test suite']
+  static examples = ['$ wate run:suite test suite']
 
   static envDir = 'environments'
 

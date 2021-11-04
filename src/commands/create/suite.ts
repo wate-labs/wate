@@ -13,7 +13,7 @@ export default class SuiteCommand extends Command {
 
   static description = 'create new suite'
 
-  static examples = ['$ artes create:suite']
+  static examples = ['$ wate create:suite']
 
   static dir = 'suites'
 

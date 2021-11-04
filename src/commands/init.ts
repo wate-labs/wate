@@ -2,9 +2,9 @@ import {Command, flags} from '@oclif/command'
 import * as fs from 'fs'
 
 export default class InitCommand extends Command {
-  static description = 'initialize new artes project'
+  static description = 'initialize new wate project'
 
-  static examples = ['$ artes init']
+  static examples = ['$ wate init']
 
   static requestsDir = 'requests'
 
@@ -34,6 +34,6 @@ export default class InitCommand extends Command {
     })
     this.log(`Setup finished.
 
-Next please add new requests by running: artes create:request "my request"`)
+Next please add new requests by running: wate create:request "my request"`)
   }
 }

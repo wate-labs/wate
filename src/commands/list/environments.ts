@@ -9,7 +9,7 @@ const {bold} = Chalk
 export default class EnvironmentsCommand extends Command {
   static description = 'list the available environments'
 
-  static examples = ['$ artes list:environments']
+  static examples = ['$ wate list:environments']
 
   static dir = 'environments'
 

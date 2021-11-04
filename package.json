@@ -1,12 +1,12 @@
 {
-  "name": "artes",
+  "name": "wate",
   "description": "A tool for automated tests for web APIs",
   "version": "0.1.0-dev",
   "author": "Flo Schuessel @scflode",
   "bin": {
-    "artes": "./bin/run"
+    "wate": "./bin/run"
   },
-  "bugs": "https://github.com/scflode/artes/issues",
+  "bugs": "https://github.com/scflode/wate/issues",
   "dependencies": {
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
@@ -51,7 +51,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/scflode/artes",
+  "homepage": "https://github.com/scflode/wate",
   "keywords": [
     "oclif"
   ],
@@ -59,7 +59,7 @@
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "artes",
+    "bin": "wate",
     "topics": {
       "create": {
         "description": "create requests, environments or suites"
@@ -76,10 +76,10 @@
       "@oclif/plugin-autocomplete"
     ],
     "macos": {
-      "identifier": "org.artes.cli"
+      "identifier": "org.wate.cli"
     }
   },
-  "repository": "scflode/artes",
+  "repository": "scflode/wate",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint . --ext .ts --config .eslintrc",

@@ -13,7 +13,7 @@ export default class EnvironmentCommand extends Command {
 
   static description = 'create new environment'
 
-  static examples = ['$ artes create:environment']
+  static examples = ['$ wate create:environment']
 
   static dir = 'environments'
 

@@ -9,7 +9,7 @@ const {bold} = Chalk
 export default class RequestsCommand extends Command {
   static description = 'list the available collections and requests'
 
-  static examples = ['$ artes list:requests']
+  static examples = ['$ wate list:requests']
 
   static dir = 'requests'
 

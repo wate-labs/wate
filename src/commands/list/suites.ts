@@ -9,7 +9,7 @@ const {bold} = Chalk
 export default class SuitesCommand extends Command {
   static description = 'list the available suites'
 
-  static examples = ['$ artes list:suites']
+  static examples = ['$ wate list:suites']
 
   static dir = 'suites'
 

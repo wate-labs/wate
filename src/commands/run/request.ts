@@ -46,7 +46,7 @@ export default class RequestCommand extends Command {
 
   static description = 'run an existing request'
 
-  static examples = ['$ artes run:request test ping']
+  static examples = ['$ wate run:request test ping']
 
   static envDir = 'environments'
 
