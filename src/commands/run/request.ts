@@ -92,8 +92,10 @@ export default class RequestCommand extends Command {
       path.join(RequestCommand.reqDir, reqName),
       context,
       params,
-      captures,
-      [],
+      {
+        captures,
+        assertions: [],
+      },
     )
 
     return RequestBuilder.render(request, context)
