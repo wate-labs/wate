@@ -45,26 +45,22 @@ export default class RequestCommand extends Command {
   }
 
   private getHttpTemplate(): string {
-    return `
-GET /get?query_param=value HTTP/1.1
+    return `GET /get?query_param=value HTTP/1.1
 Host: my-host.tld
 Content-Type: text/plain
 Content-Length: 27
 
 {
     "property": "value"
-}
-    `
+}`
   }
 
   private getPreRequestTemplate(): string {
-    return `
-module.exports = (_captures, _parameters) => {
+    return `module.exports = (_captures, _parameters) => {
   // Use the captures to retrieve data from previous requests
   // Use the parameter to retrieve the defined parameters
   // Return key value parts of the parameters to use
   return {}
-}
-    `
+}`
   }
 }

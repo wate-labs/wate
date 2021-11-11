@@ -42,8 +42,7 @@ export default class SuiteCommand extends Command {
   }
 
   private getTemplate(): string {
-    return `
-{
+    return `{
   "name": "My suite name",
   "cases": [
     {
@@ -55,7 +54,6 @@ export default class SuiteCommand extends Command {
       ]
     }
   ]
-}
-    `
+}`
   }
 }

@@ -42,10 +42,8 @@ export default class EnvironmentCommand extends Command {
   }
 
   private getTemplate(): string {
-    return `
-{
+    return `{
   "host": "my-host.tld"
-}
-    `
+}`
   }
 }
