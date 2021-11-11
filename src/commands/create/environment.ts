@@ -37,10 +37,15 @@ export default class EnvironmentCommand extends Command {
       this.error(`Environment "${name}" (${fullPath}) already exists.`)
     }
     fs.mkdirSync(environmentPath, {recursive: true})
-    fs.copyFileSync(
-      path.join(__dirname, '../../', 'templates', 'environment.json'),
-      path.join(environmentPath, fileName),
-    )
+    fs.writeFileSync(path.join(environmentPath, fileName), this.getTemplate())
     this.log(`Created "${name}" located at "${environmentPath}"`)
+  }
+
+  private getTemplate(): string {
+    return `
+{
+  "host": "my-host.tld"
+}
+    `
   }
 }
