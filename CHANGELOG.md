@@ -2,6 +2,9 @@
 
 ## 0.2.0 (TBD)
 
+- Fix commands for creating suites, environments and requests
+- Remove creating post-response.js as it is not used
+
 ## 0.1.0 (2021-11-04)
 
 - Add suite assertions

@@ -15,8 +15,10 @@ export default class RequestBuilder {
     requestPath: string,
     context: Context,
     params: Param[],
-    captures: CaptureDefinition[],
-    assertions: AssertionDefinition[],
+    definitons: {
+      captures: CaptureDefinition[];
+      assertions: AssertionDefinition[];
+    },
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     const host = context.environment.host ?? request.headers.Host
@@ -29,8 +31,8 @@ export default class RequestBuilder {
       headers: RequestBuilder.headers(request.headers, context.environment),
       data: request.body,
       params,
-      captures,
-      assertions,
+      captures: definitons.captures,
+      assertions: definitons.assertions,
     }
   }
 

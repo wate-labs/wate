@@ -32,18 +32,39 @@ export default class RequestCommand extends Command {
       this.error(`Request "${requestName}" (${requestPath}) already exists.`)
     }
     fs.mkdirSync(requestPath, {recursive: true})
-    fs.copyFileSync(
-      path.join(__dirname, '../../', 'templates', 'request.http'),
+
+    fs.writeFileSync(
       path.join(requestPath, 'request.http'),
+      this.getHttpTemplate(),
     )
-    fs.copyFileSync(
-      path.join(__dirname, '../../', 'templates', 'pre-request.js'),
+    fs.writeFileSync(
       path.join(requestPath, 'pre-request.js'),
-    )
-    fs.copyFileSync(
-      path.join(__dirname, '../../', 'templates', 'post-response.js'),
-      path.join(requestPath, 'post-response.js'),
+      this.getPreRequestTemplate(),
     )
     this.log(`Created "${requestName}" located under ${requestPath}`)
+  }
+
+  private getHttpTemplate(): string {
+    return `
+GET /get?query_param=value HTTP/1.1
+Host: my-host.tld
+Content-Type: text/plain
+Content-Length: 27
+
+{
+    "property": "value"
+}
+    `
+  }
+
+  private getPreRequestTemplate(): string {
+    return `
+module.exports = (_captures, _parameters) => {
+  // Use the captures to retrieve data from previous requests
+  // Use the parameter to retrieve the defined parameters
+  // Return key value parts of the parameters to use
+  return {}
+}
+    `
   }
 }

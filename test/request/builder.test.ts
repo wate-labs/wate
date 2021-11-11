@@ -23,13 +23,10 @@ describe('builder', () => {
     const requestPath = path.join(fixturePath, 'request_1')
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
-    const preparedRequest = RequestBuilder.prepare(
-      requestPath,
-      context,
-      [],
-      [],
-      [],
-    )
+    const preparedRequest = RequestBuilder.prepare(requestPath, context, [], {
+      captures: [],
+      assertions: [],
+    })
     const request = RequestBuilder.render(preparedRequest, context)
     assert.equal(request.url, '/get?query_param=value')
     assert.equal(request.baseURL, 'http://my-host')
@@ -53,8 +50,10 @@ describe('builder', () => {
           value: 'testValue',
         },
       ],
-      [],
-      [],
+      {
+        captures: [],
+        assertions: [],
+      },
     )
     const request = RequestBuilder.render(preparedRequest, context)
     assert.equal(request.data.propertyWithPlaceholder, 'testValue')
@@ -75,8 +74,10 @@ describe('builder', () => {
           value: 'testValue',
         },
       ],
-      [],
-      [],
+      {
+        captures: [],
+        assertions: [],
+      },
     )
     const request = RequestBuilder.render(preparedRequest, context)
     assert.equal(request.headers['X-Custom'], 'testValue')
@@ -85,13 +86,10 @@ describe('builder', () => {
     const requestPath = path.join(fixturePath, 'request_with_placeholders')
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
-    const preparedRequest = RequestBuilder.prepare(
-      requestPath,
-      context,
-      [],
-      [],
-      [],
-    )
+    const preparedRequest = RequestBuilder.prepare(requestPath, context, [], {
+      captures: [],
+      assertions: [],
+    })
     assert.throws(
       () => RequestBuilder.render(preparedRequest, context),
       'The following variables are missing: placeholder',

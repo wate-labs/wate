@@ -108,8 +108,10 @@ export default class SuiteLoader {
         return SuiteLoader.prepareRequest(
           request,
           DataHelper.toParam(params),
-          DataHelper.toCapture(captures),
-          DataHelper.toAssertion(assertions),
+          {
+            captures: DataHelper.toCapture(captures),
+            assertions: DataHelper.toAssertion(assertions),
+          },
           context,
         )
       }),
@@ -119,16 +121,20 @@ export default class SuiteLoader {
   private static prepareRequest(
     request: string,
     params: Param[],
-    captureDefinitions: CaptureDefinition[],
-    assertionDefinitions: AssertionDefinition[],
+    definitions: {
+      captures: CaptureDefinition[];
+      assertions: AssertionDefinition[];
+    },
     context: Context,
   ): Request {
     return RequestBuilder.prepare(
       path.join(context.requestsLocation, request),
       context,
       params,
-      captureDefinitions,
-      assertionDefinitions,
+      {
+        captures: definitions.captures,
+        assertions: definitions.assertions,
+      },
     )
   }
 }

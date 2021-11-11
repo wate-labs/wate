@@ -37,10 +37,25 @@ export default class SuiteCommand extends Command {
       this.error(`Suite "${name}" (${fullPath}) already exists.`)
     }
     fs.mkdirSync(suitePath, {recursive: true})
-    fs.copyFileSync(
-      path.join(__dirname, '../../', 'templates', 'suite.json'),
-      path.join(suitePath, fileName),
-    )
+    fs.writeFileSync(path.join(suitePath, fileName), this.getTemplate())
     this.log(`Created "${name}" located at "${suitePath}"`)
+  }
+
+  private getTemplate(): string {
+    return `
+{
+  "name": "My suite name",
+  "cases": [
+    {
+      "name": "My test case",
+      "requests": [
+        {
+          "request": "my_request"
+        }
+      ]
+    }
+  ]
+}
+    `
   }
 }

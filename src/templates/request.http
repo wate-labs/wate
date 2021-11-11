@@ -1,8 +1,0 @@
-GET /get?query_param=value HTTP/1.1
-Host: my-host.tld
-Content-Type: text/plain
-Content-Length: 27
-
-{
-    "property": "value"
-}

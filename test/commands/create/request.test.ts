@@ -20,7 +20,6 @@ describe('create:request', () => {
     expect(fs.existsSync('requests/my_request')).to.be.true
     expect(fs.existsSync('requests/my_request/pre-request.js')).to.be.true
     expect(fs.existsSync('requests/my_request/request.http')).to.be.true
-    expect(fs.existsSync('requests/my_request/post-response.js')).to.be.true
   })
 
   test
@@ -42,8 +41,6 @@ describe('create:request', () => {
     .be.true
     expect(fs.existsSync('requests/collection/my_request/request.http')).to.be
     .true
-    expect(fs.existsSync('requests/collection/my_request/post-response.js'))
-    .to.be.true
   })
 
   test

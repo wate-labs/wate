@@ -147,13 +147,10 @@ export default class SuiteCommand extends Command {
       let response: Response = ResponseHelper.emptyResponse(request)
 
       if (!flags.dry) {
-        response = await this.runRequest(
-          suiteCase.name,
-          request,
-          context,
-          flags.captures,
-          flags.assertions,
-        )
+        response = await this.runRequest(suiteCase.name, request, context, {
+          printCaptures: flags.captures,
+          printAssertions: flags.assertions,
+        })
       }
 
       if (flags.verbose) {
@@ -175,8 +172,10 @@ export default class SuiteCommand extends Command {
     caseName: string,
     request: Request,
     context: Context,
-    printCaptures: boolean,
-    printAssertions: boolean,
+    flags: {
+      printCaptures: boolean;
+      printAssertions: boolean;
+    },
   ) {
     this.log(dim(`[${caseName}] Running (${request.url})`))
     request = RequestBuilder.render(request, context)
@@ -190,7 +189,7 @@ export default class SuiteCommand extends Command {
       ].join('\n'),
     )
 
-    if (response.captures.length > 0 && printCaptures) {
+    if (response.captures.length > 0 && flags.printCaptures) {
       this.printCaptures(response.captures)
     }
 
@@ -198,7 +197,7 @@ export default class SuiteCommand extends Command {
     if (request.assertions.length > 0) {
       assertions = Asserter.assert(request.assertions, context.captures)
       context.assertions = [...context.assertions, ...assertions]
-      if (printAssertions) {
+      if (flags.printAssertions) {
         this.printAssertions(assertions)
       }
     }
