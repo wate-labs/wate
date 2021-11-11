@@ -11,8 +11,7 @@ for blackbox testing 3rd party APIs.
 
 - environments
 - requests
-  - pre request hooks
-  - post response hooks
+  - pre request hook
 - suites
   - cases
     - params
@@ -66,10 +65,6 @@ The parameters will get merged with the already exising statically defined or
 provided via the CLI ones.
 
 > Note: The parameters will replace existing ones that have the same name.
-
-#### Post response script
-
-TBD
 
 ### Suites
 
@@ -136,6 +131,7 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 ## Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g wate
 $ wate COMMAND
@@ -147,22 +143,24 @@ USAGE
   $ wate COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 ## Commands
 
 <!-- commands -->
-* [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
-* [`wate create:environment NAME`](#wate-createenvironment-name)
-* [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
-* [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
-* [`wate help [COMMAND]`](#wate-help-command)
-* [`wate init`](#wate-init)
-* [`wate list:environments`](#wate-listenvironments)
-* [`wate list:requests`](#wate-listrequests)
-* [`wate list:suites`](#wate-listsuites)
-* [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
-* [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
+
+- [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
+- [`wate create:environment NAME`](#wate-createenvironment-name)
+- [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
+- [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
+- [`wate help [COMMAND]`](#wate-help-command)
+- [`wate init`](#wate-init)
+- [`wate list:environments`](#wate-listenvironments)
+- [`wate list:requests`](#wate-listrequests)
+- [`wate list:suites`](#wate-listsuites)
+- [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
+- [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
 
 ## `wate autocomplete [SHELL]`
 
@@ -382,4 +380,5 @@ EXAMPLE
 ```
 
 _See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.1.0/src/commands/run/suite.ts)_
+
 <!-- commandsstop -->
