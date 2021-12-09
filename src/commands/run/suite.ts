@@ -181,6 +181,14 @@ export default class SuiteCommand extends Command {
     request = RequestBuilder.render(request, context)
     const response = await RequestRunner.run(request)
     context.captures = [...context.captures, ...response.captures]
+    if (response.hasError) {
+      this.error(
+        [
+          `[${caseName}] Finished with an error: ${response.error.reason} on ${request.url}`,
+          Printer.requestAndResponse(request, response, false),
+        ].join('\n'),
+      )
+    }
     this.log(
       [
         dim(

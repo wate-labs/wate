@@ -2,6 +2,8 @@
 
 ## 0.2.0 (TBD)
 
+- Improve output in case of an error
+- Add automated prefixing of captures and assertions
 - Fix commands for creating suites, environments and requests
 - Remove creating post-response.js as it is not used
 
