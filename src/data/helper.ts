@@ -15,9 +15,13 @@ export default class DataHelper {
     })
   }
 
-  public static toCapture(captures: CaptureKeyValue): CaptureDefinition[] {
+  public static toCapture(
+    captures: CaptureKeyValue,
+    prefix?: string,
+  ): CaptureDefinition[] {
     return Object.entries(captures || []).map(
       ([name, jsonPath]): CaptureDefinition => {
+        name = prefix ? `${prefix}.${name}` : name
         return {name, jsonPath}
       },
     )
@@ -25,9 +29,11 @@ export default class DataHelper {
 
   public static toAssertion(
     assertions: AssertionKeyValue,
+    prefix?: string,
   ): AssertionDefinition[] {
     return Object.entries(assertions || []).map(
       ([name, captureName]): AssertionDefinition => {
+        name = prefix ? `${prefix}.${name}` : name
         return {name, expected: captureName}
       },
     )

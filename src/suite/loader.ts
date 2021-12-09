@@ -80,9 +80,33 @@ export default class SuiteLoader {
     return {
       name: suiteDefinition.name,
       cases: suiteDefinition.cases.map(({name, requests}) =>
-        SuiteLoader.prepareCase(name, requests, context),
+        SuiteLoader.prepareCase(
+          name,
+          SuiteLoader.sanitized(name),
+          requests,
+          context,
+        ),
       ),
     }
+  }
+
+  private static sanitized(value: string): string {
+    value = value.replace(/^\s+|\s+$/g, '') // trim
+    value = value.toLowerCase()
+
+    // remove accents, swap ñ for n, etc
+    const from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;'
+    const to = 'aaaaeeeeiiiioooouuuunc------'
+    for (let i = 0, l = from.length; i < l; i++) {
+      value = value.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
+    }
+
+    value = value
+    .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-') // collapse dashes
+
+    return value
   }
 
   private static validateSuite(suiteDefinition: SuiteDefinition) {
@@ -99,6 +123,7 @@ export default class SuiteLoader {
 
   private static prepareCase(
     name: string,
+    id: string,
     requests: RequestDefinition[],
     context: Context,
   ): Case {
@@ -109,8 +134,8 @@ export default class SuiteLoader {
           request,
           DataHelper.toParam(params),
           {
-            captures: DataHelper.toCapture(captures),
-            assertions: DataHelper.toAssertion(assertions),
+            captures: DataHelper.toCapture(captures, id),
+            assertions: DataHelper.toAssertion(assertions, id),
           },
           context,
         )
