@@ -91,8 +91,10 @@ Static values for requests can be defined as part of the `params` property.
 
 ###### Captures
 
-Captures can be defined for a request. These [JSONPath](https://github.com/JSONPath-Plus/JSONPath)
+Captures can be defined for a request. These [JSONata](https://jsonata.org)
 expressions are applied to the response of a request and stored in the context.
+JSONata allows querying and transforming the output JSON. See project for
+details.
 
 Captures therefore can also be reused in follow-up requests as parameters with
 the prefix `$captures.` and the name of the capture (e.g.

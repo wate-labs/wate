@@ -1,6 +1,6 @@
 export default interface CaptureDefinition {
   name: string;
-  jsonPath: string;
+  expression: string;
 }
 
 export interface Capture {

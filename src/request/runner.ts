@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
-import {JSONPath as jsonPath} from 'jsonpath-plus'
+import * as jsonata from 'jsonata'
 import Request from '../request'
 import Response from '../response'
 import CaptureDefinition, {Capture} from '../capture'
@@ -99,13 +99,13 @@ export default class RequestRunner {
   }
 
   private static captureValue(capture: CaptureDefinition, data: any): Capture {
-    const matches: Array<string> = jsonPath({
-      path: capture.jsonPath,
-      json: data,
-    })
-    const value = matches.length > 1 ? matches : matches.pop()
+    const value = jsonata(capture.expression).evaluate(data)
 
-    return {name: capture.name, value}
+    return {name: capture.name, value: RequestRunner.cleanCapture(value)}
+  }
+
+  private static cleanCapture(raw: any): any {
+    return JSON.parse(JSON.stringify(raw))
   }
 }
 

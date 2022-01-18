@@ -142,8 +142,8 @@ export default class RequestCommand extends Command {
     let captures: CaptureDefinition[] = []
     if (flags.captures) {
       flags.captures.forEach((raw: string) => {
-        const [name, jsonPath] = raw.split('=')
-        captures = [...captures, {name, jsonPath}]
+        const [name, expression] = raw.split('=')
+        captures = [...captures, {name, expression}]
       })
     }
 
