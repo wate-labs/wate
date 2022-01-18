@@ -215,7 +215,13 @@ export default class SuiteCommand extends Command {
 
   private printCaptures(captures: Capture[], title?: string) {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(captures, {name: {}, value: {}}, {'no-truncate': true})
+    cli.table(
+      captures.map(({name, value}) => {
+        return {name, value: Printer.prettify(value)}
+      }),
+      {name: {}, value: {}},
+      {'no-truncate': true},
+    )
     this.log('')
   }
 
@@ -227,8 +233,8 @@ export default class SuiteCommand extends Command {
       return {
         matched: assertion.matched ? '✓' : '⨯',
         name: assertion.name,
-        expected: assertion.expected,
-        actual: assertion.actual,
+        expected: Printer.prettify(assertion.expected),
+        actual: Printer.prettify(assertion.actual),
       }
     })
     this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
