@@ -143,22 +143,41 @@ export default class SuiteCommand extends Command {
     const startTime = Date.now()
     this.log(`Starting case ${suiteCase.name}`)
     const responses: Response[] = []
-    for await (const request of suiteCase.requests) {
+    for await (let request of suiteCase.requests) {
       let response: Response = ResponseHelper.emptyResponse(request)
 
+      this.log(dim(`[${suiteCase.name}] Running (${request.url})`))
+
+      request = RequestBuilder.render(request, context)
+      if (flags.verbose) {
+        this.log(Printer.request(request))
+      }
+
       if (!flags.dry) {
-        response = await this.runRequest(suiteCase.name, request, context, {
+        response = await this.runRequest(request, context, {
           printCaptures: flags.captures,
           printAssertions: flags.assertions,
         })
       }
 
       if (flags.verbose) {
-        this.log(Printer.requestAndResponse(request, response, flags.dry))
+        this.log(Printer.response(response))
       }
       if (response.hasError) {
-        this.error(response.error.reason)
+        this.error(
+          [
+            `[${suiteCase.name}] Finished request with an error: ${response.error.reason} on ${request.url}`,
+            Printer.requestAndResponse(request, response, false),
+          ].join('\n'),
+        )
       }
+      this.log(
+        [
+          dim(
+            `[${suiteCase.name}] Finished request with status ${response.status} in ${response.durationInMs}ms`,
+          ),
+        ].join('\n'),
+      )
 
       responses.push(response)
     }
@@ -169,7 +188,6 @@ export default class SuiteCommand extends Command {
   }
 
   private async runRequest(
-    caseName: string,
     request: Request,
     context: Context,
     flags: {
@@ -177,26 +195,8 @@ export default class SuiteCommand extends Command {
       printAssertions: boolean;
     },
   ) {
-    this.log(dim(`[${caseName}] Running (${request.url})`))
-    request = RequestBuilder.render(request, context)
     const response = await RequestRunner.run(request)
     context.captures = [...context.captures, ...response.captures]
-    if (response.hasError) {
-      this.error(
-        [
-          `[${caseName}] Finished with an error: ${response.error.reason} on ${request.url}`,
-          Printer.requestAndResponse(request, response, false),
-        ].join('\n'),
-      )
-    }
-    this.log(
-      [
-        dim(
-          `[${caseName}] Finished with status ${response.status} in ${response.durationInMs}ms`,
-        ),
-      ].join('\n'),
-    )
-
     if (response.captures.length > 0 && flags.printCaptures) {
       this.printCaptures(response.captures)
     }
