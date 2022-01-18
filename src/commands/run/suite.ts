@@ -215,7 +215,7 @@ export default class SuiteCommand extends Command {
 
   private printCaptures(captures: Capture[], title?: string) {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(captures, {name: {}, value: {}})
+    cli.table(captures, {name: {}, value: {}}, {'no-truncate': true})
     this.log('')
   }
 
