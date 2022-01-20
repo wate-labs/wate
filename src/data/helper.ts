@@ -20,9 +20,9 @@ export default class DataHelper {
     prefix?: string,
   ): CaptureDefinition[] {
     return Object.entries(captures || []).map(
-      ([name, jsonPath]): CaptureDefinition => {
+      ([name, expression]): CaptureDefinition => {
         name = prefix ? `${prefix}.${name}` : name
-        return {name, jsonPath}
+        return {name, expression}
       },
     )
   }

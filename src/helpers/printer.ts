@@ -4,6 +4,10 @@ import Response from '../response'
 import ResponseValidator from '../response/validator'
 
 export default class Printer {
+  public static prettify(data: any): string {
+    return JSON.stringify(data, null, 2)
+  }
+
   public static request(rawRequest: Request): string {
     const request = Printer.parse(rawRequest)
     return [
@@ -81,10 +85,6 @@ export default class Printer {
       headers: Printer.prettify(headers),
       body: Printer.prettify(data),
     }
-  }
-
-  private static prettify(data: any): string {
-    return JSON.stringify(data, null, 2)
   }
 }
 interface RequestOrResponse {

@@ -2,6 +2,7 @@
 
 ## 0.2.0 (TBD)
 
+- Change JSONPath based evaluation with JSONata
 - Add printing request immediately when parsed
 - Improve output in case of an error
 - Add automated prefixing of captures and assertions

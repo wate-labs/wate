@@ -95,13 +95,13 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
-    if (context.captures.length > 0) {
+    if (context.captures.length > 0 && context.assertions.length === 0) {
       this.printCaptures(
         context.captures,
         `Summary for ${suite.name}`.toUpperCase(),
       )
     }
-    if (context.captures.length > 0) {
+    if (context.assertions.length > 0) {
       this.printAssertions(
         context.assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
@@ -215,20 +215,26 @@ export default class SuiteCommand extends Command {
 
   private printCaptures(captures: Capture[], title?: string) {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(captures, {name: {}, value: {}}, {'no-truncate': true})
+    cli.table(
+      captures.map(({name, value}) => {
+        return {name, value: Printer.prettify(value)}
+      }),
+      {name: {}, value: {}},
+      {'no-truncate': true},
+    )
     this.log('')
   }
 
   private printAssertions(assertions: Assertion[], title?: string) {
-    const failedAssertions = assertions.filter(
+    const hasFailedAssertions = assertions.filter(
       assertion => !assertion.matched,
     ).length
     const printableAssertions = assertions.map(assertion => {
       return {
         matched: assertion.matched ? '✓' : '⨯',
         name: assertion.name,
-        expected: assertion.expected,
-        actual: assertion.actual,
+        expected: this.prettify(assertion.expected),
+        actual: this.prettify(assertion.actual),
       }
     })
     this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
@@ -240,8 +246,26 @@ export default class SuiteCommand extends Command {
     })
     this.log('')
 
-    if (failedAssertions) {
-      this.error(`There were ${failedAssertions} assertion(s) that failed`)
+    if (hasFailedAssertions) {
+      this.error(`There were ${hasFailedAssertions} assertion(s) that failed`)
     }
+  }
+
+  private prettify(data: any): string {
+    if (typeof data === 'object') {
+      const values = Object.entries(data).reduce(
+        (acc: Array<string>, [key, value]) => {
+          const kv = `${key}: ${value}`
+          acc.push(kv)
+
+          return acc
+        },
+        [],
+      )
+
+      return values.join('\n')
+    }
+
+    return data
   }
 }
