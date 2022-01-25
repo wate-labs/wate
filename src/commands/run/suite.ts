@@ -217,7 +217,11 @@ export default class SuiteCommand extends Command {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
     cli.table(
       captures.map(({name, value}) => {
-        return {name, value: Printer.prettify(value)}
+        let printValue = value
+        if (typeof value === 'object' || Array.isArray(value)) {
+          printValue = Printer.prettify(value)
+        }
+        return {name, value: printValue}
       }),
       {name: {}, value: {}},
       {'no-truncate': true},
