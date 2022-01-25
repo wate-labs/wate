@@ -95,7 +95,10 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
-    if (context.captures.length > 0 && context.assertions.length === 0) {
+    if (
+      context.captures.length > 0 &&
+      (context.assertions.length === 0 || flags.verbose)
+    ) {
       this.printCaptures(
         context.captures,
         `Summary for ${suite.name}`.toUpperCase(),
@@ -149,6 +152,7 @@ export default class SuiteCommand extends Command {
       this.log(dim(`[${suiteCase.name}] Running (${request.url})`))
 
       request = RequestBuilder.render(request, context)
+
       if (flags.verbose) {
         this.log(Printer.request(request))
       }
