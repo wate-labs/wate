@@ -103,11 +103,14 @@ export default class RequestCommand extends Command {
 
   private async runRequest(request: Request, verbose: boolean, dry: boolean) {
     let response: Response = ResponseHelper.emptyResponse(request)
+    if (verbose) {
+      this.log(Printer.request(request))
+    }
     if (!dry) {
       response = await RequestRunner.run(request)
     }
     if (verbose) {
-      this.log(Printer.requestAndResponse(request, response, dry))
+      this.log(Printer.response(response))
     }
     if (response.hasError) {
       this.error(response.error.reason)
@@ -152,7 +155,17 @@ export default class RequestCommand extends Command {
 
   private printCaptures(captures: Capture[]) {
     this.log(['', 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(captures, {name: {}, value: {}})
+    cli.table(
+      captures.map(({name, value}) => {
+        let printValue = value
+        if (typeof value === 'object' || Array.isArray(value)) {
+          printValue = Printer.prettify(value)
+        }
+        return {name, value: printValue}
+      }),
+      {name: {}, value: {}},
+      {'no-truncate': true},
+    )
     this.log('')
   }
 }

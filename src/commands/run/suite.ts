@@ -66,6 +66,8 @@ export default class SuiteCommand extends Command {
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
+    // console.log(require('util').inspect(suite, {depth: 10}))
+    // this.error('done')
     this.log(
       [
         dim(
@@ -95,7 +97,10 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
-    if (context.captures.length > 0 && context.assertions.length === 0) {
+    if (
+      context.captures.length > 0 &&
+      (context.assertions.length === 0 || flags.verbose)
+    ) {
       this.printCaptures(
         context.captures,
         `Summary for ${suite.name}`.toUpperCase(),
@@ -149,12 +154,13 @@ export default class SuiteCommand extends Command {
       this.log(dim(`[${suiteCase.name}] Running (${request.url})`))
 
       request = RequestBuilder.render(request, context)
+
       if (flags.verbose) {
         this.log(Printer.request(request))
       }
 
       if (!flags.dry) {
-        response = await this.runRequest(request, context, {
+        response = await this.runRequest(suiteCase.name, request, context, {
           printCaptures: flags.captures,
           printAssertions: flags.assertions,
         })
@@ -188,6 +194,7 @@ export default class SuiteCommand extends Command {
   }
 
   private async runRequest(
+    caseName: string,
     request: Request,
     context: Context,
     flags: {
@@ -196,14 +203,23 @@ export default class SuiteCommand extends Command {
     },
   ) {
     const response = await RequestRunner.run(request)
-    context.captures = [...context.captures, ...response.captures]
+    const captures = response.captures.map((capture: Capture) => {
+      capture.caseName = caseName
+
+      return capture
+    })
+    context.captures = [...context.captures, ...captures]
     if (response.captures.length > 0 && flags.printCaptures) {
       this.printCaptures(response.captures)
     }
 
     let assertions = null
     if (request.assertions.length > 0) {
-      assertions = Asserter.assert(request.assertions, context.captures)
+      assertions = Asserter.assert(
+        caseName,
+        request.assertions,
+        context.captures,
+      )
       context.assertions = [...context.assertions, ...assertions]
       if (flags.printAssertions) {
         this.printAssertions(assertions)
@@ -217,7 +233,11 @@ export default class SuiteCommand extends Command {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
     cli.table(
       captures.map(({name, value}) => {
-        return {name, value: Printer.prettify(value)}
+        let printValue = value
+        if (typeof value === 'object' || Array.isArray(value)) {
+          printValue = Printer.prettify(value)
+        }
+        return {name, value: printValue}
       }),
       {name: {}, value: {}},
       {'no-truncate': true},
@@ -229,21 +249,27 @@ export default class SuiteCommand extends Command {
     const hasFailedAssertions = assertions.filter(
       assertion => !assertion.matched,
     ).length
+    this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
     const printableAssertions = assertions.map(assertion => {
       return {
-        matched: assertion.matched ? '✓' : '⨯',
-        name: assertion.name,
+        '': assertion.matched ? '✓' : '⨯',
+        case_name: assertion.caseName,
+        assertion_name: assertion.name,
         expected: this.prettify(assertion.expected),
         actual: this.prettify(assertion.actual),
       }
     })
-    this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
-    cli.table(printableAssertions, {
-      matched: {},
-      name: {},
-      expected: {},
-      actual: {},
-    })
+    cli.table(
+      printableAssertions,
+      {
+        '': {},
+        case_name: {minWidth: 50},
+        assertion_name: {minWidth: 20},
+        expected: {minWidth: 30},
+        actual: {minWidth: 30},
+      },
+      {'no-truncate': true},
+    )
     this.log('')
 
     if (hasFailedAssertions) {

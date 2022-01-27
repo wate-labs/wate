@@ -4,28 +4,38 @@ import {Capture} from '../capture'
 
 export default class Asserter {
   public static assert(
+    caseName: string,
     assertions: AssertionDefinition[],
     captures: Capture[],
   ): Assertion[] {
-    return assertions.map(definition => Asserter.apply(definition, captures))
+    return assertions.map(definition =>
+      Asserter.apply(caseName, definition, captures),
+    )
   }
 
   private static apply(
+    caseName: string,
     definition: AssertionDefinition,
     captures: Capture[],
   ): Assertion {
     const matchingCaptures = captures.filter(
-      capture => capture.name === definition.name,
+      capture =>
+        capture.caseName === caseName && capture.name === definition.name,
     )
     if (matchingCaptures.length !== 1) {
       throw new Error(
-        `Capture "${definition.name}" does not exist or is ambiguous for asserting`,
+        `Capture "${
+          definition.name
+        }" does not exist or is ambiguous for asserting: ${JSON.stringify(
+          captures,
+        )}`,
       )
     }
 
     const matchingCapture = matchingCaptures.pop()
 
     return {
+      caseName: caseName,
       name: definition.name,
       expected: definition.expected,
       actual: matchingCapture!.value,
