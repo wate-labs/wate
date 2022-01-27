@@ -4,6 +4,7 @@ export default interface AssertionDefinition {
 }
 
 export interface Assertion {
+  caseName: string;
   name: string;
   expected: any;
   actual: any;

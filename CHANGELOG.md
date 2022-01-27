@@ -2,6 +2,7 @@
 
 ## 0.2.0 (TBD)
 
+- Add grouped assertion printing
 - Change JSONPath based evaluation with JSONata
 - Add printing request immediately when parsed
 - Improve output in case of an error

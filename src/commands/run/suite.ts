@@ -66,6 +66,8 @@ export default class SuiteCommand extends Command {
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
+    // console.log(require('util').inspect(suite, {depth: 10}))
+    // this.error('done')
     this.log(
       [
         dim(
@@ -158,7 +160,7 @@ export default class SuiteCommand extends Command {
       }
 
       if (!flags.dry) {
-        response = await this.runRequest(request, context, {
+        response = await this.runRequest(suiteCase.name, request, context, {
           printCaptures: flags.captures,
           printAssertions: flags.assertions,
         })
@@ -192,6 +194,7 @@ export default class SuiteCommand extends Command {
   }
 
   private async runRequest(
+    caseName: string,
     request: Request,
     context: Context,
     flags: {
@@ -200,14 +203,23 @@ export default class SuiteCommand extends Command {
     },
   ) {
     const response = await RequestRunner.run(request)
-    context.captures = [...context.captures, ...response.captures]
+    const captures = response.captures.map((capture: Capture) => {
+      capture.caseName = caseName
+
+      return capture
+    })
+    context.captures = [...context.captures, ...captures]
     if (response.captures.length > 0 && flags.printCaptures) {
       this.printCaptures(response.captures)
     }
 
     let assertions = null
     if (request.assertions.length > 0) {
-      assertions = Asserter.assert(request.assertions, context.captures)
+      assertions = Asserter.assert(
+        caseName,
+        request.assertions,
+        context.captures,
+      )
       context.assertions = [...context.assertions, ...assertions]
       if (flags.printAssertions) {
         this.printAssertions(assertions)
@@ -237,21 +249,27 @@ export default class SuiteCommand extends Command {
     const hasFailedAssertions = assertions.filter(
       assertion => !assertion.matched,
     ).length
+    this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
     const printableAssertions = assertions.map(assertion => {
       return {
-        matched: assertion.matched ? '✓' : '⨯',
-        name: assertion.name,
+        '': assertion.matched ? '✓' : '⨯',
+        case_name: assertion.caseName,
+        assertion_name: assertion.name,
         expected: this.prettify(assertion.expected),
         actual: this.prettify(assertion.actual),
       }
     })
-    this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
-    cli.table(printableAssertions, {
-      matched: {},
-      name: {},
-      expected: {},
-      actual: {},
-    })
+    cli.table(
+      printableAssertions,
+      {
+        '': {},
+        case_name: {minWidth: 50},
+        assertion_name: {minWidth: 20},
+        expected: {minWidth: 30},
+        actual: {minWidth: 30},
+      },
+      {'no-truncate': true},
+    )
     this.log('')
 
     if (hasFailedAssertions) {
