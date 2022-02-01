@@ -14,6 +14,7 @@ import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion} from '../../assertion'
+import Export from '../../data/export'
 
 const {bold, dim} = Chalk
 
@@ -46,6 +47,10 @@ export default class SuiteCommand extends Command {
       char: 'a',
       description: 'print assertion results for each request',
     }),
+    report: flags.boolean({
+      char: 'r',
+      description: 'write report to file',
+    }),
   }
 
   static description = 'run an existing suite'
@@ -66,8 +71,6 @@ export default class SuiteCommand extends Command {
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
-    // console.log(require('util').inspect(suite, {depth: 10}))
-    // this.error('done')
     this.log(
       [
         dim(
@@ -111,6 +114,9 @@ export default class SuiteCommand extends Command {
         context.assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
       )
+    }
+    if (flags.report) {
+      this.exportAssertions(suite.name, context.assertions)
     }
   }
 
@@ -278,5 +284,25 @@ export default class SuiteCommand extends Command {
     if (hasFailedAssertions) {
       this.error(`There were ${hasFailedAssertions} assertion(s) that failed`)
     }
+  }
+
+  private exportAssertions(name: string, assertions: Assertion[]) {
+    this.log(`Generating export for ${name}`)
+    let lastCaseName = ''
+    const printableAssertions = assertions.map(assertion => {
+      const caseName =
+        lastCaseName === assertion.caseName ? '' : assertion.caseName
+      lastCaseName = assertion.caseName
+      return {
+        '': assertion.matched ? '✓' : '⨯',
+        case_name: caseName,
+        assertion_name: assertion.name,
+        expected: assertion.expected,
+        actual: assertion.actual,
+      }
+    })
+    const filename = Export.write(name, printableAssertions)
+
+    this.log(`Exported to ${filename}`)
   }
 }
