@@ -250,13 +250,17 @@ export default class SuiteCommand extends Command {
       assertion => !assertion.matched,
     ).length
     this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
+    let lastCaseName = ''
     const printableAssertions = assertions.map(assertion => {
+      const caseName =
+        lastCaseName === assertion.caseName ? '' : assertion.caseName
+      lastCaseName = assertion.caseName
       return {
         '': assertion.matched ? '✓' : '⨯',
-        case_name: assertion.caseName,
+        case_name: caseName,
         assertion_name: assertion.name,
-        expected: this.prettify(assertion.expected),
-        actual: this.prettify(assertion.actual),
+        expected: assertion.expected,
+        actual: assertion.actual,
       }
     })
     cli.table(
@@ -270,28 +274,9 @@ export default class SuiteCommand extends Command {
       },
       {'no-truncate': true},
     )
-    this.log('')
 
     if (hasFailedAssertions) {
       this.error(`There were ${hasFailedAssertions} assertion(s) that failed`)
     }
-  }
-
-  private prettify(data: any): string {
-    if (typeof data === 'object') {
-      const values = Object.entries(data).reduce(
-        (acc: Array<string>, [key, value]) => {
-          const kv = `${key}: ${value}`
-          acc.push(kv)
-
-          return acc
-        },
-        [],
-      )
-
-      return values.join('\n')
-    }
-
-    return data
   }
 }
