@@ -103,7 +103,7 @@ export default class SuiteCommand extends Command {
     ) {
       this.printCaptures(
         context.captures,
-        `Summary for ${suite.name}`.toUpperCase(),
+        `All captures for ${suite.name}`.toUpperCase(),
       )
     }
     if (context.assertions.length > 0) {
@@ -232,14 +232,14 @@ export default class SuiteCommand extends Command {
   private printCaptures(captures: Capture[], title?: string) {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
     cli.table(
-      captures.map(({name, value}) => {
+      captures.map(({caseName, name, value}) => {
         let printValue = value
         if (typeof value === 'object' || Array.isArray(value)) {
           printValue = Printer.prettify(value)
         }
-        return {name, value: printValue}
+        return {case_name: caseName, capture_name: name, value: printValue}
       }),
-      {name: {}, value: {}},
+      {case_name: {}, capture_name: {}, value: {}},
       {'no-truncate': true},
     )
     this.log('')
