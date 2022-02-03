@@ -8,48 +8,47 @@
   },
   "bugs": "https://github.com/scflode/wate/issues",
   "dependencies": {
-    "@oclif/command": "^1.8.0",
-    "@oclif/config": "^1.17.0",
-    "@oclif/plugin-autocomplete": "^0.3.0",
-    "@oclif/plugin-help": "^3.2.3",
+    "@oclif/core": "^1",
+    "@oclif/plugin-autocomplete": "^1.2.0",
+    "@oclif/plugin-help": "^5",
     "@types/http-string-parser": "0.0.29",
     "@types/mock-fs": "^4.13.1",
     "ajv": "^8.6.2",
     "axios": "^0.21.2",
-    "chalk": "^4.1.2",
-    "cli-ux": "^5.6.3",
     "date-fns": "^2.28.0",
     "exceljs": "^4.3.0",
     "http-string-parser": "0.0.6",
     "jsonata": "^1.8.5",
-    "mock-fs": "^4.14.0",
-    "nunjucks": "^3.2.3",
-    "tslib": "^1.14.1"
+    "nunjucks": "^3.2.3"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1.26.0",
-    "@oclif/test": "^1.2.8",
-    "@types/chai": "^4.2.21",
-    "@types/jsonpath": "^0.2.0",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^10.17.60",
+    "@oclif/test": "^2",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.9.4",
     "@types/nunjucks": "^3.2.0",
-    "chai": "^4.3.4",
-    "eslint": "^7.0.0",
-    "eslint-config-oclif": "^3.1.0",
-    "eslint-config-oclif-typescript": "^0.1.0",
-    "globby": "^10.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "^14.1.1",
-    "ts-node": "^8.10.2",
-    "typescript": "^4.0.0"
+    "chai": "^4",
+    "eslint": "^7.32.0",
+    "eslint-config-oclif": "^4",
+    "eslint-config-oclif-typescript": "^1.0.2",
+    "eslint-plugin-mocha": "^10.0.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-unicorn": "^40.1.0",
+    "globby": "^11",
+    "mocha": "^9",
+    "mock-fs": "^5.1.2",
+    "oclif": "^2",
+    "shx": "^0.3.3",
+    "ts-node": "^10.2.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
   },
   "engines": {
     "node": ">=14.16.0"
   },
   "files": [
     "/bin",
-    "/lib",
+    "/dist",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
@@ -58,9 +57,10 @@
     "oclif"
   ],
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "oclif": {
-    "commands": "./lib/commands",
+    "commands": "./dist/commands",
+    "dirname": "wate",
     "bin": "wate",
     "topics": {
       "create": {
@@ -83,14 +83,14 @@
   },
   "repository": "scflode/wate",
   "scripts": {
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "eslint . --ext .ts --config .eslintrc",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest",
-    "test-all": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "test": "mocha --forbid-only",
+    "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts --config .eslintrc",
-    "lint-fix": "eslint . --ext .ts --config .eslintrc --fix",
-    "version": "oclif-dev readme && git add README.md"
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "yarn lint",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "test": "mocha --forbid-only",
+    "test-all": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
   },
-  "types": "lib/index.d.ts"
+  "types": "dist/index.d.ts"
 }

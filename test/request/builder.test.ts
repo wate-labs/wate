@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import * as path from 'path'
+import * as path from 'node:path'
 import RequestBuilder from '../../src/request/builder'
 import EnvironmentLoader from '../../src/environment/loader'
 import Environment from '../../src/environment'

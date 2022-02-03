@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import * as parser from 'http-string-parser'
 import * as nunjucks from 'nunjucks'
 import Request from '../request'
@@ -68,7 +68,7 @@ export default class RequestBuilder {
   private static parse(data: string) {
     try {
       return JSON.parse(data)
-    } catch (error) {
+    } catch {
       return data
     }
   }
@@ -81,6 +81,7 @@ export default class RequestBuilder {
     if (!fs.existsSync(preRequestPath)) {
       return params
     }
+
     const fullPath = path.resolve(preRequestPath)
     const preRequest = require(fullPath)
     const computedParams: KeyValue = preRequest(
@@ -125,9 +126,9 @@ export default class RequestBuilder {
     data: {[key: string]: string},
     params: Param[],
   ): {[key: string]: string} {
-    Object.entries(data).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(data)) {
       data[key] = RequestBuilder.applyParams(value, params)
-    })
+    }
 
     return data
   }
@@ -142,7 +143,7 @@ export default class RequestBuilder {
   }
 
   private static validateVariables(data: string, replacements: {}) {
-    const variablesRegex = /{{\s?([\w]+)((?:\..+)|(?:\[.+)?)\s?}}/g
+    const variablesRegex = /{{\s?(\w+)((?:\..+)|(?:\[.+)?)\s?}}/g
     const variables = [...data.matchAll(variablesRegex)].map(
       ([_, name]) => name,
     )

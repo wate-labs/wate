@@ -1,5 +1,5 @@
 import {format} from 'date-fns/fp'
-import * as fs from 'fs'
+import * as fs from 'node:fs'
 import * as ExcelJS from 'exceljs'
 
 export default class Export {
@@ -18,6 +18,7 @@ export default class Export {
     if (!fs.existsSync('reports')) {
       fs.mkdirSync('reports')
     }
+
     const workbook = new ExcelJS.Workbook()
     workbook.creator = 'wate - Web API Testing tool'
     workbook.title = name
@@ -57,7 +58,7 @@ export default class Export {
         fgColor: {argb: '008810'},
       }
 
-      columns.forEach(name => {
+      for (const name of columns) {
         const currentCell = row.getCell(name)
         currentCell.fill =
           row.getCell('matched').value === '✓' ? fillSuccess : fillError
@@ -65,7 +66,7 @@ export default class Export {
           size: 12,
           color: {argb: 'FFFFFFFF'},
         }
-      })
+      }
     })
     // Align columns
     worksheet.columns.every(col => (col.alignment = {vertical: 'top'}))

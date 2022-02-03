@@ -1,6 +1,6 @@
 import {expect, test} from '@oclif/test'
 import fs from '../../mockfs'
-import * as path from 'path'
+import * as path from 'node:path'
 
 const fixturePath = `${__dirname}/../../fixtures`
 

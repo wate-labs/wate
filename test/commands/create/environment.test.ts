@@ -1,6 +1,6 @@
 import {expect, test} from '@oclif/test'
 import filesystem from '../../mockfs'
-import * as fs from 'fs'
+import * as fs from 'node:fs'
 
 describe('create:environment', () => {
   test

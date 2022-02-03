@@ -1,6 +1,6 @@
-import {Command, flags} from '@oclif/command'
-import * as fs from 'fs'
-import * as path from 'path'
+import {Command, Flags} from '@oclif/core'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 export default class RequestCommand extends Command {
   static args = [
@@ -18,19 +18,21 @@ export default class RequestCommand extends Command {
   static dir = 'requests'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
-    const {args} = this.parse(RequestCommand)
+    const {args} = await this.parse(RequestCommand)
     const requestName = args.requestName
     if (!fs.existsSync(RequestCommand.dir)) {
       this.error(`Directory "${RequestCommand.dir}" not found.`)
     }
+
     const requestPath = path.join(RequestCommand.dir, requestName)
     if (fs.existsSync(requestPath)) {
       this.error(`Request "${requestName}" (${requestPath}) already exists.`)
     }
+
     fs.mkdirSync(requestPath, {recursive: true})
 
     fs.writeFileSync(

@@ -1,8 +1,8 @@
-import {Command, flags} from '@oclif/command'
+import {Command, Flags} from '@oclif/core'
 import * as Chalk from 'chalk'
 import * as indent from 'indent-string'
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 const {bold} = Chalk
 
@@ -14,7 +14,7 @@ export default class SuitesCommand extends Command {
   static dir = 'suites'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
@@ -29,6 +29,7 @@ export default class SuitesCommand extends Command {
     if (collectionsAndSuites.length === 0) {
       this.error('No collections or suites found.')
     }
+
     const description = 'The following collections and suites were found.'
     const collections = this.listCollections(collectionsAndSuites)
 
@@ -40,7 +41,7 @@ export default class SuitesCommand extends Command {
 
   listCollectionsAndSuites(currentPath: string): Array<CollectionOrSuites> {
     const entries: Array<CollectionOrSuites> = []
-    fs.readdirSync(currentPath).forEach(entry => {
+    for (const entry of fs.readdirSync(currentPath)) {
       const collectionOrSuite: CollectionOrSuites = this.newCollectionOrSuite()
       const newPath = path.join(currentPath, entry)
       collectionOrSuite.name = entry
@@ -48,8 +49,9 @@ export default class SuitesCommand extends Command {
         collectionOrSuite.type = 'collection'
         collectionOrSuite.children = this.listCollectionsAndSuites(newPath)
       }
+
       entries.push(collectionOrSuite)
-    })
+    }
 
     return entries
   }
@@ -70,16 +72,17 @@ export default class SuitesCommand extends Command {
 
   extractCollections(collectionsAndSuites: Array<CollectionOrSuites>, ind = 2) {
     let collections: Array<string> = []
-    collectionsAndSuites.forEach(entry => {
+    for (const entry of collectionsAndSuites) {
       if (entry.type === 'collection') {
         collections.push(indent(entry.name, ind))
       }
+
       if (entry.children.length > 0) {
         collections = collections.concat(
           this.extractCollections(entry.children, ind + 2),
         )
       }
-    })
+    }
 
     return collections
   }
@@ -95,17 +98,18 @@ export default class SuitesCommand extends Command {
     collection = '',
   ) {
     let suites: Array<string> = []
-    collectionsAndSuites.forEach(entry => {
+    for (const entry of collectionsAndSuites) {
       if (entry.type === 'suite') {
         suites.push(indent(`${collection}${entry.name}`, 2))
       }
+
       if (entry.children.length > 0) {
         const parentCollection = collection + `${entry.name}/`
         suites = suites.concat(
           this.extractSuites(entry.children, parentCollection),
         )
       }
-    })
+    }
 
     return suites
   }

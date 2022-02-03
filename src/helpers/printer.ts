@@ -58,22 +58,23 @@ export default class Printer {
     if (dry) {
       content = [
         ...content,
-        ...['', dim('Dry runs do not have a response'), ''],
+        '',
+        dim('Dry runs do not have a response'),
+        '',
       ]
     }
 
     if (!dry) {
       content = [
         ...content,
-        ...[
-          '',
-          bold('RESPONSE'),
-          dim('headers'),
-          response.headers,
-          dim('body'),
-          response.body,
-          '',
-        ],
+
+        '',
+        bold('RESPONSE'),
+        dim('headers'),
+        response.headers,
+        dim('body'),
+        response.body,
+        '',
       ]
     }
 

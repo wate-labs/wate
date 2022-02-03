@@ -1,6 +1,6 @@
 import * as mockfs from 'mock-fs'
-import * as path from 'path'
-import * as pfs from 'fs'
+import * as path from 'node:path'
+import * as pfs from 'node:fs'
 
 const fs = {
   mock(conf: any) {
