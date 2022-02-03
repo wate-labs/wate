@@ -1,7 +1,10 @@
+import {format} from 'date-fns/fp'
 import * as fs from 'fs'
 import * as xlsx from 'xlsx'
 
 export default class Export {
+  static dateTimeFormat = format('yyyy-MM-dd-hhmm')
+
   public static write(
     name: string,
     data: {
@@ -18,23 +21,9 @@ export default class Export {
     const workbook = xlsx.utils.book_new()
     const sheet = xlsx.utils.json_to_sheet(data)
     xlsx.utils.book_append_sheet(workbook, sheet)
-    const filename = `reports/${Export.datePrefix()}_${name}.xlsx`
+    const filename = `reports/${Export.dateTimeFormat(new Date())}_${name}.xlsx`
     xlsx.writeFile(workbook, filename)
 
     return filename
-  }
-
-  private static datePrefix(): string {
-    const now = new Date()
-    const dateParts = [
-      now.getFullYear(),
-      Export.padDate(now.getMonth() + 1),
-      Export.padDate(now.getDate()),
-    ]
-    return dateParts.join('-')
-  }
-
-  private static padDate(dateOrMonth: number): string {
-    return dateOrMonth.toString().padStart(2, '0')
   }
 }

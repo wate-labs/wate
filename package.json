@@ -18,6 +18,7 @@
     "axios": "^0.21.2",
     "chalk": "^4.1.2",
     "cli-ux": "^5.6.3",
+    "date-fns": "^2.28.0",
     "http-string-parser": "0.0.6",
     "jsonata": "^1.8.5",
     "mock-fs": "^4.14.0",
