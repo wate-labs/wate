@@ -110,13 +110,13 @@ export default class SuiteCommand extends Command {
       )
     }
     if (context.assertions.length > 0) {
+      if (flags.report) {
+        await this.exportAssertions(suite.name, context.assertions)
+      }
       this.printAssertions(
         context.assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
       )
-    }
-    if (flags.report) {
-      this.exportAssertions(suite.name, context.assertions)
     }
   }
 
@@ -286,22 +286,18 @@ export default class SuiteCommand extends Command {
     }
   }
 
-  private exportAssertions(name: string, assertions: Assertion[]) {
+  private async exportAssertions(name: string, assertions: Assertion[]) {
     this.log(`Generating export for ${name}`)
-    let lastCaseName = ''
     const printableAssertions = assertions.map(assertion => {
-      const caseName =
-        lastCaseName === assertion.caseName ? '' : assertion.caseName
-      lastCaseName = assertion.caseName
       return {
-        '': assertion.matched ? '✓' : '⨯',
-        case_name: caseName,
+        matched: assertion.matched ? '✓' : '⨯',
+        case_name: assertion.caseName,
         assertion_name: assertion.name,
         expected: assertion.expected,
         actual: assertion.actual,
       }
     })
-    const filename = Export.write(name, printableAssertions)
+    const filename = await Export.write(name, printableAssertions)
 
     this.log(`Exported to ${filename}`)
   }
