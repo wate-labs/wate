@@ -2,6 +2,7 @@
 
 ## 0.2.0 (TBD)
 
+- Improve Excel file layout
 - Add Excel reporting
 - Add grouped assertion printing
 - Change JSONPath based evaluation with JSONata
