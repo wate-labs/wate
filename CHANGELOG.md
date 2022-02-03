@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (TBD)
+## 0.2.0 (2022-02-03)
 
 - Improve Excel file layout
 - Add Excel reporting
