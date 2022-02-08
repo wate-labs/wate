@@ -4,6 +4,7 @@ import AssertionDefinition, {KeyValue as AssertionKeyValue} from '../assertion'
 
 export default class DataHelper {
   public static toKV(params: Param[]): ParamKeyValue {
+    /* eslint-disable unicorn/prefer-object-from-entries */
     return params.reduce((params, {name, value}) => {
       return {...params, [name]: DataHelper.parse(value)}
     }, {})

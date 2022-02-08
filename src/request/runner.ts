@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios'
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as jsonata from 'jsonata'
 import Request from '../request'
 import Response from '../response'
@@ -45,7 +45,7 @@ export default class RequestRunner {
         RequestRunner.prepare(request),
       ))
       captures = RequestRunner.captureFromBody(data, request.captures)
-    } catch (error: Error | AxiosError | unknown) {
+    } catch (error: Error | unknown) {
       hasError = true
       if (axios.isAxiosError(error) && error.response?.status) {
         headers = error.response.headers
@@ -111,11 +111,11 @@ export default class RequestRunner {
 
 interface MetadataAwareAxiosRequestConfig extends AxiosRequestConfig {
   metadata: {
-    startTime: number;
-  };
+    startTime: number
+  }
 }
 
 interface MetadataAwareAxiosResponse extends AxiosResponse {
-  config: MetadataAwareAxiosRequestConfig;
-  durationInMs: number;
+  config: MetadataAwareAxiosRequestConfig
+  durationInMs: number
 }

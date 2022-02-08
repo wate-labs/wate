@@ -8,11 +8,11 @@ export default class Export {
   public static async write(
     name: string,
     data: {
-      matched: string;
-      case_name: string;
-      assertion_name: string;
-      expected: string;
-      actual: string;
+      matched: string
+      case_name: string
+      assertion_name: string
+      expected: string
+      actual: string
     }[],
   ): Promise<string> {
     if (!fs.existsSync('reports')) {
@@ -69,7 +69,11 @@ export default class Export {
       }
     })
     // Align columns
-    worksheet.columns.every(col => (col.alignment = {vertical: 'top'}))
+    worksheet.columns.every(col => {
+      col.alignment = {vertical: 'top'}
+
+      return col
+    })
     // Wrap text for expected and asserted
     const expectedCol = worksheet.getColumn('expected')
     expectedCol.alignment = {wrapText: true, horizontal: 'right'}
