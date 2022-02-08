@@ -1,5 +1,5 @@
-import {Command, flags} from '@oclif/command'
-import * as fs from 'fs'
+import {Command, Flags} from '@oclif/core'
+import * as fs from 'node:fs'
 
 export default class InitCommand extends Command {
   static description = 'initialize new wate project'
@@ -13,7 +13,7 @@ export default class InitCommand extends Command {
   static environmentsDir = 'environments'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
@@ -23,15 +23,17 @@ export default class InitCommand extends Command {
       InitCommand.suitesDir,
       InitCommand.environmentsDir,
     ]
-    requiredDirs.forEach(dir => {
+    for (const dir of requiredDirs) {
       if (fs.existsSync(dir)) {
         this.error(`Found existing ${dir} directory.`)
       }
-    })
-    requiredDirs.forEach(dir => {
+    }
+
+    for (const dir of requiredDirs) {
       this.log(`Creating ${dir} directory`)
       fs.mkdirSync(dir)
-    })
+    }
+
     this.log(`Setup finished.
 
 Next please add new requests by running: wate create:request "my request"`)

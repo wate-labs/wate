@@ -1,4 +1,4 @@
-import * as assert from 'assert'
+import * as assert from 'node:assert'
 import AssertionDefinition, {Assertion} from '../assertion'
 import {Capture} from '../capture'
 
@@ -47,7 +47,7 @@ export default class Asserter {
     try {
       assert.deepStrictEqual(actual, expected)
       return true
-    } catch (error) {
+    } catch {
       return false
     }
   }

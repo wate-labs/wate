@@ -1,5 +1,4 @@
-import {Command, flags} from '@oclif/command'
-import {cli} from 'cli-ux'
+import {CliUx, Command, Flags} from '@oclif/core'
 import * as Chalk from 'chalk'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
@@ -25,29 +24,29 @@ export default class SuiteCommand extends Command {
   ]
 
   static flags = {
-    help: flags.help({char: 'h'}),
-    verbose: flags.boolean({
+    help: Flags.help({char: 'h'}),
+    verbose: Flags.boolean({
       char: 'v',
       description: 'print the raw response headers and body',
     }),
-    parameters: flags.string({
+    parameters: Flags.string({
       char: 'p',
       description: 'use given parameter name and value in request',
       multiple: true,
     }),
-    dry: flags.boolean({
+    dry: Flags.boolean({
       char: 'd',
       description: 'perform a dry run without emitting requests',
     }),
-    captures: flags.boolean({
+    captures: Flags.boolean({
       char: 'c',
       description: 'print captured values for each request',
     }),
-    assertions: flags.boolean({
+    assertions: Flags.boolean({
       char: 'a',
       description: 'print assertion results for each request',
     }),
-    report: flags.boolean({
+    report: Flags.boolean({
       char: 'r',
       description: 'write report to file',
     }),
@@ -64,7 +63,7 @@ export default class SuiteCommand extends Command {
   static suiteDir = 'suites'
 
   async run() {
-    const {args, flags} = this.parse(SuiteCommand)
+    const {args, flags} = await this.parse(SuiteCommand)
     const envName = args.environment
     const suiteName = args.suite
     const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
@@ -92,6 +91,7 @@ export default class SuiteCommand extends Command {
     for await (const suiteCase of suite.cases) {
       await this.runCase(suiteCase, context, flags)
     }
+
     const durationInMs = Date.now() - startTime
     this.log(
       [
@@ -109,10 +109,12 @@ export default class SuiteCommand extends Command {
         `All captures for ${suite.name}`.toUpperCase(),
       )
     }
+
     if (context.assertions.length > 0) {
       if (flags.report) {
         await this.exportAssertions(suite.name, context.assertions)
       }
+
       this.printAssertions(
         context.assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
@@ -175,6 +177,7 @@ export default class SuiteCommand extends Command {
       if (flags.verbose) {
         this.log(Printer.response(response))
       }
+
       if (response.hasError) {
         this.error(
           [
@@ -183,6 +186,7 @@ export default class SuiteCommand extends Command {
           ].join('\n'),
         )
       }
+
       this.log(
         [
           dim(
@@ -193,6 +197,7 @@ export default class SuiteCommand extends Command {
 
       responses.push(response)
     }
+
     const durationInMs = Date.now() - startTime
     this.log(`Finished case ${suiteCase.name} in ${durationInMs}ms`, '\n')
 
@@ -237,12 +242,13 @@ export default class SuiteCommand extends Command {
 
   private printCaptures(captures: Capture[], title?: string) {
     this.log(['', title || 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(
+    CliUx.ux.table(
       captures.map(({caseName, name, value}) => {
         let printValue = value
         if (typeof value === 'object' || Array.isArray(value)) {
           printValue = Printer.prettify(value)
         }
+
         return {case_name: caseName, capture_name: name, value: printValue}
       }),
       {case_name: {}, capture_name: {}, value: {}},
@@ -269,7 +275,7 @@ export default class SuiteCommand extends Command {
         actual: assertion.actual,
       }
     })
-    cli.table(
+    CliUx.ux.table(
       printableAssertions,
       {
         '': {},

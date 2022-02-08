@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import Environment from '../environment'
 import SchemaValidator, {ValidationSchema} from '../validator/schema'
 
@@ -19,6 +19,7 @@ export default class EnvironmentLoader {
     if (!fs.existsSync(filePath)) {
       throw new Error(`Environment "${name}" not found`)
     }
+
     try {
       const content = JSON.parse(fs.readFileSync(filePath).toString())
       const scheme = content.scheme ?? 'https'
@@ -38,7 +39,11 @@ export default class EnvironmentLoader {
         host,
       }
     } catch (error) {
-      throw new Error(`Malformed environment "${name}": ${error.message}`)
+      if (error instanceof Error) {
+        throw new TypeError(`Malformed environment "${name}": ${error.message}`)
+      }
+
+      throw new Error(`Malformed environment "${name}": Unknown error`)
     }
   }
 }

@@ -1,7 +1,6 @@
-import {Command, flags} from '@oclif/command'
+import {CliUx, Command, Flags} from '@oclif/core'
 import * as Chalk from 'chalk'
-import {cli} from 'cli-ux'
-import * as path from 'path'
+import * as path from 'node:path'
 import Context from '../../context'
 import EnvironmentLoader from '../../environment/loader'
 import RequestRunner from '../../request/runner'
@@ -23,21 +22,21 @@ export default class RequestCommand extends Command {
   ]
 
   static flags = {
-    help: flags.help({char: 'h'}),
-    verbose: flags.boolean({
+    help: Flags.help({char: 'h'}),
+    verbose: Flags.boolean({
       char: 'v',
       description: 'print the raw response headers and body',
     }),
-    dry: flags.boolean({
+    dry: Flags.boolean({
       char: 'd',
       description: 'perform a dry run without emitting the request',
     }),
-    parameters: flags.string({
+    parameters: Flags.string({
       char: 'p',
       description: 'use given parameter name and value in request',
       multiple: true,
     }),
-    captures: flags.string({
+    captures: Flags.string({
       char: 'c',
       description: 'capture value from response with given JSONPath expression',
       multiple: true,
@@ -53,7 +52,7 @@ export default class RequestCommand extends Command {
   static reqDir = 'requests'
 
   async run() {
-    const {args, flags} = this.parse(RequestCommand)
+    const {args, flags} = await this.parse(RequestCommand)
     const envName = args.environment
     const reqName = args.request
     const environment = EnvironmentLoader.load(RequestCommand.envDir, envName)
@@ -106,12 +105,15 @@ export default class RequestCommand extends Command {
     if (verbose) {
       this.log(Printer.request(request))
     }
+
     if (!dry) {
       response = await RequestRunner.run(request)
     }
+
     if (verbose) {
       this.log(Printer.response(response))
     }
+
     if (response.hasError) {
       this.error(response.error.reason)
     }
@@ -155,12 +157,13 @@ export default class RequestCommand extends Command {
 
   private printCaptures(captures: Capture[]) {
     this.log(['', 'Captured values'.toUpperCase(), ''].join('\n'))
-    cli.table(
+    CliUx.ux.table(
       captures.map(({name, value}) => {
         let printValue = value
         if (typeof value === 'object' || Array.isArray(value)) {
           printValue = Printer.prettify(value)
         }
+
         return {name, value: printValue}
       }),
       {name: {}, value: {}},

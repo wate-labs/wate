@@ -1,6 +1,6 @@
-import {Command, flags} from '@oclif/command'
-import * as fs from 'fs'
-import * as path from 'path'
+import {Command, Flags} from '@oclif/core'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 export default class EnvironmentCommand extends Command {
   static args = [
@@ -18,11 +18,11 @@ export default class EnvironmentCommand extends Command {
   static dir = 'environments'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
-    const {args} = this.parse(EnvironmentCommand)
+    const {args} = await this.parse(EnvironmentCommand)
     const name = `${args.name}`
     if (!fs.existsSync(EnvironmentCommand.dir)) {
       this.error(`Directory "${EnvironmentCommand.dir}" not found.`)
@@ -36,6 +36,7 @@ export default class EnvironmentCommand extends Command {
     if (fs.existsSync(fullPath)) {
       this.error(`Environment "${name}" (${fullPath}) already exists.`)
     }
+
     fs.mkdirSync(environmentPath, {recursive: true})
     fs.writeFileSync(path.join(environmentPath, fileName), this.getTemplate())
     this.log(`Created "${name}" located at "${environmentPath}"`)

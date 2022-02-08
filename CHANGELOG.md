@@ -2,6 +2,8 @@
 
 ## 0.3.0 (TBD)
 
+- Update dependencies
+
 ## 0.2.0 (2022-02-03)
 
 - Improve Excel file layout

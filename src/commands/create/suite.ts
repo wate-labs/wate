@@ -1,6 +1,6 @@
-import {Command, flags} from '@oclif/command'
-import * as fs from 'fs'
-import * as path from 'path'
+import {Command, Flags} from '@oclif/core'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 export default class SuiteCommand extends Command {
   static args = [
@@ -18,11 +18,11 @@ export default class SuiteCommand extends Command {
   static dir = 'suites'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
-    const {args} = this.parse(SuiteCommand)
+    const {args} = await this.parse(SuiteCommand)
     const name = `${args.suiteName}`
     if (!fs.existsSync(SuiteCommand.dir)) {
       this.error(`Directory "${SuiteCommand.dir}" not found.`)
@@ -36,6 +36,7 @@ export default class SuiteCommand extends Command {
     if (fs.existsSync(fullPath)) {
       this.error(`Suite "${name}" (${fullPath}) already exists.`)
     }
+
     fs.mkdirSync(suitePath, {recursive: true})
     fs.writeFileSync(path.join(suitePath, fileName), this.getTemplate())
     this.log(`Created "${name}" located at "${suitePath}"`)

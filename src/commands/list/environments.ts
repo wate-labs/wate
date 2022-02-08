@@ -1,8 +1,8 @@
-import {Command, flags} from '@oclif/command'
+import {Command, Flags} from '@oclif/core'
 import * as Chalk from 'chalk'
 import * as indent from 'indent-string'
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 const {bold} = Chalk
 
@@ -14,7 +14,7 @@ export default class EnvironmentsCommand extends Command {
   static dir = 'environments'
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: Flags.help({char: 'h'}),
   }
 
   async run() {
@@ -29,6 +29,7 @@ export default class EnvironmentsCommand extends Command {
     if (collectionsAndEnvironments.length === 0) {
       this.error('No collections or environments found')
     }
+
     const description = 'The following collections and environments were found.'
     const collections = this.listCollections(collectionsAndEnvironments)
 
@@ -42,7 +43,7 @@ export default class EnvironmentsCommand extends Command {
     currentPath: string,
   ): Array<CollectionOrEnvironments> {
     const entries: Array<CollectionOrEnvironments> = []
-    fs.readdirSync(currentPath).forEach(entry => {
+    for (const entry of fs.readdirSync(currentPath)) {
       const collectionOrEnvironment: CollectionOrEnvironments =
         this.newCollectionOrEnvironment()
       const newPath = path.join(currentPath, entry)
@@ -52,8 +53,9 @@ export default class EnvironmentsCommand extends Command {
         collectionOrEnvironment.children =
           this.listCollectionsAndEnvironments(newPath)
       }
+
       entries.push(collectionOrEnvironment)
-    })
+    }
 
     return entries
   }
@@ -79,16 +81,17 @@ export default class EnvironmentsCommand extends Command {
     ind = 2,
   ) {
     let collections: Array<string> = []
-    collectionsAndEnvironments.forEach(entry => {
+    for (const entry of collectionsAndEnvironments) {
       if (entry.type === 'collection') {
         collections.push(indent(entry.name, ind))
       }
+
       if (entry.children.length > 0) {
         collections = collections.concat(
           this.extractCollections(entry.children, ind + 2),
         )
       }
-    })
+    }
 
     return collections
   }
@@ -106,17 +109,18 @@ export default class EnvironmentsCommand extends Command {
     collection = '',
   ) {
     let environments: Array<string> = []
-    collectionsAndEnvironments.forEach(entry => {
+    for (const entry of collectionsAndEnvironments) {
       if (entry.type === 'environment') {
         environments.push(indent(`${collection}${entry.name}`, 2))
       }
+
       if (entry.children.length > 0) {
         const parentCollection = collection + `${entry.name}/`
         environments = environments.concat(
           this.extractEnvironments(entry.children, parentCollection),
         )
       }
-    })
+    }
 
     return environments
   }

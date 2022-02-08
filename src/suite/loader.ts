@@ -1,5 +1,5 @@
-import * as path from 'path'
-import * as fs from 'fs'
+import * as path from 'node:path'
+import * as fs from 'node:fs'
 import {Suite, Case, SuiteDefinition, RequestDefinition} from '../suite'
 import Request from '../request'
 import SchemaValidator, {ValidationSchema} from '../validator/schema'
@@ -71,6 +71,7 @@ export default class SuiteLoader {
     if (!fs.existsSync(filePath)) {
       throw new Error(`Suite "${name}" not found`)
     }
+
     const suiteDefinition: SuiteDefinition = JSON.parse(
       fs.readFileSync(filePath).toString(),
     )

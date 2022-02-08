@@ -45,19 +45,19 @@ export default class RequestRunner {
         RequestRunner.prepare(request),
       ))
       captures = RequestRunner.captureFromBody(data, request.captures)
-    } catch (error) {
+    } catch (error: Error | unknown) {
       hasError = true
-      if (error.response?.status) {
+      if (axios.isAxiosError(error) && error.response?.status) {
         headers = error.response.headers
         data = error.response.data
         errorObject = {
           reason: `Status code: ${error.response.status} (${error.response.statusText})`,
         }
-      } else if (error.code) {
+      } else if (axios.isAxiosError(error) && error.code) {
         errorObject = {
           reason: error.code,
         }
-      } else if (error.message) {
+      } else if (error instanceof Error && error.message) {
         errorObject = {
           reason: error.message,
         }
@@ -111,11 +111,11 @@ export default class RequestRunner {
 
 interface MetadataAwareAxiosRequestConfig extends AxiosRequestConfig {
   metadata: {
-    startTime: number;
-  };
+    startTime: number
+  }
 }
 
 interface MetadataAwareAxiosResponse extends AxiosResponse {
-  config: MetadataAwareAxiosRequestConfig;
-  durationInMs: number;
+  config: MetadataAwareAxiosRequestConfig
+  durationInMs: number
 }
