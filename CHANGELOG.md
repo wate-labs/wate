@@ -2,6 +2,7 @@
 
 ## 0.3.0 (TBD)
 
+- Add YAML support to suites (precedence is JSON)
 - Update dependencies
 
 ## 0.2.0 (2022-02-03)
