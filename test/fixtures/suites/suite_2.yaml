@@ -1,0 +1,6 @@
+name: My suite name
+cases:
+- name: My test case
+  requests:
+  - request: request_1
+

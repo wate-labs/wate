@@ -1,5 +1,6 @@
 import * as path from 'node:path'
 import * as fs from 'node:fs'
+import * as yaml from 'js-yaml'
 import {Suite, Case, SuiteDefinition, RequestDefinition} from '../suite'
 import Request from '../request'
 import SchemaValidator, {ValidationSchema} from '../validator/schema'
@@ -9,6 +10,7 @@ import Param from '../param'
 import DataHelper from '../data/helper'
 import CaptureDefinition from '../capture'
 import AssertionDefinition from '../assertion'
+import {JSON_SCHEMA} from 'js-yaml'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -67,14 +69,18 @@ export default class SuiteLoader {
   }
 
   public static load(suitePath: string, name: string, context: Context): Suite {
-    const filePath = path.join(suitePath, `${name}.json`)
-    if (!fs.existsSync(filePath)) {
+    const filePathJson = path.join(suitePath, `${name}.json`)
+    const filePathYaml = path.join(suitePath, `${name}.yaml`)
+    let suiteDefinition: SuiteDefinition
+    if (fs.existsSync(filePathJson)) {
+      suiteDefinition = JSON.parse(fs.readFileSync(filePathJson).toString())
+    } else if (fs.existsSync(filePathYaml)) {
+      suiteDefinition = yaml.load(fs.readFileSync(filePathYaml).toString(), {
+        schema: JSON_SCHEMA,
+      }) as SuiteDefinition
+    } else {
       throw new Error(`Suite "${name}" not found`)
     }
-
-    const suiteDefinition: SuiteDefinition = JSON.parse(
-      fs.readFileSync(filePath).toString(),
-    )
 
     SuiteLoader.validateSuite(suiteDefinition)
 
@@ -123,8 +129,8 @@ export default class SuiteLoader {
     request: string,
     params: Param[],
     definitions: {
-      captures: CaptureDefinition[];
-      assertions: AssertionDefinition[];
+      captures: CaptureDefinition[]
+      assertions: AssertionDefinition[]
     },
     context: Context,
   ): Request {

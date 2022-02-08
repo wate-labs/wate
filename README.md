@@ -73,6 +73,9 @@ requests (e.g. authentication and protected resource calls).
 
 Suites have a name and one or more cases.
 
+> Suite files can be both in JSON or YAML file format. The precedence is JSON
+> over YAML in case of same names.
+
 #### Cases
 
 A suite consists of one or more cases. The cases have one or more requests
@@ -133,6 +136,7 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 ## Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g wate
 $ wate COMMAND
@@ -144,22 +148,24 @@ USAGE
   $ wate COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 ## Commands
 
 <!-- commands -->
-* [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
-* [`wate create:environment NAME`](#wate-createenvironment-name)
-* [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
-* [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
-* [`wate help [COMMAND]`](#wate-help-command)
-* [`wate init`](#wate-init)
-* [`wate list:environments`](#wate-listenvironments)
-* [`wate list:requests`](#wate-listrequests)
-* [`wate list:suites`](#wate-listsuites)
-* [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
-* [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
+
+- [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
+- [`wate create:environment NAME`](#wate-createenvironment-name)
+- [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
+- [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
+- [`wate help [COMMAND]`](#wate-help-command)
+- [`wate init`](#wate-init)
+- [`wate list:environments`](#wate-listenvironments)
+- [`wate list:requests`](#wate-listrequests)
+- [`wate list:suites`](#wate-listsuites)
+- [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
+- [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
 
 ## `wate autocomplete [SHELL]`
 
@@ -380,4 +386,5 @@ EXAMPLE
 ```
 
 _See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/run/suite.ts)_
+
 <!-- commandsstop -->
