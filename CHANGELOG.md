@@ -2,6 +2,7 @@
 
 ## 0.3.0 (TBD)
 
+- Add export and import of values for cross suite handling
 - Add YAML support to suites (precedence is JSON)
 - Update dependencies
 

@@ -126,6 +126,24 @@ set to the expected one.
 > see them in context.
 > If an assertions fails an error message is being displayed (exit code > 0).
 
+###### Exports
+
+You can define exports to persist given value (e.g. captures) to a file that can
+later be picked up by a subsequent suite run. These exported values are
+namespaced by the case and are available in the same named case in a subsequent
+suite. This is needed when you want to test delayed or asynchronous features
+like the result of a processing.
+
+> To actually be able to use this in an automated fasion the delay can be
+> steered by a CI tool like GitLab CI.
+
+###### Imports
+
+Imports are the counterpart for exports. This allows to tell the case which
+formerly exported values to load from the shared file and use f.e. as a
+parameter for the follow up case. To use a formerly exported value use the
+`$imports.` format (e.g. `$imports.exportName`).
+
 ## Setting up a new project
 
 To bootstrap a new project `wate init` can be used which will automatically
