@@ -13,7 +13,7 @@ import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion} from '../../assertion'
-import Export from '../../data/export'
+import Report from '../../data/report'
 
 const {bold, dim} = Chalk
 
@@ -147,10 +147,10 @@ export default class SuiteCommand extends Command {
     suiteCase: Case,
     context: Context,
     flags: {
-      verbose: boolean;
-      dry: boolean;
-      captures: boolean;
-      assertions: boolean;
+      verbose: boolean
+      dry: boolean
+      captures: boolean
+      assertions: boolean
     },
   ): Promise<Response[]> {
     const startTime = Date.now()
@@ -209,8 +209,8 @@ export default class SuiteCommand extends Command {
     request: Request,
     context: Context,
     flags: {
-      printCaptures: boolean;
-      printAssertions: boolean;
+      printCaptures: boolean
+      printAssertions: boolean
     },
   ) {
     const response = await RequestRunner.run(request)
@@ -303,7 +303,7 @@ export default class SuiteCommand extends Command {
         actual: assertion.actual,
       }
     })
-    const filename = await Export.write(name, printableAssertions)
+    const filename = await Report.write(name, printableAssertions)
 
     this.log(`Exported to ${filename}`)
   }
