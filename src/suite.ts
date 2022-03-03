@@ -2,30 +2,33 @@ import {KeyValue as ParamKeyValue} from './param'
 import {KeyValue as CaptureKeyValue} from './capture'
 import {KeyValue as AssertionKeyValue} from './assertion'
 import Request from './request'
+import {Import} from './import'
 
 export interface SuiteDefinition {
-  name: string;
-  cases: CaseDefinition[];
+  name: string
+  import: string
+  cases: CaseDefinition[]
 }
 
 export interface CaseDefinition {
-  name: string;
-  requests: RequestDefinition[];
+  name: string
+  requests: RequestDefinition[]
 }
 
 export interface Suite {
-  name: string;
-  cases: Case[];
+  name: string
+  imports: Import[]
+  cases: Case[]
 }
 
 export interface Case {
-  name: string;
-  requests: Request[];
+  name: string
+  requests: Request[]
 }
 
 export interface RequestDefinition {
-  request: string;
-  params: ParamKeyValue;
-  captures: CaptureKeyValue;
-  assertions: AssertionKeyValue;
+  request: string
+  params: ParamKeyValue
+  captures: CaptureKeyValue
+  assertions: AssertionKeyValue
 }

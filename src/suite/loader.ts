@@ -11,6 +11,7 @@ import DataHelper from '../data/helper'
 import CaptureDefinition from '../capture'
 import AssertionDefinition from '../assertion'
 import {JSON_SCHEMA} from 'js-yaml'
+import {Import} from '../import'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -18,6 +19,7 @@ export default class SuiteLoader {
     properties: {
       name: {type: 'string'},
       description: {type: 'string'},
+      import: {type: 'string'},
       cases: {
         type: 'array',
         items: {
@@ -84,8 +86,11 @@ export default class SuiteLoader {
 
     SuiteLoader.validateSuite(suiteDefinition)
 
+    const imports = SuiteLoader.loadImports(suitePath, suiteDefinition.import)
+
     return {
       name: suiteDefinition.name,
+      imports,
       cases: suiteDefinition.cases.map(({name, requests}) =>
         SuiteLoader.prepareCase(name, requests, context),
       ),
@@ -102,6 +107,29 @@ export default class SuiteLoader {
         `"${validation.error?.path}" ${validation.error?.message}`,
       )
     }
+  }
+
+  private static loadImports(suitePath: string, name?: string): Import[] {
+    if (!name) {
+      return []
+    }
+
+    const filePath = path.join(suitePath, '..', `${name}.json`)
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Import file '${name}' (${filePath}) not found`)
+    }
+
+    const caseImports = JSON.parse(fs.readFileSync(filePath).toString())
+    const imports: Import[] = []
+    for (const [caseName, importedValues] of Object.entries(caseImports)) {
+      for (const [name, value] of Object.entries(
+        importedValues as {[key: string]: any},
+      )) {
+        imports.push({caseName, name, value})
+      }
+    }
+
+    return imports
   }
 
   private static prepareCase(

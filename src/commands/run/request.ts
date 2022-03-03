@@ -128,6 +128,7 @@ export default class RequestCommand extends Command {
       params: [],
       captures: [],
       assertions: [],
+      imports: [],
     }
   }
 

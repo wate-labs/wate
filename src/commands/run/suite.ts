@@ -6,7 +6,7 @@ import SuiteLoader from '../../suite/loader'
 import Request from '../../request'
 import Response from '../../response'
 import RequestRunner from '../../request/runner'
-import {Case} from '../../suite'
+import {Case, Suite} from '../../suite'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
 import {Capture} from '../../capture'
@@ -67,9 +67,10 @@ export default class SuiteCommand extends Command {
     const envName = args.environment
     const suiteName = args.suite
     const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
-    const context = this.buildContext(flags, envName)
+    let context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
+    context = this.addImports(context, suite)
     this.log(
       [
         dim(
@@ -132,6 +133,7 @@ export default class SuiteCommand extends Command {
       params: [],
       captures: [],
       assertions: [],
+      imports: [],
     }
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
@@ -139,6 +141,12 @@ export default class SuiteCommand extends Command {
         context.params = [...context.params, {name, value}]
       })
     }
+
+    return context
+  }
+
+  private addImports(context: Context, suite: Suite): Context {
+    context.imports = suite.imports
 
     return context
   }

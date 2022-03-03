@@ -1,0 +1,9 @@
+name: My suite name
+import: exports/export
+cases:
+- name: My test case
+  requests:
+  - request: request_with_import
+    params:
+      value: $imports.exportedKey
+

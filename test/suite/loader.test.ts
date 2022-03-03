@@ -18,8 +18,9 @@ describe('suite loader', () => {
       params: [],
       captures: [],
       assertions: [],
+      imports: [],
     }
-    const suite = SuiteLoader.load(suitePath, 'suite_1', context)
+    const suite = SuiteLoader.load(suitePath, 'suite_json', context)
     assert.equal(suite.name, 'My suite name')
     assert.lengthOf(suite.cases, 1)
     const suiteCase = suite.cases.pop()
@@ -36,13 +37,31 @@ describe('suite loader', () => {
       params: [],
       captures: [],
       assertions: [],
+      imports: [],
     }
-    const suite = SuiteLoader.load(suitePath, 'suite_2', context)
+    const suite = SuiteLoader.load(suitePath, 'suite_yaml', context)
     assert.equal(suite.name, 'My suite name')
     assert.lengthOf(suite.cases, 1)
     const suiteCase = suite.cases.pop()
     assert.equal(suiteCase!.name, 'My test case')
     assert.lengthOf(suiteCase!.requests, 1)
+  })
+
+  it('loads imported values', () => {
+    const suitePath = fixturePath
+    const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
+    const context: Context = {
+      requestsLocation: requestsPath,
+      environment: environment,
+      params: [],
+      captures: [],
+      assertions: [],
+      imports: [],
+    }
+    const suite = SuiteLoader.load(suitePath, 'suite_imports', context)
+    assert.deepEqual(suite.imports, [
+      {caseName: 'My test case', name: 'exportedKey', value: 'exportedValue'},
+    ])
   })
 
   it('raises an error if the suite cannot be found', () => {
@@ -54,6 +73,7 @@ describe('suite loader', () => {
       params: [],
       captures: [],
       assertions: [],
+      imports: [],
     }
     assert.throws(() => {
       SuiteLoader.load(suitePath, 'i_do_not_exist', context)

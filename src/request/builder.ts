@@ -9,6 +9,7 @@ import DataHelper from '../data/helper'
 import Context from '../context'
 import CaptureDefinition, {Capture} from '../capture'
 import AssertionDefinition from '../assertion'
+import {Import} from '../import'
 
 export default class RequestBuilder {
   public static prepare(
@@ -16,8 +17,8 @@ export default class RequestBuilder {
     context: Context,
     params: Param[],
     definitons: {
-      captures: CaptureDefinition[];
-      assertions: AssertionDefinition[];
+      captures: CaptureDefinition[]
+      assertions: AssertionDefinition[]
     },
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
@@ -38,7 +39,9 @@ export default class RequestBuilder {
 
   public static render(request: Request, context: Context): Request {
     const preRequestScript = path.join(request.path, 'pre-request.js')
-    let params = RequestBuilder.applyCapturesToParams(request.params, context)
+    let params = request.params
+    params = RequestBuilder.applyImportsToParams(params, context.imports)
+    params = RequestBuilder.applyCapturesToParams(params, context.captures)
     params = RequestBuilder.applyPreRequestHandling(
       preRequestScript,
       params,
@@ -93,12 +96,40 @@ export default class RequestBuilder {
     return [...params, ...normalizedParams]
   }
 
-  private static applyCapturesToParams(
+  private static applyImportsToParams(
     params: Param[],
-    context: Context,
+    imports: Import[],
   ): Param[] {
     return params.map(param =>
-      RequestBuilder.applyCapturesToParam(param, context.captures),
+      RequestBuilder.applyImportsToParam(param, imports),
+    )
+  }
+
+  private static applyImportsToParam(param: Param, imports: Import[]): Param {
+    if (
+      typeof param.value === 'string' &&
+      param.value.startsWith('$imports.')
+    ) {
+      const importName = param.value.replace('$imports.', '')
+      const importValue = imports.filter(
+        importValue => importValue.name === importName,
+      )
+      if (importValue.length !== 1) {
+        throw new Error(`Import ${importName} ambiguous or not found`)
+      }
+
+      return {name: param.name, value: importValue[0].value}
+    }
+
+    return param
+  }
+
+  private static applyCapturesToParams(
+    params: Param[],
+    captures: Capture[],
+  ): Param[] {
+    return params.map(param =>
+      RequestBuilder.applyCapturesToParam(param, captures),
     )
   }
 

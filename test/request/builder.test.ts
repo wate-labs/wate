@@ -15,6 +15,7 @@ const buildContext = (environment: Environment): Context => {
     params: [],
     captures: [],
     assertions: [],
+    imports: [],
   }
 }
 
