@@ -13,17 +13,19 @@ import AssertionDefinition from '../assertion'
 export default class RequestBuilder {
   public static prepare(
     requestPath: string,
+    delayed: number,
     context: Context,
     params: Param[],
     definitons: {
-      captures: CaptureDefinition[];
-      assertions: AssertionDefinition[];
+      captures: CaptureDefinition[]
+      assertions: AssertionDefinition[]
     },
   ): Request {
     const request = RequestBuilder.load(path.join(requestPath, 'request.http'))
     const host = context.environment.host ?? request.headers.Host
 
     return {
+      delayed,
       path: requestPath,
       url: request.uri,
       baseURL: context.environment.scheme + '://' + host,

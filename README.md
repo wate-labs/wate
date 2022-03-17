@@ -88,6 +88,9 @@ Cases have a name and one or more requests.
 Requests as descibe above are the building block of suite cases. Used in the
 context of a case requests have some additional functionality.
 
+> Case requests can also have a `delayed` property set which delays execution
+> in seconds. These requests are ran at the end of the suite.
+
 ###### Params
 
 Static values for requests can be defined as part of the `params` property.
