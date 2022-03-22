@@ -157,7 +157,7 @@ export default class SuiteCommand extends Command {
           let response: Response = ResponseHelper.emptyResponse(request);
 
           this.log(dim(`[${caseName}] Running (${request.url})`));
-          request = RequestBuilder.render(request, context);
+          request = RequestBuilder.render(caseName, request, context);
           if (flags.verbose) {
             this.log(Printer.request(request));
           }
@@ -249,7 +249,7 @@ export default class SuiteCommand extends Command {
         continue;
       }
 
-      request = RequestBuilder.render(request, context);
+      request = RequestBuilder.render(suiteCase.name, request, context);
 
       if (flags.verbose) {
         this.log(Printer.request(request));
