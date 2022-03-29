@@ -19,7 +19,7 @@ export default class RequestCommand extends Command {
   static args = [
     {name: 'environment', description: 'environment to use', required: true},
     {name: 'request', description: 'name of the request', required: true},
-  ]
+  ];
 
   static flags = {
     help: Flags.help({char: 'h'}),
@@ -41,15 +41,15 @@ export default class RequestCommand extends Command {
       description: 'capture value from response with given JSONPath expression',
       multiple: true,
     }),
-  }
+  };
 
-  static description = 'run an existing request'
+  static description = 'run an existing request';
 
-  static examples = ['$ wate run:request test ping']
+  static examples = ['$ wate run:request test ping'];
 
-  static envDir = 'environments'
+  static envDir = 'environments';
 
-  static reqDir = 'requests'
+  static reqDir = 'requests';
 
   async run() {
     const {args, flags} = await this.parse(RequestCommand)
@@ -89,6 +89,7 @@ export default class RequestCommand extends Command {
   ) {
     const request = RequestBuilder.prepare(
       path.join(RequestCommand.reqDir, reqName),
+      0,
       context,
       params,
       {
@@ -97,7 +98,7 @@ export default class RequestCommand extends Command {
       },
     )
 
-    return RequestBuilder.render(request, context)
+    return RequestBuilder.render('n/a', request, context)
   }
 
   private async runRequest(request: Request, verbose: boolean, dry: boolean) {
@@ -131,7 +132,7 @@ export default class RequestCommand extends Command {
     }
   }
 
-  private buildParams(flags: {parameters?: string[]}): Param[] {
+  private buildParams(flags: { parameters?: string[] }): Param[] {
     let params: Param[] = []
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
@@ -143,7 +144,7 @@ export default class RequestCommand extends Command {
     return params
   }
 
-  private buildCaptures(flags: {captures?: string[]}): CaptureDefinition[] {
+  private buildCaptures(flags: { captures?: string[] }): CaptureDefinition[] {
     let captures: CaptureDefinition[] = []
     if (flags.captures) {
       flags.captures.forEach((raw: string) => {

@@ -3,16 +3,17 @@ import * as fs from 'node:fs'
 import * as ExcelJS from 'exceljs'
 
 export default class Export {
-  static dateTimeFormat = format('yyyy-MM-dd-hhmm')
+  static dateTimeFormat = format('yyyy-MM-dd-HHmm');
 
   public static async write(
     name: string,
     data: {
-      matched: string
-      case_name: string
-      assertion_name: string
-      expected: string
-      actual: string
+      matched: string;
+      case_name: string;
+      assertion_name: string;
+      expected: string;
+      actual: string;
+      debug: string;
     }[],
   ): Promise<string> {
     if (!fs.existsSync('reports')) {
@@ -29,6 +30,7 @@ export default class Export {
       {header: 'Assertion Name', key: 'assertion_name', width: 20},
       {header: 'Expected', key: 'expected', width: 20},
       {header: 'Actual', key: 'actual', width: 20},
+      {header: 'Debug', key: 'debug', width: 150},
     ]
     const columns = [
       'matched',
@@ -36,6 +38,7 @@ export default class Export {
       'assertion_name',
       'expected',
       'actual',
+      'debug',
     ]
     worksheet.autoFilter = {
       from: 'B1',
@@ -80,7 +83,9 @@ export default class Export {
     const actualCol = worksheet.getColumn('actual')
     actualCol.alignment = {wrapText: true, horizontal: 'right'}
 
-    const filename = `reports/${Export.dateTimeFormat(new Date())}_${name}.xlsx`
+    const filename = `reports/${Export.dateTimeFormat(
+      new Date(),
+    )}_${name}.xlsx`
 
     await workbook.xlsx.writeFile(filename)
 

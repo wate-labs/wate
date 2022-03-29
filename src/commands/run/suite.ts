@@ -21,7 +21,7 @@ export default class SuiteCommand extends Command {
   static args = [
     {name: 'environment', description: 'environment to use', required: true},
     {name: 'suite', description: 'name of the suite', required: true},
-  ]
+  ];
 
   static flags = {
     help: Flags.help({char: 'h'}),
@@ -50,17 +50,17 @@ export default class SuiteCommand extends Command {
       char: 'r',
       description: 'write report to file',
     }),
-  }
+  };
 
-  static description = 'run an existing suite'
+  static description = 'run an existing suite';
 
-  static examples = ['$ wate run:suite test suite']
+  static examples = ['$ wate run:suite test suite'];
 
-  static envDir = 'environments'
+  static envDir = 'environments';
 
-  static reqDir = 'requests'
+  static reqDir = 'requests';
 
-  static suiteDir = 'suites'
+  static suiteDir = 'suites';
 
   async run() {
     const {args, flags} = await this.parse(SuiteCommand)
@@ -88,9 +88,27 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
+    let delayed: [string, Request[]][] = []
     for await (const suiteCase of suite.cases) {
-      await this.runCase(suiteCase, context, flags)
+      delayed.push([
+        suiteCase.name,
+        await this.runCase(suiteCase, context, flags),
+      ])
     }
+
+    CliUx.ux.action.start('Waiting for delayed processing')
+    let counter = 0
+    let processed = false
+    while (!processed) {
+      counter = await this.tick(counter)
+      delayed = await this.runDelayed(delayed, counter, context, flags)
+      if (delayed.length === 0) {
+        this.log('Finished delayed processing')
+        processed = true
+      }
+    }
+
+    CliUx.ux.action.stop()
 
     const durationInMs = Date.now() - startTime
     this.log(
@@ -112,7 +130,7 @@ export default class SuiteCommand extends Command {
 
     if (context.assertions.length > 0) {
       if (flags.report) {
-        await this.exportAssertions(suite.name, context.assertions)
+        await this.export(suite.name, context.assertions, context.captures)
       }
 
       this.printAssertions(
@@ -122,8 +140,72 @@ export default class SuiteCommand extends Command {
     }
   }
 
+  private async runDelayed(
+    delayedQueue: [string, Request[]][],
+    counter: number,
+    context: Context,
+    flags: {
+      captures: boolean;
+      assertions: boolean;
+      verbose: boolean;
+      dry: boolean;
+    },
+  ): Promise<[string, Request[]][]> {
+    const remainingQueue: [string, Request[]][] = []
+    for (const [caseName, requests] of delayedQueue) {
+      const remainingRequests: Request[] = []
+      for await (let request of requests) {
+        if (request.delayed === counter) {
+          let response: Response = ResponseHelper.emptyResponse(request)
+
+          this.log(dim(`[${caseName}] Running (${request.url})`))
+          request = RequestBuilder.render(caseName, request, context)
+          if (flags.verbose) {
+            this.log(Printer.request(request))
+          }
+
+          if (!flags.dry) {
+            response = await this.runRequest(caseName, request, context, {
+              printCaptures: flags.captures,
+              printAssertions: flags.assertions,
+            })
+          }
+
+          if (flags.verbose) {
+            this.log(Printer.response(response))
+          }
+
+          if (response.hasError) {
+            this.error(
+              [
+                `[${caseName}] Finished request with an error: ${response.error.reason} on ${request.url}`,
+                Printer.requestAndResponse(request, response, false),
+              ].join('\n'),
+            )
+          }
+
+          this.log(
+            [
+              dim(
+                `[${caseName}] Finished request with status ${response.status} in ${response.durationInMs}ms`,
+              ),
+            ].join('\n'),
+          )
+        } else {
+          remainingRequests.push(request)
+        }
+      }
+
+      if (remainingRequests.length > 0) {
+        remainingQueue.push([caseName, remainingRequests])
+      }
+    }
+
+    return remainingQueue
+  }
+
   private buildContext(
-    flags: {parameters?: string[]},
+    flags: { parameters?: string[] },
     envName: string,
   ): Context {
     const context: Context = {
@@ -152,16 +234,26 @@ export default class SuiteCommand extends Command {
       captures: boolean;
       assertions: boolean;
     },
-  ): Promise<Response[]> {
+  ): Promise<Request[]> {
     const startTime = Date.now()
     this.log(`Starting case ${suiteCase.name}`)
-    const responses: Response[] = []
+    const delayed: Request[] = []
     for await (let request of suiteCase.requests) {
       let response: Response = ResponseHelper.emptyResponse(request)
 
       this.log(dim(`[${suiteCase.name}] Running (${request.url})`))
 
-      request = RequestBuilder.render(request, context)
+      if (request.delayed) {
+        this.log(
+          dim(
+            `[${suiteCase.name}] Put request to queue. Will be run in ${request.delayed}s.`,
+          ),
+        )
+        delayed.push(request)
+        continue
+      }
+
+      request = RequestBuilder.render(suiteCase.name, request, context)
 
       if (flags.verbose) {
         this.log(Printer.request(request))
@@ -194,14 +286,12 @@ export default class SuiteCommand extends Command {
           ),
         ].join('\n'),
       )
-
-      responses.push(response)
     }
 
     const durationInMs = Date.now() - startTime
     this.log(`Finished case ${suiteCase.name} in ${durationInMs}ms`, '\n')
 
-    return responses
+    return delayed
   }
 
   private async runRequest(
@@ -212,7 +302,7 @@ export default class SuiteCommand extends Command {
       printCaptures: boolean;
       printAssertions: boolean;
     },
-  ) {
+  ): Promise<Response> {
     const response = await RequestRunner.run(request)
     const captures = response.captures.map((capture: Capture) => {
       capture.caseName = caseName
@@ -292,12 +382,19 @@ export default class SuiteCommand extends Command {
     }
   }
 
-  private async exportAssertions(name: string, assertions: Assertion[]) {
+  private async export(
+    name: string,
+    assertions: Assertion[],
+    captures: Capture[],
+  ) {
     this.log(`Generating export for ${name}`)
     const printableAssertions = assertions.map(assertion => {
       return {
         matched: assertion.matched ? '✓' : '⨯',
         case_name: assertion.caseName,
+        debug: this.buildDebug(
+          captures.filter(capture => capture.caseName === assertion.caseName),
+        ),
         assertion_name: assertion.name,
         expected: assertion.expected,
         actual: assertion.actual,
@@ -306,5 +403,28 @@ export default class SuiteCommand extends Command {
     const filename = await Export.write(name, printableAssertions)
 
     this.log(`Exported to ${filename}`)
+  }
+
+  private buildDebug(captures: Capture[]): string {
+    if (captures.length === 0) {
+      return ''
+    }
+
+    const printableCaptures = captures.map(
+      capture => `${capture.name}: ${JSON.stringify(capture.value)}`,
+    )
+
+    return printableCaptures.join('\n')
+  }
+
+  private async tick(counter: number): Promise<number> {
+    await this.sleep(1000)
+    return counter + 1
+  }
+
+  private sleep(ms: number) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms)
+    })
   }
 }

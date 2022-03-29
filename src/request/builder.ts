@@ -13,6 +13,7 @@ import AssertionDefinition from '../assertion'
 export default class RequestBuilder {
   public static prepare(
     requestPath: string,
+    delayed: number,
     context: Context,
     params: Param[],
     definitons: {
@@ -24,6 +25,7 @@ export default class RequestBuilder {
     const host = context.environment.host ?? request.headers.Host
 
     return {
+      delayed,
       path: requestPath,
       url: request.uri,
       baseURL: context.environment.scheme + '://' + host,
@@ -36,9 +38,17 @@ export default class RequestBuilder {
     }
   }
 
-  public static render(request: Request, context: Context): Request {
+  public static render(
+    caseName: string,
+    request: Request,
+    context: Context,
+  ): Request {
     const preRequestScript = path.join(request.path, 'pre-request.js')
-    let params = RequestBuilder.applyCapturesToParams(request.params, context)
+    let params = RequestBuilder.applyCapturesToParams(
+      caseName,
+      request.params,
+      context,
+    )
     params = RequestBuilder.applyPreRequestHandling(
       preRequestScript,
       params,
@@ -94,15 +104,17 @@ export default class RequestBuilder {
   }
 
   private static applyCapturesToParams(
+    caseName: string,
     params: Param[],
     context: Context,
   ): Param[] {
     return params.map(param =>
-      RequestBuilder.applyCapturesToParam(param, context.captures),
+      RequestBuilder.applyCapturesToParam(caseName, param, context.captures),
     )
   }
 
   private static applyCapturesToParam(
+    caseName: string,
     param: Param,
     captures: Capture[],
   ): Param {
@@ -111,7 +123,10 @@ export default class RequestBuilder {
       param.value.startsWith('$captures.')
     ) {
       const captureName = param.value.replace('$captures.', '')
-      const capture = captures.filter(capture => capture.name === captureName)
+      const capture = captures.filter(
+        capture =>
+          capture.caseName === caseName && capture.name === captureName,
+      )
       if (capture.length !== 1) {
         throw new Error(`Capture ${captureName} ambiguous or not found`)
       }
@@ -123,9 +138,9 @@ export default class RequestBuilder {
   }
 
   private static applyParamsToAll(
-    data: {[key: string]: string},
+    data: { [key: string]: string },
     params: Param[],
-  ): {[key: string]: string} {
+  ): { [key: string]: string } {
     for (const [key, value] of Object.entries(data)) {
       data[key] = RequestBuilder.applyParams(value, params)
     }

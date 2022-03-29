@@ -15,6 +15,7 @@ export default class RequestRunner {
       reason: '',
     }
     let captures: Capture[] = []
+
     axios.interceptors.request.use(
       function (config) {
         (config as MetadataAwareAxiosRequestConfig).metadata = {

@@ -49,6 +49,7 @@ export default class SuiteLoader {
         type: 'object',
         properties: {
           request: {type: 'string'},
+          delayed: {type: 'number'},
           params: {
             type: 'object',
             additionalProperties: true,
@@ -111,22 +112,26 @@ export default class SuiteLoader {
   ): Case {
     return {
       name: name,
-      requests: requests.map(({request, params, captures, assertions}) => {
-        return SuiteLoader.prepareRequest(
-          request,
-          DataHelper.toParam(params),
-          {
-            captures: DataHelper.toCapture(captures),
-            assertions: DataHelper.toAssertion(assertions),
-          },
-          context,
-        )
-      }),
+      requests: requests.map(
+        ({request, delayed, params, captures, assertions}) => {
+          return SuiteLoader.prepareRequest(
+            request,
+            delayed,
+            DataHelper.toParam(params),
+            {
+              captures: DataHelper.toCapture(captures),
+              assertions: DataHelper.toAssertion(assertions),
+            },
+            context,
+          )
+        },
+      ),
     }
   }
 
   private static prepareRequest(
     request: string,
+    delayed: number,
     params: Param[],
     definitions: {
       captures: CaptureDefinition[]
@@ -136,6 +141,7 @@ export default class SuiteLoader {
   ): Request {
     return RequestBuilder.prepare(
       path.join(context.requestsLocation, request),
+      delayed,
       context,
       params,
       {
