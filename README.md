@@ -76,6 +76,32 @@ Suites have a name and one or more cases.
 > Suite files can be both in JSON or YAML file format. The precedence is JSON
 > over YAML in case of same names.
 
+#### Matrices
+
+Sometimes there is a fairly complex setup for testing a particular behavior
+needed in terms of the cases. To not have to copy the ceremonial setups over
+and over again the matrix feature comes to help.
+
+With a matrix you can define only the parts of a case that actually change,
+e.g. an age which is used in one or more test case requests. The parts
+supported are:
+
+- params
+- captures
+- assertions
+
+In the request's definition you can access those as `$matrix.params.age` for 
+single value access or `$matrix.captures` for complete replacements.
+
+Cases acting as matrix test cases need to be annotated with the property
+`matrix: true`.
+
+> Note: complete replacements still need to match the overall schema. Hence
+> those might need prefixing of the special propery name `_`, e.g. 
+> `_: $matrix.captures`.
+
+All matrix defintions are run sequentially, one after another.
+
 #### Cases
 
 A suite consists of one or more cases. The cases have one or more requests
@@ -86,10 +112,12 @@ Cases have a name and one or more requests.
 ##### Case requests
 
 Requests as descibe above are the building block of suite cases. Used in the
-context of a case requests have some additional functionality.
+context of a case requests have some additional functionality. All case 
+requests are run sequentially.
 
 > Case requests can also have a `delayed` property set which delays execution
-> in seconds. These requests are ran at the end of the suite.
+> in seconds. These requests are queued and executed at the end of the suite.
+> The captures defined are evaluated at runtime.
 
 ###### Params
 

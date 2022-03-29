@@ -2,6 +2,7 @@
 
 ## 0.3.0 (TBD)
 
+- Add matrix test cases
 - Add delayed requests
 - Add YAML support to suites (precedence is JSON)
 - Update dependencies
