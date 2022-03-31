@@ -99,6 +99,7 @@ export default class SuiteCommand extends Command {
     CliUx.ux.action.start('Waiting for delayed processing')
     let counter = 0
     let processed = false
+    /* eslint-disable no-await-in-loop */
     while (!processed) {
       counter = await this.tick(counter)
       delayed = await this.runDelayed(delayed, counter, context, flags)
@@ -154,6 +155,7 @@ export default class SuiteCommand extends Command {
     const remainingQueue: [string, Request[]][] = []
     for (const [caseName, requests] of delayedQueue) {
       const remainingRequests: Request[] = []
+      /* eslint-disable no-await-in-loop */
       for await (let request of requests) {
         if (request.delayed === counter) {
           let response: Response = ResponseHelper.emptyResponse(request)

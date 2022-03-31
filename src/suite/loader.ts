@@ -2,6 +2,7 @@ import * as path from 'node:path'
 import * as fs from 'node:fs'
 import * as yaml from 'js-yaml'
 import {JSON_SCHEMA} from 'js-yaml'
+import {cloneDeep} from 'lodash'
 import {Suite, Case, SuiteDefinition, RequestDefinition, CaseDefinition, KeyValueBag} from '../suite'
 import Request from '../request'
 import SchemaValidator, {ValidationSchema} from '../validator/schema'
@@ -11,8 +12,6 @@ import DataHelper from '../data/helper'
 import Param, {KeyValue as ParamKeyValue} from '../param'
 import CaptureDefinition, {KeyValue as CaptureKeyValue} from '../capture'
 import AssertionDefinition, {KeyValue as AssertionKeyValue} from '../assertion'
-import Debug from '../helpers/debug'
-import { cloneDeep } from 'lodash'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
