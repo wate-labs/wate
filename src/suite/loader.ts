@@ -11,6 +11,8 @@ import DataHelper from '../data/helper'
 import Param, {KeyValue as ParamKeyValue} from '../param'
 import CaptureDefinition, {KeyValue as CaptureKeyValue} from '../capture'
 import AssertionDefinition, {KeyValue as AssertionKeyValue} from '../assertion'
+import Debug from '../helpers/debug'
+import { cloneDeep } from 'lodash'
 
 export default class SuiteLoader {
   static schema: ValidationSchema = {
@@ -122,7 +124,7 @@ export default class SuiteLoader {
       cases = cases.filter(({matrix}) => matrix !== true)
       suiteDefinition.matrix.forEach(({name, caseName, params, captures, assertions}) => {
         console.log(`Building matrix test case for ${caseName} as ${name}`)
-        const caseDefinition = matrixTestCases.filter(caseDefinition => caseDefinition.name === caseName).pop()
+        const caseDefinition = cloneDeep(matrixTestCases.filter(caseDefinition => caseDefinition.name === caseName).pop())
         if (!caseDefinition) {
           throw new Error(`No test case found with name "${caseName}" or it is not annotated as matrix test case`)
         }
