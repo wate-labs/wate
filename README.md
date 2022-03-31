@@ -167,36 +167,33 @@ To bootstrap the building blocks please refer to the [commands](#commands).
 ## Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g wate
 $ wate COMMAND
 running command...
-$ wate (-v|--version|version)
-wate/0.2.0 darwin-x64 node-v14.17.3
+$ wate (--version)
+wate/0.3.0 darwin-x64 node-v16.13.2
 $ wate --help [COMMAND]
 USAGE
   $ wate COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 ## Commands
 
 <!-- commands -->
-
-- [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
-- [`wate create:environment NAME`](#wate-createenvironment-name)
-- [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
-- [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
-- [`wate help [COMMAND]`](#wate-help-command)
-- [`wate init`](#wate-init)
-- [`wate list:environments`](#wate-listenvironments)
-- [`wate list:requests`](#wate-listrequests)
-- [`wate list:suites`](#wate-listsuites)
-- [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
-- [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
+* [`wate autocomplete [SHELL]`](#wate-autocomplete-shell)
+* [`wate create:environment NAME`](#wate-createenvironment-name)
+* [`wate create:request REQUESTNAME`](#wate-createrequest-requestname)
+* [`wate create:suite SUITENAME`](#wate-createsuite-suitename)
+* [`wate help [COMMAND]`](#wate-help-command)
+* [`wate init`](#wate-init)
+* [`wate list:environments`](#wate-listenvironments)
+* [`wate list:requests`](#wate-listrequests)
+* [`wate list:suites`](#wate-listsuites)
+* [`wate run:request ENVIRONMENT REQUEST`](#wate-runrequest-environment-request)
+* [`wate run:suite ENVIRONMENT SUITE`](#wate-runsuite-environment-suite)
 
 ## `wate autocomplete [SHELL]`
 
@@ -204,22 +201,28 @@ display autocomplete installation instructions
 
 ```
 USAGE
-  $ wate autocomplete [SHELL]
+  $ wate autocomplete [SHELL] [-r]
 
 ARGUMENTS
   SHELL  shell type
 
-OPTIONS
+FLAGS
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
+
+DESCRIPTION
+  display autocomplete installation instructions
 
 EXAMPLES
   $ wate autocomplete
+
   $ wate autocomplete bash
+
   $ wate autocomplete zsh
+
   $ wate autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v0.3.0/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v1.2.0/src/commands/autocomplete/index.ts)_
 
 ## `wate create:environment NAME`
 
@@ -227,19 +230,22 @@ create new environment
 
 ```
 USAGE
-  $ wate create:environment NAME
+  $ wate create:environment [NAME] [-h]
 
 ARGUMENTS
   NAME  name of the environment, e.g. my_collection/my_environment
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  create new environment
+
+EXAMPLES
   $ wate create:environment
 ```
 
-_See code: [src/commands/create/environment.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/create/environment.ts)_
+_See code: [dist/commands/create/environment.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -247,19 +253,22 @@ create new request
 
 ```
 USAGE
-  $ wate create:request REQUESTNAME
+  $ wate create:request [REQUESTNAME] [-h]
 
 ARGUMENTS
   REQUESTNAME  name of the request, e.g. my_collection/my_request
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  create new request
+
+EXAMPLES
   $ wate create:request
 ```
 
-_See code: [src/commands/create/request.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/create/request.ts)_
+_See code: [dist/commands/create/request.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -267,36 +276,42 @@ create new suite
 
 ```
 USAGE
-  $ wate create:suite SUITENAME
+  $ wate create:suite [SUITENAME] [-h]
 
 ARGUMENTS
   SUITENAME  name of the suite, e.g. my_collection/my_suite
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  create new suite
+
+EXAMPLES
   $ wate create:suite
 ```
 
-_See code: [src/commands/create/suite.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/create/suite.ts)_
+_See code: [dist/commands/create/suite.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
-display help for wate
+Display help for wate.
 
 ```
 USAGE
-  $ wate help [COMMAND]
+  $ wate help [COMMAND] [-n]
 
 ARGUMENTS
-  COMMAND  command to show help for
+  COMMAND  Command to show help for.
 
-OPTIONS
-  --all  see all commands in CLI
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for wate.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.3.1/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.11/src/commands/help.ts)_
 
 ## `wate init`
 
@@ -304,16 +319,19 @@ initialize new wate project
 
 ```
 USAGE
-  $ wate init
+  $ wate init [-h]
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  initialize new wate project
+
+EXAMPLES
   $ wate init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/init.ts)_
+_See code: [dist/commands/init.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -321,16 +339,19 @@ list the available environments
 
 ```
 USAGE
-  $ wate list:environments
+  $ wate list:environments [-h]
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  list the available environments
+
+EXAMPLES
   $ wate list:environments
 ```
 
-_See code: [src/commands/list/environments.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/list/environments.ts)_
+_See code: [dist/commands/list/environments.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -338,16 +359,19 @@ list the available collections and requests
 
 ```
 USAGE
-  $ wate list:requests
+  $ wate list:requests [-h]
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  list the available collections and requests
+
+EXAMPLES
   $ wate list:requests
 ```
 
-_See code: [src/commands/list/requests.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/list/requests.ts)_
+_See code: [dist/commands/list/requests.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -355,16 +379,19 @@ list the available suites
 
 ```
 USAGE
-  $ wate list:suites
+  $ wate list:suites [-h]
 
-OPTIONS
-  -h, --help  show CLI help
+FLAGS
+  -h, --help  Show CLI help.
 
-EXAMPLE
+DESCRIPTION
+  list the available suites
+
+EXAMPLES
   $ wate list:suites
 ```
 
-_See code: [src/commands/list/suites.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/list/suites.ts)_
+_See code: [dist/commands/list/suites.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -372,24 +399,27 @@ run an existing request
 
 ```
 USAGE
-  $ wate run:request ENVIRONMENT REQUEST
+  $ wate run:request [ENVIRONMENT] [REQUEST] [-h] [-v] [-d] [-p <value>] [-c <value>]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
   REQUEST      name of the request
 
-OPTIONS
-  -c, --captures=captures      capture value from response with given JSONPath expression
+FLAGS
+  -c, --captures=<value>...    capture value from response with given JSONPath expression
   -d, --dry                    perform a dry run without emitting the request
-  -h, --help                   show CLI help
-  -p, --parameters=parameters  use given parameter name and value in request
+  -h, --help                   Show CLI help.
+  -p, --parameters=<value>...  use given parameter name and value in request
   -v, --verbose                print the raw response headers and body
 
-EXAMPLE
+DESCRIPTION
+  run an existing request
+
+EXAMPLES
   $ wate run:request test ping
 ```
 
-_See code: [src/commands/run/request.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/run/request.ts)_
+_See code: [dist/commands/run/request.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -397,25 +427,27 @@ run an existing suite
 
 ```
 USAGE
-  $ wate run:suite ENVIRONMENT SUITE
+  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
   SUITE        name of the suite
 
-OPTIONS
+FLAGS
   -a, --assertions             print assertion results for each request
   -c, --captures               print captured values for each request
   -d, --dry                    perform a dry run without emitting requests
-  -h, --help                   show CLI help
-  -p, --parameters=parameters  use given parameter name and value in request
+  -h, --help                   Show CLI help.
+  -p, --parameters=<value>...  use given parameter name and value in request
   -r, --report                 write report to file
   -v, --verbose                print the raw response headers and body
 
-EXAMPLE
+DESCRIPTION
+  run an existing suite
+
+EXAMPLES
   $ wate run:suite test suite
 ```
 
-_See code: [src/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.2.0/src/commands/run/suite.ts)_
-
+_See code: [dist/commands/run/suite.ts](https://github.com/scflode/wate/blob/v0.3.0/dist/commands/run/suite.ts)_
 <!-- commandsstop -->

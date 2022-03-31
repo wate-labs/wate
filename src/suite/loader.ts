@@ -156,7 +156,7 @@ export default class SuiteLoader {
     return {name: caseName, requests: requests.map(({request, delayed, params, captures, assertions}) => {
       params = SuiteLoader.setMatrixValues(params, kvBag.params)
       captures = SuiteLoader.setMatrixValues(captures, kvBag.captures) as CaptureKeyValue
-      assertions = SuiteLoader.setMatrixValues(assertions, kvBag.assertions)
+      assertions = SuiteLoader.setMatrixValues(assertions, kvBag.assertions) as AssertionKeyValue
 
       return {
         request,
