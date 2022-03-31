@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 (TBD)
+## 0.3.0 (2022-03-31)
 
 - Add matrix test cases
 - Add delayed requests
