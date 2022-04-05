@@ -51,20 +51,28 @@ jobs:
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
       - run: npm ci
       - run: npx oclif pack tarballs
-
-  release-linux:
-    name: Release deb
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Attach artifacts to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          node-version: '16'
-      - run: sudo apt update
-      - run: sudo apt install nsis p7zip-full p7zip-rar -y
-      - run: npm ci
-      - run: whoami
-      - run: npx oclif pack deb
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.artifact_glob }}
+          file_glob: true
+          overwrite: true
+          tag: ${{ github.ref }}
+
+  #  release-linux:
+  #    name: Release deb
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - uses: actions/setup-node@v2
+  #        with:
+  #          node-version: '16'
+  #      - run: sudo apt update
+  #      - run: sudo apt install nsis p7zip-full p7zip-rar -y
+  #      - run: npm ci
+  #      - run: whoami
+  #      - run: npx oclif pack deb
 
   release-macos:
     name: Release macOS
@@ -77,4 +85,12 @@ jobs:
       - run: brew install makensis
       - run: npm ci
       - run: npx oclif pack macos
+      - name: Attach artifacts to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.artifact_glob }}
+          file_glob: true
+          overwrite: true
+          tag: ${{ github.ref }}
 
