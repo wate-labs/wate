@@ -2,11 +2,7 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      revision:
-        description: 'Branch name or commit hash'
-        required: true
-        default: 'main'
+
 jobs:
   #  release:
   #    name: Release ${{ matrix.os }}
@@ -53,7 +49,7 @@ jobs:
           node-version: '16'
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
-      - run: npm i -g shx
+      - run: npm ci
       - run: npx oclif pack tarballs
 
   release-linux:
@@ -66,7 +62,7 @@ jobs:
           node-version: '16'
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
-      - run: npm i -g shx
+      - run: npm ci
       - run: npx oclif pack deb
 
   release-macos:
@@ -78,6 +74,6 @@ jobs:
         with:
           node-version: '16'
       - run: brew install makensis
-      - run: npm i -g shx
+      - run: npm ci
       - run: npx oclif pack macos
 
