@@ -122,7 +122,6 @@ export default class SuiteLoader {
       const matrixTestCases = cases.filter(({matrix}) => matrix === true)
       cases = cases.filter(({matrix}) => matrix !== true)
       suiteDefinition.matrix.forEach(({name, caseName, params, captures, assertions}) => {
-        console.log(`Building matrix test case for ${caseName} as ${name}`)
         const caseDefinition = cloneDeep(matrixTestCases.filter(caseDefinition => caseDefinition.name === caseName).pop())
         if (!caseDefinition) {
           throw new Error(`No test case found with name "${caseName}" or it is not annotated as matrix test case`)
