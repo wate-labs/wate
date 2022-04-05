@@ -10,7 +10,7 @@
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-autocomplete": "^1.2.0",
-    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-help": "^5.1.11",
     "@types/http-string-parser": "0.0.29",
     "@types/mock-fs": "^4.13.1",
     "ajv": "^8.6.2",
@@ -90,10 +90,10 @@
     "lint": "eslint . --ext .ts --config .eslintrc",
     "fix": "eslint . --ext .ts --config .eslintrc --fix",
     "postpack": "shx rm -f oclif.manifest.json",
-    "posttest": "yarn lint",
-    "prepack": "yarn build && oclif manifest && oclif readme",
+    "posttest": "npm run lint",
+    "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only",
-    "test-all": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "test-all": "mocha --parallel --forbid-only 'test/**/*.test.ts'",
     "version": "oclif readme && git add README.md"
   },
   "types": "dist/index.d.ts"
