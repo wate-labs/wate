@@ -43,6 +43,19 @@ jobs:
   #          file_glob: true
   #          overwrite: true
   #          tag: ${{ github.ref }}
+  release-tarballs:
+    name: Release tarballs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: sudo apt update
+      - run: sudo apt install nsis p7zip-full p7zip-rar -y
+      - run: npm i -g shx
+      - run: npx oclif pack tarballs
+
   release-linux:
     name: Release deb
     runs-on: ubuntu-latest
@@ -53,7 +66,8 @@ jobs:
           node-version: '16'
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
-      - run: npx oclif pack dep -r .
+      - run: npm i -g shx
+      - run: npx oclif pack dep
 
   release-macos:
     name: Release macOS
@@ -64,5 +78,6 @@ jobs:
         with:
           node-version: '16'
       - run: brew install makensis
-      - run: npx oclif pack macos -r .
+      - run: npm i -g shx
+      - run: npx oclif pack macos
 
