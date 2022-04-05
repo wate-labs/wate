@@ -23,9 +23,9 @@ jobs:
         with:
           node-version: '16'
       - run: npm ci
-      - run: npm test test/commands/create/**/*.test.ts
-      - run: npm test test/commands/list/**/*.test.ts
-      - run: npm test test/commands/run/**/*.test.ts
-      - run: npm test test/commands/*.test.ts
+      - run: npm run test 'test/commands/create/**/*.test.ts'
+      - run: npm run test 'test/commands/list/**/*.test.ts'
+      - run: npm run test 'test/commands/run/**/*.test.ts'
+      - run: npm run test 'test/commands/*.test.ts'
       - run: npm run test-unit
 
