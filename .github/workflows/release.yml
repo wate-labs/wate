@@ -2,44 +2,95 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      revision:
-        description: 'Branch name or commit hash'
-        required: true
-        default: 'main'
-jobs:
-  release:
-    name: Release ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - target: deb
-          os: ubuntu-latest
-          artifact_name: ./dist/deb/*
-        - target: exe
-          os: windows-latest
-          artifact_name: ./dist/win/*
-        - target: pkg
-          os: macos-latest
-          artifact_glob: ./dist/macos/*
+jobs:
+  #  release:
+  #    name: Release ${{ matrix.os }}
+  #    runs-on: ${{ matrix.os }}
+  #
+  #    strategy:
+  #      fail-fast: false
+  #      matrix:
+  #        include:
+  #        - target: deb
+  #          os: ubuntu-latest
+  #          artifact_name: ./dist/deb/*
+  #        - target: win
+  #          os: windows-latest
+  #          artifact_name: ./dist/win/*
+  #        - target: macos
+  #          os: macos-latest
+  #          artifact_glob: ./dist/macos/*
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - uses: actions/setup-node@v2
+  #        with:
+  #          node-version: '16'
+  #      - run: |
+  #          if [ "$RUNNER_OS" == "macOS" ]; then
+  #            brew install makensis
+  #          fi
+  #      - run: npx oclif pack ${{ matrix.target }} -r .
+  #      - name: Attach artifacts to release
+  #        uses: svenstaro/upload-release-action@v2
+  #        with:
+  #          repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #          file: ${{ matrix.artifact_glob }}
+  #          file_glob: true
+  #          overwrite: true
+  #          tag: ${{ github.ref }}
+  release-tarballs:
+    name: Release tarballs
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            brew install makensis
-          fi
-      - run: npx oclif pack ${{ matrix.target }} -r .
+      - run: sudo apt update
+      - run: sudo apt install nsis p7zip-full p7zip-rar -y
+      - run: npm ci
+      - run: npx oclif pack tarballs
       - name: Attach artifacts to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.artifact_glob }}
+          file: ./dist/*.tar.{gz,xz}
           file_glob: true
           overwrite: true
           tag: ${{ github.ref }}
+
+  #  release-linux:
+  #    name: Release deb
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - uses: actions/setup-node@v2
+  #        with:
+  #          node-version: '16'
+  #      - run: sudo apt update
+  #      - run: sudo apt install nsis p7zip-full p7zip-rar -y
+  #      - run: npm ci
+  #      - run: whoami
+  #      - run: npx oclif pack deb
+
+  release-macos:
+    name: Release macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: brew install makensis
+      - run: npm ci
+      - run: npx oclif pack macos
+      - name: Attach artifacts to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./dist/macos/*
+          file_glob: true
+          overwrite: true
+          tag: ${{ github.ref }}
+
