@@ -22,6 +22,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - run: npm i -g yarn
-      - run: yarn
-      - run: yarn test-all
+      - run: npm ci
+      - run: npm run test-all
