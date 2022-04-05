@@ -10,7 +10,7 @@
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-autocomplete": "^1.2.0",
-    "@oclif/plugin-help": "^5.1.11",
+    "@oclif/plugin-help": "^5.1.12",
     "@types/http-string-parser": "0.0.30",
     "@types/mock-fs": "^4.13.1",
     "ajv": "^8.6.2",
