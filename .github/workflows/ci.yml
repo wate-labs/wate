@@ -15,5 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: mkdir .nyc_output
       - run: npm cache clear & npm ci
       - run: npm run test-all
