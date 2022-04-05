@@ -16,7 +16,7 @@ jobs:
           os: ubuntu-latest
           artifact_name: ./dist/deb/*
         - target: exe
-          os: win-latest
+          os: windows-latest
           artifact_name: ./dist/win/*
         - target: pkg
           os: macos-latest
