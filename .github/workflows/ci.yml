@@ -23,5 +23,5 @@ jobs:
         with:
           node-version: '16'
       - run: npm i -g yarn
-      - run: npm ci
-      - run: npm run test-all
+      - run: yarn
+      - run: yarn test-all
