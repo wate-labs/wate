@@ -67,7 +67,7 @@ jobs:
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
       - run: npm i -g shx
-      - run: npx oclif pack dep
+      - run: npx oclif pack deb
 
   release-macos:
     name: Release macOS
