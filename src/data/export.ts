@@ -62,14 +62,6 @@ export default class Export {
         fgColor: {argb: '008810'},
       }
 
-      const currentCell = row.getCell('case_name')
-      const caseSectionCell = caseSectionRow ? caseSectionRow.getCell('case_name') : null
-      if (caseSectionCell && currentCell.value === caseSectionCell.value) {
-        currentCell.merge(caseSectionCell, true)
-      } else {
-        caseSectionRow = row
-      }
-
       for (const name of columns) {
         const currentCell = row.getCell(name)
         currentCell.fill =
@@ -78,6 +70,16 @@ export default class Export {
           size: 12,
           color: {argb: 'FFFFFFFF'},
         }
+      }
+
+      const currentCaseNameCell = row.getCell('case_name')
+      const caseSectionCell = caseSectionRow ? caseSectionRow.getCell('case_name') : null
+      if (caseSectionCell && currentCaseNameCell.value === caseSectionCell.value) {
+        currentCaseNameCell.font = {
+          size: 1,
+        }
+      } else {
+        caseSectionRow = row
       }
     })
     // Align columns
