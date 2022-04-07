@@ -90,26 +90,31 @@ export default class SuiteCommand extends Command {
     )
     let delayed: [string, Request[]][] = []
     for await (const suiteCase of suite.cases) {
-      delayed.push([
-        suiteCase.name,
-        await this.runCase(suiteCase, context, flags),
-      ])
-    }
-
-    CliUx.ux.action.start('Waiting for delayed processing')
-    let counter = 0
-    let processed = false
-    /* eslint-disable no-await-in-loop */
-    while (!processed) {
-      counter = await this.tick(counter)
-      delayed = await this.runDelayed(delayed, counter, context, flags)
-      if (delayed.length === 0) {
-        this.log('Finished delayed processing')
-        processed = true
+      const delayedCases = await this.runCase(suiteCase, context, flags)
+      if (delayedCases.length > 0) {
+        delayed.push([
+          suiteCase.name,
+          delayedCases,
+        ])
       }
     }
 
-    CliUx.ux.action.stop()
+    if (delayed.length > 0) {
+      CliUx.ux.action.start('Waiting for delayed processing')
+      let counter = 0
+      let processed = false
+      /* eslint-disable no-await-in-loop */
+      while (!processed) {
+        counter = await this.tick(counter)
+        delayed = await this.runDelayed(delayed, counter, context, flags)
+        if (delayed.length === 0) {
+          this.log('Finished delayed processing')
+          processed = true
+        }
+      }
+
+      CliUx.ux.action.stop()
+    }
 
     const durationInMs = Date.now() - startTime
     this.log(

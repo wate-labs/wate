@@ -2,6 +2,7 @@
 
 ## 0.4.0 (TBD)
 
+- Skip waiting if no delayed requests are present
 - Improve Excel exports to look cleaner and be easier to work with
 
 ## 0.3.0 (2022-03-31)
