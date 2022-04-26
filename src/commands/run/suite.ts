@@ -321,13 +321,16 @@ export default class SuiteCommand extends Command {
       this.printCaptures(response.captures)
     }
 
-    let assertions = null
+    let assertions:Assertion[] = []
     if (request.assertions.length > 0) {
-      assertions = Asserter.assert(
-        caseName,
-        request.assertions,
-        context.captures,
-      )
+      if (!response.hasError) {
+        assertions = Asserter.assert(
+          caseName,
+          request.assertions,
+          context.captures,
+        )
+      }
+
       context.assertions = [...context.assertions, ...assertions]
       if (flags.printAssertions) {
         this.printAssertions(assertions)
