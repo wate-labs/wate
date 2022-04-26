@@ -1,12 +1,12 @@
 {
   "name": "wate",
   "description": "A tool for automated tests for web APIs",
-  "version": "0.4.0-dev",
+  "version": "0.4.0",
   "author": "Flo Schuessel @scflode",
   "bin": {
     "wate": "./bin/run"
   },
-  "bugs": "https://github.com/scflode/wate/issues",
+  "bugs": "https://github.com/wate-labs/wate/issues",
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-autocomplete": "^1.2.0",
@@ -55,7 +55,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/scflode/wate",
+  "homepage": "https://github.com/wate-labs/wate",
   "keywords": [
     "oclif"
   ],
@@ -84,7 +84,7 @@
       "identifier": "org.wate.cli"
     }
   },
-  "repository": "scflode/wate",
+  "repository": "wate-labs/wate",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts --config .eslintrc",

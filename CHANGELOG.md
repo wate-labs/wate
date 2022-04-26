@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 (TBD)
+## 0.4.0 (2022-04-26)
 
 - Improve error reporting
 - Improve Excel auto filters
