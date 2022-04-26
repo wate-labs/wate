@@ -2,6 +2,7 @@
 
 ## 0.4.0 (TBD)
 
+- Improve error reporting
 - Improve Excel auto filters
 - Skip waiting if no delayed requests are present
 - Improve Excel exports to look cleaner and be easier to work with
