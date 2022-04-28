@@ -96,7 +96,8 @@
     "test": "mocha --parallel --forbid-only 'test/**/*.test.ts'",
     "version": "oclif readme && git add README.md",
     "build:tarballs": "npx oclif pack tarballs",
-    "build:macos": "npx oclif pack macos"
+    "build:macos": "npx oclif pack macos",
+    "build:deb": "npx oclif pack deb"
   },
   "types": "dist/index.d.ts"
 }
