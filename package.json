@@ -92,8 +92,8 @@
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",
     "prepack": "npm run build && oclif manifest && oclif readme",
-    "test": "mocha --forbid-only",
-    "test-all": "mocha --parallel --forbid-only 'test/**/*.test.ts'",
+    "test:single": "mocha --forbid-only",
+    "test": "mocha --parallel --forbid-only 'test/**/*.test.ts'",
     "version": "oclif readme && git add README.md",
     "build:tarballs": "npx oclif pack tarballs",
     "build:macos": "npx oclif pack macos"
