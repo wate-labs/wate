@@ -28,11 +28,11 @@ jobs:
   release-linux:
     name: Release deb
     runs-on: ubuntu-latest
+    container:
+      image: node:16.13-bullseye
+      options: --user root
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
       - run: npm ci
