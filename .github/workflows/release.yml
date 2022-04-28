@@ -35,8 +35,8 @@ jobs:
           node-version: '16'
       - run: sudo apt update
       - run: sudo apt install nsis p7zip-full p7zip-rar -y
-      - run: sudo npm ci
-      - run: sudo npx oclif pack deb
+      - run: npm ci
+      - run: npx oclif pack deb
 
   release-macos:
     name: Release macOS
