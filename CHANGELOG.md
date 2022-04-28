@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 0.4.1 (2022-04-28)
 
 - Exclude non suite files when listing suites
 
