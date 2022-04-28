@@ -50,6 +50,14 @@ export default class SuitesCommand extends Command {
         collectionOrSuite.children = this.listCollectionsAndSuites(newPath)
       }
 
+      if (collectionOrSuite.type === 'suite') {
+        if (collectionOrSuite.name.endsWith('.json') || collectionOrSuite.name.endsWith('.yaml')) {
+          collectionOrSuite.name = collectionOrSuite.name.replace('.json', '').replace('.yaml', '')
+        } else {
+          continue
+        }
+      }
+
       entries.push(collectionOrSuite)
     }
 

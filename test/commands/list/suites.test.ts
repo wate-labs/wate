@@ -4,7 +4,7 @@ import fs from '../../mockfs'
 describe('list:suites', () => {
   test
   .do(() => {
-    fs.mock({suites: {suite_1: '', suite_2: ''}})
+    fs.mock({suites: {'suite_1.json': '', 'suite_2.yaml': ''}})
   })
   .finally(() => {
     fs.restore()
@@ -26,9 +26,31 @@ describe('list:suites', () => {
 
   test
   .do(() => {
+    fs.mock({suites: {'suite_1.json': '', 'suite_2.yaml': '', some_excluded_file: ''}})
+  })
+  .finally(() => {
+    fs.restore()
+  })
+  .stdout()
+  .command(['list:suites'])
+  .it('excludes additional files', ctx => {
+    const expectedOutput = [
+      'The following collections and suites were found.\n',
+      'COLLECTIONS',
+      '',
+      '',
+      'SUITES',
+      '  suite_1',
+      '  suite_2',
+    ].join('\n')
+    expect(ctx.stdout).to.contain(expectedOutput)
+  })
+
+  test
+  .do(() => {
     fs.mock({
       suites: {
-        collection: {suite_1: '', suite_2: ''},
+        collection: {'suite_1.json': '', 'suite_2.yaml': ''},
       },
     })
   })
@@ -55,8 +77,8 @@ describe('list:suites', () => {
     fs.mock({
       suites: {
         meta_collection: {
-          nested_collection_1: {suite_1: ''},
-          nested_collection_2: {suite_2: ''},
+          nested_collection_1: {'suite_1.json': ''},
+          nested_collection_2: {'suite_2.yaml': ''},
         },
       },
     })
