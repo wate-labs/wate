@@ -1,7 +1,7 @@
 {
   "name": "wate",
   "description": "A tool for automated tests for web APIs",
-  "version": "0.4.0",
+  "version": "0.5.0-dev",
   "author": "Flo Schuessel @scflode",
   "bin": {
     "wate": "./bin/run"
@@ -94,7 +94,9 @@
     "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only",
     "test-all": "mocha --parallel --forbid-only 'test/**/*.test.ts'",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md",
+    "build:tarballs": "npx oclif pack tarballs",
+    "build:macos": "npx oclif pack macos"
   },
   "types": "dist/index.d.ts"
 }

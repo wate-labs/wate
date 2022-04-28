@@ -1,5 +1,9 @@
 # Changelog
 
+## dev
+
+- Exclude non suite files when listing suites
+
 ## 0.4.0 (2022-04-26)
 
 - Improve error reporting
