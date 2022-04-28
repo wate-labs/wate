@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: apt update
-      - run: apt install nsis p7zip-full p7zip-rar -y
+      - run: apt install apt-utils -y
       - run: npm ci
       - run: npx oclif pack deb
 
