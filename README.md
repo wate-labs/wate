@@ -134,6 +134,10 @@ Captures therefore can also be reused in follow-up requests as parameters with
 the prefix `$captures.` and the name of the capture (e.g.
 `"myParam": "$captures.capturedValue`)
 
+If you need to capture a value from the respective request you can do so by using
+the prefix `$request.` in front. It will extract the value after the prefix, e.g.
+`$request.my.value` will extract the jsonata path `my.value` from the request.
+
 Captures are also needed if you want to do assertions. Assertions are descibed
 below.
 

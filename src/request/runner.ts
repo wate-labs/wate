@@ -15,7 +15,6 @@ export default class RequestRunner {
       reason: '',
     }
     let captures: Capture[] = []
-
     axios.interceptors.request.use(
       function (config) {
         (config as MetadataAwareAxiosRequestConfig).metadata = {
@@ -45,7 +44,10 @@ export default class RequestRunner {
       ({headers, data, status, durationInMs} = await axios.request(
         RequestRunner.prepare(request),
       ))
-      captures = RequestRunner.captureFromBody(data, request.captures)
+      captures = [
+        ...RequestRunner.captureFromRequestBody(request.data, RequestRunner.prepareRequestCaptures(request.captures)),
+        ...RequestRunner.captureFromBody(data, RequestRunner.prepareResponseCaptures(request.captures)),
+      ]
     } catch (error: Error | unknown) {
       hasError = true
       if (axios.isAxiosError(error) && error.response?.status) {
@@ -81,8 +83,40 @@ export default class RequestRunner {
     }
   }
 
+  private static prepareRequestCaptures(captures: CaptureDefinition[]): CaptureDefinition[] {
+    return captures
+    .filter(capture => capture.expression.startsWith('$request.'))
+    .map(capture => {
+      const expression = capture.expression.replace('$request.', '')
+
+      return {
+        name: capture.name,
+        expression,
+      }
+    })
+  }
+
+  private static prepareResponseCaptures(captures: CaptureDefinition[]): CaptureDefinition[] {
+    return captures
+    .filter(capture => !capture.expression.startsWith('$request.'))
+  }
+
   private static prepare(request: Request): AxiosRequestConfig {
     return request as AxiosRequestConfig
+  }
+
+  private static captureFromRequestBody(
+    data: any,
+    captures: CaptureDefinition[],
+  ): Capture[] {
+    if (typeof data === 'object') {
+      return captures.reduce(
+        (acc, capture) => [...acc, RequestRunner.captureValue(capture, data)],
+        [] as Capture[],
+      )
+    }
+
+    return []
   }
 
   private static captureFromBody(

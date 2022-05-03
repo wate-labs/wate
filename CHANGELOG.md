@@ -1,5 +1,9 @@
 # Changelog
 
+## dev
+
+- Add capturing data from request body
+
 ## 0.4.1 (2022-04-28)
 
 - Exclude non suite files when listing suites
