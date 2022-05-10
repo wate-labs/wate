@@ -391,7 +391,7 @@ run an existing request
 
 ```
 USAGE
-  $ wate run:request [ENVIRONMENT] [REQUEST] [-h] [-v] [-d] [-p <value>] [-c <value>]
+  $ wate run:request [ENVIRONMENT] [REQUEST] [-h] [-v] [-d] [-p <value>] [-c <value>] [-e]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -400,6 +400,7 @@ ARGUMENTS
 FLAGS
   -c, --captures=<value>...    capture value from response with given JSONPath expression
   -d, --dry                    perform a dry run without emitting the request
+  -e, --export                 export the requests and responses
   -h, --help                   Show CLI help.
   -p, --parameters=<value>...  use given parameter name and value in request
   -v, --verbose                print the raw response headers and body

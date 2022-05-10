@@ -2,6 +2,7 @@
 
 ## dev
 
+- Add exporting request and response bodies for single requests
 - Add possibility to print captures without explicit assertions
 - Add capturing data from request body
 
