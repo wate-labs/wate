@@ -153,6 +153,10 @@ expected values.
 Assertions are key-value pairs with the name of a previous capture and the value
 set to the expected one.
 
+Besides asserting values it is also possible to print capture values without 
+assertion by referencing the desired value with `$captures.`. This is useful
+if a pre request script calculates values like f.e. a date of birth.
+
 > Note: Currently only matching (the actual value has to match the expected) is
 > supported.
 
@@ -233,7 +237,7 @@ EXAMPLES
   $ wate create:environment
 ```
 
-_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/create/environment.ts)_
+_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -256,7 +260,7 @@ EXAMPLES
   $ wate create:request
 ```
 
-_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/create/request.ts)_
+_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -279,7 +283,7 @@ EXAMPLES
   $ wate create:suite
 ```
 
-_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/create/suite.ts)_
+_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
@@ -319,7 +323,7 @@ EXAMPLES
   $ wate init
 ```
 
-_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/init.ts)_
+_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -339,7 +343,7 @@ EXAMPLES
   $ wate list:environments
 ```
 
-_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/list/environments.ts)_
+_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -359,7 +363,7 @@ EXAMPLES
   $ wate list:requests
 ```
 
-_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/list/requests.ts)_
+_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -379,7 +383,7 @@ EXAMPLES
   $ wate list:suites
 ```
 
-_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/list/suites.ts)_
+_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -407,7 +411,7 @@ EXAMPLES
   $ wate run:request test ping
 ```
 
-_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/run/request.ts)_
+_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -437,5 +441,5 @@ EXAMPLES
   $ wate run:suite test suite
 ```
 
-_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.4.1/dist/commands/run/suite.ts)_
+_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.5.0-dev/dist/commands/run/suite.ts)_
 <!-- commandsstop -->

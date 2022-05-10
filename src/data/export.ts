@@ -10,7 +10,7 @@ export default class Export {
     data: {
       matched: string;
       case_name: string;
-      assertion_name: string;
+      name: string;
       expected: string;
       actual: string;
       debug: string;
@@ -26,7 +26,7 @@ export default class Export {
     const worksheet = workbook.addWorksheet('Report')
     worksheet.columns = [
       {header: 'Case Name', key: 'case_name', width: 32},
-      {header: 'Assertion Name', key: 'assertion_name', width: 20},
+      {header: 'Name', key: 'name', width: 20},
       {header: 'OK?', key: 'matched', width: 5},
       {header: 'Expected', key: 'expected', width: 20},
       {header: 'Actual', key: 'actual', width: 20},
@@ -34,7 +34,7 @@ export default class Export {
     ]
     const columns = [
       'case_name',
-      'assertion_name',
+      'name',
       'matched',
       'expected',
       'actual',
