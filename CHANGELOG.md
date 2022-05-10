@@ -2,6 +2,7 @@
 
 ## dev
 
+- Add possibility to print captures without explicit assertions
 - Add capturing data from request body
 
 ## 0.4.1 (2022-04-28)

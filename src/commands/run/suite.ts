@@ -370,7 +370,7 @@ export default class SuiteCommand extends Command {
       return {
         '': assertion.matched ? '✓' : '⨯',
         case_name: caseName,
-        assertion_name: assertion.name,
+        name: assertion.name,
         expected: assertion.expected,
         actual: assertion.actual,
       }
@@ -380,7 +380,7 @@ export default class SuiteCommand extends Command {
       {
         '': {},
         case_name: {minWidth: 50},
-        assertion_name: {minWidth: 20},
+        name: {minWidth: 20},
         expected: {minWidth: 30},
         actual: {minWidth: 30},
       },
@@ -405,7 +405,7 @@ export default class SuiteCommand extends Command {
         debug: this.buildDebug(
           captures.filter(capture => capture.caseName === assertion.caseName),
         ),
-        assertion_name: assertion.name,
+        name: assertion.name,
         expected: assertion.expected,
         actual: assertion.actual,
       }
