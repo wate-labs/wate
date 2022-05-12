@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 0.5.0 (2022-05-12)
 
 - Add exporting request and response bodies for suites
 - Add exporting request and response bodies for single requests
