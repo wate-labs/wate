@@ -12,6 +12,7 @@ import ResponseHelper from '../../helpers/response'
 import RequestBuilder from '../../request/builder'
 import CaptureDefinition, {Capture} from '../../capture'
 import Param from '../../param'
+import JsonExport from '../../exporter/json'
 
 const {dim} = Chalk
 
@@ -41,6 +42,10 @@ export default class RequestCommand extends Command {
       description: 'capture value from response with given JSONPath expression',
       multiple: true,
     }),
+    export: Flags.boolean({
+      char: 'e',
+      description: 'export the requests and responses',
+    }),
   };
 
   static description = 'run an existing request';
@@ -66,7 +71,7 @@ export default class RequestCommand extends Command {
 
     const request = this.buildRequest(reqName, params, captures, context)
 
-    const response = await this.runRequest(request, flags.verbose, flags.dry)
+    const response = await this.runRequest(request, flags.verbose, flags.dry, flags.export)
 
     if (response.captures.length > 0) {
       this.printCaptures(response.captures)
@@ -101,7 +106,7 @@ export default class RequestCommand extends Command {
     return RequestBuilder.render('n/a', request, context)
   }
 
-  private async runRequest(request: Request, verbose: boolean, dry: boolean) {
+  private async runRequest(request: Request, verbose: boolean, dry: boolean, exportRqRs: boolean): Promise<Response> {
     let response: Response = ResponseHelper.emptyResponse(request)
     if (verbose) {
       this.log(Printer.request(request))
@@ -113,6 +118,10 @@ export default class RequestCommand extends Command {
 
     if (verbose) {
       this.log(Printer.response(response))
+    }
+
+    if (exportRqRs) {
+      this.exportRequestAndResponse(request, response)
     }
 
     if (response.hasError) {
@@ -171,5 +180,14 @@ export default class RequestCommand extends Command {
       {'no-truncate': true},
     )
     this.log('')
+  }
+
+  private exportRequestAndResponse(request: Request, response: Response) {
+    const pattern = /\//g
+    const name = request.url.replace(pattern, '_')
+    const requestFilename = JsonExport.write(`${name}_rq`, request.data)
+    const responseFilename = JsonExport.write(`${name}_rs`, response.data)
+
+    this.log(`Exported request to ${requestFilename} and response to ${responseFilename}`)
   }
 }
