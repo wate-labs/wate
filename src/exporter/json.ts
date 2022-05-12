@@ -1,19 +1,20 @@
 import * as fs from 'node:fs'
+import * as path from 'node:path'
 import {format} from 'date-fns/fp'
 
 export default class JsonExport {
   static dateTimeFormat = format('yyyy-MM-dd-HHmm');
 
-  public static write(name: string, data: any): string {
-    if (!fs.existsSync('exports')) {
-      fs.mkdirSync('exports')
+  public static write(name: string, data: any, dirname = ''): string {
+    const folderpath = path.join('exports', dirname)
+    if (!fs.existsSync(folderpath)) {
+      fs.mkdirSync(folderpath, {recursive: true})
     }
 
-    const filename = `exports/${JsonExport.dateTimeFormat(
-      new Date(),
-    )}_${name}.json`
-    fs.writeFileSync(filename, JSON.stringify(data))
+    const filename = `${JsonExport.dateTimeFormat(new Date())}_${name}.json`
+    const filepath = path.join(folderpath, filename)
+    fs.writeFileSync(filepath, JSON.stringify(data))
 
-    return filename
+    return filepath
   }
 }

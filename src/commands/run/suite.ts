@@ -14,6 +14,7 @@ import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion} from '../../assertion'
 import Export from '../../data/export'
+import JsonExport from '../../exporter/json'
 
 const {bold, dim} = Chalk
 
@@ -49,6 +50,10 @@ export default class SuiteCommand extends Command {
     report: Flags.boolean({
       char: 'r',
       description: 'write report to file',
+    }),
+    export: Flags.boolean({
+      char: 'e',
+      description: 'export the request and response bodies',
     }),
   };
 
@@ -240,6 +245,7 @@ export default class SuiteCommand extends Command {
       dry: boolean;
       captures: boolean;
       assertions: boolean;
+      export: boolean;
     },
   ): Promise<Request[]> {
     const startTime = Date.now()
@@ -275,6 +281,10 @@ export default class SuiteCommand extends Command {
 
       if (flags.verbose) {
         this.log(Printer.response(response))
+      }
+
+      if (flags.export) {
+        this.exportRequestAndResponse(suiteCase.name, request, response)
       }
 
       if (response.hasError) {
@@ -425,6 +435,15 @@ export default class SuiteCommand extends Command {
     )
 
     return printableCaptures.join('\n')
+  }
+
+  private exportRequestAndResponse(caseName: string, request: Request, response: Response) {
+    const pattern = /\//g
+    const name = request.url.replace(pattern, '_')
+    const requestFilename = JsonExport.write(`${name}_rq`, request.data, caseName)
+    const responseFilename = JsonExport.write(`${name}_rs`, response.data, caseName)
+
+    this.log(`Exported request to ${requestFilename} and response to ${responseFilename}`)
   }
 
   private async tick(counter: number): Promise<number> {

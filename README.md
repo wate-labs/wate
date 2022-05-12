@@ -420,7 +420,7 @@ run an existing suite
 
 ```
 USAGE
-  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r]
+  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r] [-e]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -430,6 +430,7 @@ FLAGS
   -a, --assertions             print assertion results for each request
   -c, --captures               print captured values for each request
   -d, --dry                    perform a dry run without emitting requests
+  -e, --export                 export the request and response bodies
   -h, --help                   Show CLI help.
   -p, --parameters=<value>...  use given parameter name and value in request
   -r, --report                 write report to file
