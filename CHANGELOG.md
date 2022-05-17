@@ -1,5 +1,9 @@
 # Changelog
 
+## development
+
+- Change display of assertions per case instead of run order
+
 ## 0.5.0 (2022-05-12)
 
 - Add exporting request and response bodies for suites

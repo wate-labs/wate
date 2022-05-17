@@ -137,7 +137,7 @@ export default class RequestCommand extends Command {
       environment: environment,
       params: [],
       captures: [],
-      assertions: [],
+      assertions: {},
     }
   }
 
