@@ -1,6 +1,6 @@
 # Changelog
 
-## development
+## 0.5.1 (2022-05-17)
 
 - Change display of assertions per case instead of run order
 
