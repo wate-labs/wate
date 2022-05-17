@@ -17,7 +17,7 @@ describe('suite loader', () => {
       environment: environment,
       params: [],
       captures: [],
-      assertions: [],
+      assertions: {},
     }
     const suite = SuiteLoader.load(suitePath, 'suite_1', context)
     assert.equal(suite.name, 'My suite name')
@@ -35,7 +35,7 @@ describe('suite loader', () => {
       environment: environment,
       params: [],
       captures: [],
-      assertions: [],
+      assertions: {},
     }
     const suite = SuiteLoader.load(suitePath, 'suite_2', context)
     assert.equal(suite.name, 'My suite name')
@@ -53,7 +53,7 @@ describe('suite loader', () => {
       environment: environment,
       params: [],
       captures: [],
-      assertions: [],
+      assertions: {},
     }
     assert.throws(() => {
       SuiteLoader.load(suitePath, 'i_do_not_exist', context)

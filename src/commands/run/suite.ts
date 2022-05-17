@@ -12,7 +12,7 @@ import ResponseHelper from '../../helpers/response'
 import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
-import {Assertion} from '../../assertion'
+import {Assertion, AssertionBag} from '../../assertion'
 import Export from '../../data/export'
 import JsonExport from '../../exporter/json'
 
@@ -131,7 +131,7 @@ export default class SuiteCommand extends Command {
     )
     if (
       context.captures.length > 0 &&
-      (context.assertions.length === 0 || flags.verbose)
+      (!this.hasAssertions(context.assertions) || flags.verbose)
     ) {
       this.printCaptures(
         context.captures,
@@ -139,13 +139,17 @@ export default class SuiteCommand extends Command {
       )
     }
 
-    if (context.assertions.length > 0) {
+    if (this.hasAssertions(context.assertions)) {
       if (flags.report) {
-        await this.export(suite.name, context.assertions, context.captures)
+        const assertions = Object.values(context.assertions).flat()
+
+        await this.export(suite.name, assertions, context.captures)
       }
 
+      const assertions = Object.values(context.assertions).flat()
+
       this.printAssertions(
-        context.assertions,
+        assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
       )
     }
@@ -225,7 +229,7 @@ export default class SuiteCommand extends Command {
       environment: EnvironmentLoader.load(SuiteCommand.envDir, envName),
       params: [],
       captures: [],
-      assertions: [],
+      assertions: {},
     }
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
@@ -341,7 +345,12 @@ export default class SuiteCommand extends Command {
         )
       }
 
-      context.assertions = [...context.assertions, ...assertions]
+      if (!context.assertions[caseName]) {
+        context.assertions[caseName] = [] as Assertion[]
+      }
+
+      context.assertions[caseName] = [...context.assertions[caseName], ...assertions]
+
       if (flags.printAssertions) {
         this.printAssertions(assertions)
       }
@@ -373,7 +382,7 @@ export default class SuiteCommand extends Command {
     ).length
     this.log(['', title || 'Assertions'.toUpperCase(), ''].join('\n'))
     let lastCaseName = ''
-    const printableAssertions = assertions.map(assertion => {
+    const printableAssertions = Object.values(assertions).map(assertion => {
       const caseName =
         lastCaseName === assertion.caseName ? '' : assertion.caseName
       lastCaseName = assertion.caseName
@@ -455,5 +464,11 @@ export default class SuiteCommand extends Command {
     return new Promise(resolve => {
       setTimeout(resolve, ms)
     })
+  }
+
+  private hasAssertions(assertionBag: AssertionBag): boolean {
+    const assertions = Object.values(assertionBag).flat()
+
+    return assertions.length > 0
   }
 }

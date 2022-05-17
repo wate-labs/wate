@@ -3,6 +3,10 @@ export default interface AssertionDefinition {
   expected: any;
 }
 
+export interface AssertionBag {
+  [caseName: string]: Assertion[];
+}
+
 export interface Assertion {
   caseName: string;
   name: string;
