@@ -64,19 +64,24 @@ export default class Export {
 
       for (const name of columns) {
         const currentCell = row.getCell(name)
-        currentCell.fill =
-          row.getCell('matched').value === '✓' ? fillSuccess : fillError
-        currentCell.font = {
-          size: 12,
-          color: {argb: 'FFFFFFFF'},
+
+        const cellValue = row.getCell('matched').value
+        if (cellValue !== '') {
+          currentCell.fill = cellValue === '✓' ? fillSuccess : fillError
+          currentCell.font = {
+            size: 12,
+            color: {argb: 'FFFFFFFF'},
+          }
         }
       }
 
       const currentCaseNameCell = row.getCell('case_name')
       const caseSectionCell = caseSectionRow ? caseSectionRow.getCell('case_name') : null
       if (caseSectionCell && currentCaseNameCell.value === caseSectionCell.value) {
+        const color = currentCaseNameCell.fill ? '00000000' : 'FFFFFFFF'
         currentCaseNameCell.font = {
           size: 1,
+          color: {argb: color},
         }
       } else {
         caseSectionRow = row

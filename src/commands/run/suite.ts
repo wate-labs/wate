@@ -386,8 +386,9 @@ export default class SuiteCommand extends Command {
       const caseName =
         lastCaseName === assertion.caseName ? '' : assertion.caseName
       lastCaseName = assertion.caseName
+
       return {
-        '': assertion.matched ? '✓' : '⨯',
+        '': this.generateMarker(assertion),
         case_name: caseName,
         name: assertion.name,
         expected: assertion.expected,
@@ -419,7 +420,7 @@ export default class SuiteCommand extends Command {
     this.log(`Generating export for ${name}`)
     const printableAssertions = assertions.map(assertion => {
       return {
-        matched: assertion.matched ? '✓' : '⨯',
+        matched: this.generateMarker(assertion),
         case_name: assertion.caseName,
         debug: this.buildDebug(
           captures.filter(capture => capture.caseName === assertion.caseName),
@@ -470,5 +471,15 @@ export default class SuiteCommand extends Command {
     const assertions = Object.values(assertionBag).flat()
 
     return assertions.length > 0
+  }
+
+  private generateMarker(assertion: Assertion): string {
+    let marker = ''
+
+    if (!(assertion.expected === '' && assertion.expected !== assertion.actual && assertion.matched)) {
+      marker = assertion.matched ? '✓' : '⨯'
+    }
+
+    return marker
   }
 }
