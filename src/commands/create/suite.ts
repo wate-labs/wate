@@ -28,7 +28,7 @@ export default class SuiteCommand extends Command {
       this.error(`Directory "${SuiteCommand.dir}" not found.`)
     }
 
-    const relativePath = `${name}.json`
+    const relativePath = `${name}.yaml`
     const fileName = path.basename(relativePath)
     const fullPath = path.join(SuiteCommand.dir, relativePath)
     const suitePath = path.dirname(fullPath)
@@ -43,18 +43,11 @@ export default class SuiteCommand extends Command {
   }
 
   private getTemplate(): string {
-    return `{
-  "name": "My suite name",
-  "cases": [
-    {
-      "name": "My test case",
-      "requests": [
-        {
-          "request": "my_request"
-        }
-      ]
-    }
-  ]
-}`
+    return `name: My suite name
+cases:
+  - name: My test case
+    requests:
+      - request: my_request
+`
   }
 }
