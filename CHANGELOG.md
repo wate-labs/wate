@@ -2,6 +2,7 @@
 
 ## dev
 
+- Hide matched marker if a capture is displayed
 - Change creating suite to YAML
 
 ## 0.5.1 (2022-05-17)
