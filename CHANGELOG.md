@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 0.6.0 (2022-05-24)
 
 - Adjust CLI output for better readability
 - Hide matched marker if a capture is displayed
