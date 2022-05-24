@@ -13,7 +13,7 @@ import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion, AssertionBag} from '../../assertion'
-import Export from '../../data/export'
+import ExcelReport from '../../data/excel-report'
 import JsonExport from '../../exporter/json'
 
 const {bold, dim} = Chalk
@@ -140,10 +140,11 @@ export default class SuiteCommand extends Command {
     }
 
     if (this.hasAssertions(context.assertions)) {
+      let exportFilepath
       if (flags.report) {
         const assertions = Object.values(context.assertions).flat()
 
-        await this.export(suite.name, assertions, context.captures)
+        exportFilepath = await this.export(suite.name, assertions, context.captures)
       }
 
       const assertions = Object.values(context.assertions).flat()
@@ -151,6 +152,7 @@ export default class SuiteCommand extends Command {
       this.printAssertions(
         assertions,
         `Assertions for ${suite.name}`.toUpperCase(),
+        exportFilepath,
       )
     }
   }
@@ -376,7 +378,7 @@ export default class SuiteCommand extends Command {
     this.log('')
   }
 
-  private printAssertions(assertions: Assertion[], title?: string) {
+  private printAssertions(assertions: Assertion[], title?: string, exportFilepath?: string) {
     const hasFailedAssertions = assertions.filter(
       assertion => !assertion.matched,
     ).length
@@ -388,9 +390,9 @@ export default class SuiteCommand extends Command {
       lastCaseName = assertion.caseName
 
       return {
-        '': this.generateMarker(assertion),
         case_name: caseName,
         name: assertion.name,
+        '': this.generateMarker(assertion),
         expected: assertion.expected,
         actual: assertion.actual,
       }
@@ -398,14 +400,18 @@ export default class SuiteCommand extends Command {
     CliUx.ux.table(
       printableAssertions,
       {
-        '': {},
         case_name: {minWidth: 50},
         name: {minWidth: 20},
+        '': {minWidth: 5},
         expected: {minWidth: 30},
         actual: {minWidth: 30},
       },
       {'no-truncate': true},
     )
+
+    if (exportFilepath) {
+      this.log(['', bold(`Exported report to "${exportFilepath}"`), ''].join('\n'))
+    }
 
     if (hasFailedAssertions) {
       this.error(`There were ${hasFailedAssertions} assertion(s) that failed`)
@@ -416,7 +422,7 @@ export default class SuiteCommand extends Command {
     name: string,
     assertions: Assertion[],
     captures: Capture[],
-  ) {
+  ): Promise<string> {
     this.log(`Generating export for ${name}`)
     const printableAssertions = assertions.map(assertion => {
       return {
@@ -430,9 +436,8 @@ export default class SuiteCommand extends Command {
         actual: assertion.actual,
       }
     })
-    const filename = await Export.write(name, printableAssertions)
 
-    this.log(`Exported to ${filename}`)
+    return ExcelReport.write(name, printableAssertions)
   }
 
   private buildDebug(captures: Capture[]): string {

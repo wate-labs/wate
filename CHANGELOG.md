@@ -2,6 +2,7 @@
 
 ## dev
 
+- Adjust CLI output for better readability
 - Hide matched marker if a capture is displayed
 - Change creating suite to YAML
 

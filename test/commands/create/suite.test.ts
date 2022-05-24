@@ -17,7 +17,7 @@ describe('create:suite', () => {
       '\n',
     )
     expect(ctx.stdout).to.contain(expectedOutput)
-    expect(fs.existsSync('suites/my_suite.json')).to.be.true
+    expect(fs.existsSync('suites/my_suite.yaml')).to.be.true
   })
 
   test
@@ -34,12 +34,12 @@ describe('create:suite', () => {
       'Created "collection/my_suite" located at "suites/collection"',
     ].join('\n')
     expect(ctx.stdout).to.contain(expectedOutput)
-    expect(fs.existsSync('suites/collection/my_suite.json')).to.be.true
+    expect(fs.existsSync('suites/collection/my_suite.yaml')).to.be.true
   })
 
   test
   .do(() => {
-    filesystem.mock({suites: {'my_suite.json': {host: ''}}})
+    filesystem.mock({suites: {'my_suite.yaml': {host: ''}}})
   })
   .finally(() => {
     filesystem.restore()
@@ -48,7 +48,7 @@ describe('create:suite', () => {
   .command(['create:suite', 'my_suite'])
   .catch(error => {
     expect(error.message).to.equal(
-      'Suite "my_suite" (suites/my_suite.json) already exists.',
+      'Suite "my_suite" (suites/my_suite.yaml) already exists.',
     )
   })
   .it('errors out when an suite already exists')
