@@ -2,7 +2,7 @@ import * as fs from 'node:fs'
 import {format} from 'date-fns/fp'
 import * as ExcelJS from 'exceljs'
 
-export default class Export {
+export default class ExcelReport {
   static dateTimeFormat = format('yyyy-MM-dd-HHmm');
 
   public static async write(
@@ -103,7 +103,7 @@ export default class Export {
     const debugCol = worksheet.getColumn('debug')
     debugCol.hidden = true
 
-    const filename = `reports/${Export.dateTimeFormat(
+    const filename = `reports/${ExcelReport.dateTimeFormat(
       new Date(),
     )}_${name}.xlsx`
 

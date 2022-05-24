@@ -13,7 +13,7 @@ import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion, AssertionBag} from '../../assertion'
-import Export from '../../data/export'
+import ExcelReport from '../../data/excel_report'
 import JsonExport from '../../exporter/json'
 
 const {bold, dim} = Chalk
@@ -437,7 +437,7 @@ export default class SuiteCommand extends Command {
       }
     })
 
-    return Export.write(name, printableAssertions)
+    return ExcelReport.write(name, printableAssertions)
   }
 
   private buildDebug(captures: Capture[]): string {
