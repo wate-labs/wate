@@ -13,7 +13,7 @@ import {Capture} from '../../capture'
 import RequestBuilder from '../../request/builder'
 import Asserter from '../../assertion/asserter'
 import {Assertion, AssertionBag} from '../../assertion'
-import ExcelReport from '../../data/excel_report'
+import ExcelReport from '../../data/excel-report'
 import JsonExport from '../../exporter/json'
 
 const {bold, dim} = Chalk
