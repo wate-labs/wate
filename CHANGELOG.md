@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 0.7.0 (2022-05-31)
 
 - Center markers in Excel reports
 - Add asserting captures of previous requests 
