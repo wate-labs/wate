@@ -15,6 +15,7 @@ import Asserter from '../../assertion/asserter'
 import {Assertion, AssertionBag} from '../../assertion'
 import ExcelReport from '../../data/excel-report'
 import JsonExport from '../../exporter/json'
+import {isArray, isObject} from 'lodash'
 
 const {bold, dim} = Chalk
 
@@ -392,9 +393,9 @@ export default class SuiteCommand extends Command {
       return {
         case_name: caseName,
         name: assertion.name,
-        '': this.generateMarker(assertion),
-        expected: assertion.expected === '###' ? '' : ` ${assertion.expected} `,
-        actual: assertion.actual,
+        '': ` ${this.generateMarker(assertion)} `,
+        expected: assertion.expected === '###' ? '' : this.prettify(assertion.expected),
+        actual: this.prettify(assertion.actual),
       }
     })
     CliUx.ux.table(
@@ -486,5 +487,13 @@ export default class SuiteCommand extends Command {
     }
 
     return marker
+  }
+
+  private prettify(value: any): any {
+    if (isObject(value) || isArray(value)) {
+      return Printer.prettify(value)
+    }
+
+    return value
   }
 }
