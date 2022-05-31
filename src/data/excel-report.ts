@@ -94,6 +94,8 @@ export default class ExcelReport {
       return col
     })
     // Wrap text for expected and asserted
+    const matchedCol = worksheet.getColumn('matched')
+    matchedCol.alignment = {horizontal: 'center'}
     const expectedCol = worksheet.getColumn('expected')
     expectedCol.alignment = {wrapText: true, horizontal: 'right'}
     const actualCol = worksheet.getColumn('actual')

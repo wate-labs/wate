@@ -1,5 +1,10 @@
 # Changelog
 
+## dev
+
+- Center markers in Excel reports
+- Add asserting captures of previous requests 
+
 ## 0.6.0 (2022-05-24)
 
 - Adjust CLI output for better readability

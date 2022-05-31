@@ -18,6 +18,19 @@ export default class Asserter {
     definition: AssertionDefinition,
     captures: Capture[],
   ): Assertion {
+    const matchingCapture = Asserter.matchingCapture(definition, caseName, captures)
+    const expected = Asserter.expectedValue(definition, captures)
+
+    return {
+      caseName: caseName,
+      name: definition.name,
+      expected,
+      actual: matchingCapture!.value,
+      matched: Asserter.isMatching(matchingCapture!.value, expected),
+    }
+  }
+
+  private static matchingCapture(definition: AssertionDefinition, caseName: string, captures: Capture[]): any {
     const matchingCaptures = captures.filter(
       capture =>
         capture.caseName === caseName && capture.name === definition.name,
@@ -32,19 +45,38 @@ export default class Asserter {
       )
     }
 
-    const matchingCapture = matchingCaptures.pop()
+    return matchingCaptures.pop()
+  }
 
-    return {
-      caseName: caseName,
-      name: definition.name,
-      expected: (typeof definition.expected === 'string' || definition.expected instanceof String) && definition.expected.startsWith('$captures.') ? '' : definition.expected,
-      actual: matchingCapture!.value,
-      matched: Asserter.isMatching(matchingCapture!.value, definition.expected),
+  private static expectedValue(definition: AssertionDefinition, captures: Capture[]): any {
+    const expected = definition.expected
+    if (Asserter.isCaptureAssertion(definition.expected)) {
+      const captureName = definition.expected.replace('$captures.', '')
+      const captureValues = captures.filter(capture => capture.name === captureName && definition.name !== capture.name)
+      if (captureValues.length === 1) {
+        return captureValues.pop()?.value
+      }
+
+      return (typeof definition.expected === 'string' || definition.expected instanceof String) ? '###' : definition.expected
     }
+
+    return expected
+  }
+
+  private static isCaptureAssertion(expected: any): boolean {
+    if (typeof expected === 'string' || expected instanceof String) {
+      if (expected.startsWith('$captures.')) {
+        return true
+      }
+
+      return false
+    }
+
+    return false
   }
 
   private static isMatching(actual: any, expected: any): boolean {
-    if ((typeof expected === 'string' || expected instanceof String) && expected.startsWith('$captures.')) {
+    if (expected === '###') {
       return true
     }
 

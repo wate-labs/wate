@@ -153,9 +153,12 @@ expected values.
 Assertions are key-value pairs with the name of a previous capture and the value
 set to the expected one.
 
-Besides asserting values it is also possible to print capture values without 
-assertion by referencing the desired value with `$captures.`. This is useful
-if a pre request script calculates values like f.e. a date of birth.
+If you need to assert that a capture of a previous request matches the a capture
+of the current request you can access the capture via `$captures.` prefix.
+
+If you use the `$captures.` prefix in context of the current request (colocated)
+the value of the capture is printed without assertion counterpart. This is useful
+to add some reference exports to the assertion table for further context.
 
 > Note: Currently only matching (the actual value has to match the expected) is
 > supported.

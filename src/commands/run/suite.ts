@@ -393,18 +393,18 @@ export default class SuiteCommand extends Command {
         case_name: caseName,
         name: assertion.name,
         '': this.generateMarker(assertion),
-        expected: assertion.expected,
+        expected: assertion.expected === '###' ? '' : ` ${assertion.expected} `,
         actual: assertion.actual,
       }
     })
     CliUx.ux.table(
       printableAssertions,
       {
-        case_name: {minWidth: 50},
-        name: {minWidth: 20},
-        '': {minWidth: 5},
-        expected: {minWidth: 30},
-        actual: {minWidth: 30},
+        case_name: {header: 'Case Name', minWidth: 50},
+        name: {header: 'Name', minWidth: 20},
+        '': {minWidth: 3},
+        expected: {header: 'Expected', minWidth: 30},
+        actual: {header: 'Actual', minWidth: 30},
       },
       {'no-truncate': true},
     )
@@ -432,7 +432,7 @@ export default class SuiteCommand extends Command {
           captures.filter(capture => capture.caseName === assertion.caseName),
         ),
         name: assertion.name,
-        expected: assertion.expected,
+        expected: assertion.expected === '###' ? '' : assertion.expected,
         actual: assertion.actual,
       }
     })
@@ -481,7 +481,7 @@ export default class SuiteCommand extends Command {
   private generateMarker(assertion: Assertion): string {
     let marker = ''
 
-    if (!(assertion.expected === '' && assertion.expected !== assertion.actual && assertion.matched)) {
+    if (!(assertion.expected === '###' && assertion.expected !== assertion.actual && assertion.matched)) {
       marker = assertion.matched ? '✓' : '⨯'
     }
 
