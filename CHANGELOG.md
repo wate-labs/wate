@@ -1,5 +1,9 @@
 # Changelog
 
+## Dev
+
+- Fix display of objects and arrays in assertion table
+
 ## 0.7.0 (2022-05-31)
 
 - Center markers in Excel reports

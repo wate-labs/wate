@@ -25,8 +25,8 @@ export default class Asserter {
       caseName: caseName,
       name: definition.name,
       expected,
-      actual: matchingCapture!.value,
-      matched: Asserter.isMatching(matchingCapture!.value, expected),
+      actual: matchingCapture.value,
+      matched: Asserter.isMatching(matchingCapture.value, expected),
     }
   }
 
