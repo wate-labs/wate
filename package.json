@@ -9,7 +9,7 @@
   "bugs": "https://github.com/wate-labs/wate/issues",
   "dependencies": {
     "@oclif/core": "^1",
-    "@oclif/plugin-autocomplete": "^1.2.0",
+    "@oclif/plugin-autocomplete": "^1.3.0",
     "@oclif/plugin-help": "^5.1.12",
     "@types/http-string-parser": "0.0.30",
     "@types/mock-fs": "^4.13.1",
