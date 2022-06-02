@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 0.7.1 (2022-06-02)
 
 - Improve alignment of cells for multiline contents
 - Update dependencies
