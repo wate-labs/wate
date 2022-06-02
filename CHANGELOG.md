@@ -2,6 +2,7 @@
 
 ## Dev
 
+- Update dependencies
 - Fix display of objects and arrays in assertion table
 
 ## 0.7.0 (2022-05-31)
