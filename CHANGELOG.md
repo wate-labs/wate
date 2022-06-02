@@ -2,6 +2,7 @@
 
 ## Dev
 
+- Improve alignment of cells for multiline contents
 - Update dependencies
 - Fix display of objects and arrays in assertion table
 

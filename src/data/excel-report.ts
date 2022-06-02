@@ -95,11 +95,11 @@ export default class ExcelReport {
     })
     // Wrap text for expected and asserted
     const matchedCol = worksheet.getColumn('matched')
-    matchedCol.alignment = {horizontal: 'center'}
+    matchedCol.alignment = {horizontal: 'center', vertical: 'top'}
     const expectedCol = worksheet.getColumn('expected')
-    expectedCol.alignment = {wrapText: true, horizontal: 'right'}
+    expectedCol.alignment = {wrapText: true, horizontal: 'right', vertical: 'top'}
     const actualCol = worksheet.getColumn('actual')
-    actualCol.alignment = {wrapText: true, horizontal: 'right'}
+    actualCol.alignment = {wrapText: true, horizontal: 'right', vertical: 'top'}
 
     // Hide debug column
     const debugCol = worksheet.getColumn('debug')
