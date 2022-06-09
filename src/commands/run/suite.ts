@@ -236,7 +236,7 @@ export default class SuiteCommand extends Command {
     }
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
-        const [name, value] = raw.split('=')
+        const [name, value] = raw.split(/=(.*)/s)
         context.params = [...context.params, {name, value}]
       })
     }
