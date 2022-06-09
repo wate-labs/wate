@@ -1,6 +1,6 @@
 # Changelog
 
-## development
+## 0.7.2 (2022-06-09)
 
 - Fix issue with command line flags where value contains an "=" sign
 
