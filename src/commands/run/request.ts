@@ -145,7 +145,7 @@ export default class RequestCommand extends Command {
     let params: Param[] = []
     if (flags.parameters) {
       flags.parameters.forEach((raw: string) => {
-        const [name, value] = raw.split('=')
+        const [name, value] = raw.split(/=(.*)/s)
         params = [...params, {name, value}]
       })
     }
@@ -157,7 +157,7 @@ export default class RequestCommand extends Command {
     let captures: CaptureDefinition[] = []
     if (flags.captures) {
       flags.captures.forEach((raw: string) => {
-        const [name, expression] = raw.split('=')
+        const [name, expression] = raw.split(/=(.*)/s)
         captures = [...captures, {name, expression}]
       })
     }
