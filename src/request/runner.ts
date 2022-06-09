@@ -134,7 +134,6 @@ export default class RequestRunner {
   }
 
   private static captureValue(capture: CaptureDefinition, data: any): Capture {
-    console.log(capture.expression)
     const value = jsonata(capture.expression).evaluate(data)
 
     return {name: capture.name, value: RequestRunner.cleanCapture(value)}

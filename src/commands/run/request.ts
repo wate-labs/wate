@@ -158,7 +158,6 @@ export default class RequestCommand extends Command {
     if (flags.captures) {
       flags.captures.forEach((raw: string) => {
         const [name, expression] = raw.split(/=(.*)/s)
-        console.log(expression)
         captures = [...captures, {name, expression}]
       })
     }
