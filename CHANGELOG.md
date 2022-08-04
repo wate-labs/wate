@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0 (TBD)
+
+- Add retries for requests
+
 ## 0.7.2 (2022-06-09)
 
 - Fix issue with command line flags where value contains an "=" sign

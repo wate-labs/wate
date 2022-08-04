@@ -184,10 +184,7 @@ export default class SuiteCommand extends Command {
           }
 
           if (!flags.dry) {
-            response = await this.runRequest(caseName, request, context, {
-              printCaptures: flags.captures,
-              printAssertions: flags.assertions,
-            })
+            response = await this.runRequestWithRetries(caseName, request, response, context, flags)
           }
 
           if (flags.verbose) {
@@ -318,6 +315,39 @@ export default class SuiteCommand extends Command {
     return delayed
   }
 
+  private async runRequestWithRetries(
+    caseName: string,
+    request: Request,
+    response: Response,
+    context: Context,
+    flags: { captures: boolean, assertions: boolean, verbose: boolean },
+  ): Promise<Response> {
+    let attempt = 0
+    if (request.retries > 0) {
+      this.log(`Retrying request for ${request.retries} times in case of an error.`)
+      while (attempt < request.retries && (response.hasError || response.status === 0)) {
+        attempt++
+        response = await this.runRequest(caseName, request, context, {
+          printCaptures: flags.captures,
+          printAssertions: flags.assertions,
+        })
+        this.log(`Attempt ${attempt} of ${request.retries} for request`)
+        if (flags.verbose) {
+          this.log(Printer.response(response))
+        }
+      }
+
+      return response
+    }
+
+    response = await this.runRequest(caseName, request, context, {
+      printCaptures: flags.captures,
+      printAssertions: flags.assertions,
+    })
+
+    return response
+  }
+
   private async runRequest(
     caseName: string,
     request: Request,
@@ -338,7 +368,7 @@ export default class SuiteCommand extends Command {
       this.printCaptures(response.captures)
     }
 
-    let assertions:Assertion[] = []
+    let assertions: Assertion[] = []
     if (request.assertions.length > 0) {
       if (!response.hasError) {
         assertions = Asserter.assert(

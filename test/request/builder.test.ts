@@ -26,6 +26,7 @@ describe('builder', () => {
     const preparedRequest = RequestBuilder.prepare(
       requestPath,
       0,
+      0,
       context,
       [],
       {
@@ -49,6 +50,7 @@ describe('builder', () => {
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
       requestPath,
+      0,
       0,
       context,
       [
@@ -75,6 +77,7 @@ describe('builder', () => {
     const preparedRequest = RequestBuilder.prepare(
       requestPath,
       0,
+      0,
       context,
       [
         {
@@ -96,6 +99,7 @@ describe('builder', () => {
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
       requestPath,
+      0,
       0,
       context,
       [],

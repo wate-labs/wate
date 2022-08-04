@@ -95,6 +95,7 @@ export default class RequestCommand extends Command {
     const request = RequestBuilder.prepare(
       path.join(RequestCommand.reqDir, reqName),
       0,
+      0,
       context,
       params,
       {

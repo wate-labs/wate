@@ -42,6 +42,7 @@ export interface Case {
 export interface RequestDefinition {
   request: string
   delayed: number
+  retries: number
   params: ParamKeyValue
   captures: CaptureKeyValue
   assertions: AssertionKeyValue

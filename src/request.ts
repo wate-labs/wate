@@ -4,6 +4,7 @@ import Param from './param'
 
 export default interface Request {
   delayed: number
+  retries: number
   path: string
   url: string
   baseURL: string
