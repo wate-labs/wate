@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.0 (TBD)
+## 0.8.0 (2022-08-04)
 
 - Add retries for requests
 
