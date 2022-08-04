@@ -14,6 +14,7 @@ export default class RequestBuilder {
   public static prepare(
     requestPath: string,
     delayed: number,
+    retries: number,
     context: Context,
     params: Param[],
     definitons: {
@@ -26,6 +27,7 @@ export default class RequestBuilder {
 
     return {
       delayed,
+      retries,
       path: requestPath,
       url: request.uri,
       baseURL: context.environment.scheme + '://' + host,

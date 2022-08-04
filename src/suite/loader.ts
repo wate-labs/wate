@@ -81,6 +81,7 @@ export default class SuiteLoader {
         properties: {
           request: {type: 'string'},
           delayed: {type: 'number'},
+          retries: {type: 'number'},
           params: {
             type: 'object',
             additionalProperties: true,
@@ -152,7 +153,7 @@ export default class SuiteLoader {
   }
 
   private static prepareMatrixCase({requests}: CaseDefinition, caseName: string, kvBag: KeyValueBag): CaseDefinition {
-    return {name: caseName, requests: requests.map(({request, delayed, params, captures, assertions}) => {
+    return {name: caseName, requests: requests.map(({request, delayed, retries, params, captures, assertions}) => {
       params = SuiteLoader.setMatrixValues(params, kvBag.params)
       captures = SuiteLoader.setMatrixValues(captures, kvBag.captures) as CaptureKeyValue
       assertions = SuiteLoader.setMatrixValues(assertions, kvBag.assertions) as AssertionKeyValue
@@ -160,6 +161,7 @@ export default class SuiteLoader {
       return {
         request,
         delayed,
+        retries,
         params,
         captures,
         assertions,
@@ -187,10 +189,11 @@ export default class SuiteLoader {
     return {
       name: name,
       requests: requests.map(
-        ({request, delayed, params, captures, assertions}) => {
+        ({request, delayed, retries, params, captures, assertions}) => {
           return SuiteLoader.prepareRequest(
             request,
             delayed,
+            retries,
             DataHelper.toParam(params),
             {
               captures: DataHelper.toCapture(captures),
@@ -206,6 +209,7 @@ export default class SuiteLoader {
   private static prepareRequest(
     request: string,
     delayed: number,
+    retries: number,
     params: Param[],
     definitions: {
       captures: CaptureDefinition[]
@@ -216,6 +220,7 @@ export default class SuiteLoader {
     return RequestBuilder.prepare(
       path.join(context.requestsLocation, request),
       delayed,
+      retries,
       context,
       params,
       {

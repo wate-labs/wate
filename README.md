@@ -119,6 +119,10 @@ requests are run sequentially.
 > in seconds. These requests are queued and executed at the end of the suite.
 > The captures defined are evaluated at runtime.
 
+> If you have requests that need polling you can use the `retries` property to
+> set the number of attempts until a response is valid. This can be helpful
+> when the server is doing some asynchronous work and you need to poll.
+
 ###### Params
 
 Static values for requests can be defined as part of the `params` property.
