@@ -12,6 +12,7 @@ import AssertionDefinition from '../assertion'
 
 export default class RequestBuilder {
   public static prepare(
+    name: string,
     requestPath: string,
     delayed: number,
     retries: number,
@@ -26,6 +27,7 @@ export default class RequestBuilder {
     const host = context.environment.host ?? request.headers.Host
 
     return {
+      name,
       delayed,
       retries,
       path: requestPath,

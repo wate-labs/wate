@@ -3,6 +3,7 @@ import CaptureDefinition from './capture'
 import Param from './param'
 
 export default interface Request {
+  name: string
   delayed: number
   retries: number
   path: string
