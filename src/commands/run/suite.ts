@@ -96,11 +96,11 @@ export default class SuiteCommand extends Command {
     )
     let delayed: [string, Request[]][] = []
     for await (const suiteCase of suite.cases) {
-      const delayedCases = await this.runCase(suiteCase, context, flags)
-      if (delayedCases.length > 0) {
+      const delayedRequests = await this.runCase(suiteCase, context, flags)
+      if (delayedRequests.length > 0) {
         delayed.push([
           suiteCase.name,
-          delayedCases,
+          delayedRequests,
         ])
       }
     }
@@ -170,15 +170,17 @@ export default class SuiteCommand extends Command {
     },
   ): Promise<[string, Request[]][]> {
     const remainingQueue: [string, Request[]][] = []
+
     for (const [caseName, requests] of delayedQueue) {
       const remainingRequests: Request[] = []
       /* eslint-disable no-await-in-loop */
       for await (let request of requests) {
-        if (request.delayed === counter) {
+        if (request.delayed !== undefined && request.delayed <= counter) {
           let response: Response = ResponseHelper.emptyResponse(request)
 
-          this.log(dim(`[${caseName}] Running (${request.url})`))
+          this.log(dim(`[${caseName}] Running ${request.name} (${request.url})`))
           request = RequestBuilder.render(caseName, request, context)
+
           if (flags.verbose) {
             this.log(Printer.request(request))
           }
@@ -194,7 +196,7 @@ export default class SuiteCommand extends Command {
           if (response.hasError) {
             this.error(
               [
-                `[${caseName}] Finished request with an error: ${response.error.reason} on ${request.url}`,
+                `[${caseName}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
                 Printer.requestAndResponse(request, response, false),
               ].join('\n'),
             )
@@ -203,11 +205,15 @@ export default class SuiteCommand extends Command {
           this.log(
             [
               dim(
-                `[${caseName}] Finished request with status ${response.status} in ${response.durationInMs}ms`,
+                `[${caseName}] Finished request ${request.name} with status ${response.status} in ${response.durationInMs}ms`,
               ),
             ].join('\n'),
           )
         } else {
+          if (request.delayed === undefined) {
+            request = this.determineDelayedRequests(remainingRequests, request)
+          }
+
           remainingRequests.push(request)
         }
       }
@@ -218,6 +224,15 @@ export default class SuiteCommand extends Command {
     }
 
     return remainingQueue
+  }
+
+  private determineDelayedRequests(remainingRequests: Request[], request: Request) {
+    const delayedRequestsLeft = remainingRequests.filter(request => request.delayed)
+    if (delayedRequestsLeft.length === 0) {
+      request.delayed = 0
+    }
+
+    return request
   }
 
   private buildContext(
@@ -255,6 +270,7 @@ export default class SuiteCommand extends Command {
     const startTime = Date.now()
     this.log(`Starting case ${suiteCase.name}`)
     const delayed: Request[] = []
+    let hasDelayed = false
     for await (let request of suiteCase.requests) {
       let response: Response = ResponseHelper.emptyResponse(request)
 
@@ -264,6 +280,18 @@ export default class SuiteCommand extends Command {
         this.log(
           dim(
             `[${suiteCase.name}] Put request to queue. Will be run in ${request.delayed}s.`,
+          ),
+        )
+        delayed.push(request)
+        hasDelayed = true
+        continue
+      }
+
+      // Put all subsequent requests after a delayed one to queue as well.
+      if (hasDelayed) {
+        this.log(
+          dim(
+            `[${suiteCase.name}] Put request to queue. Will be run after delayed predecessor.`,
           ),
         )
         delayed.push(request)
@@ -323,7 +351,7 @@ export default class SuiteCommand extends Command {
     flags: { captures: boolean, assertions: boolean, verbose: boolean },
   ): Promise<Response> {
     let attempt = 0
-    if (request.retries > 0) {
+    if (request.retries && request.retries > 0) {
       this.log(`Retrying request for ${request.retries} times in case of an error.`)
       while (attempt < request.retries && (response.hasError || response.status === 0)) {
         attempt++

@@ -93,6 +93,7 @@ export default class RequestCommand extends Command {
     context: Context,
   ) {
     const request = RequestBuilder.prepare(
+      reqName,
       path.join(RequestCommand.reqDir, reqName),
       0,
       0,

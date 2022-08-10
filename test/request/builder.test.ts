@@ -20,10 +20,12 @@ const buildContext = (environment: Environment): Context => {
 
 describe('builder', () => {
   it('builds a request with environment', () => {
-    const requestPath = path.join(fixturePath, 'request_1')
+    const name = 'request_1'
+    const requestPath = path.join(fixturePath, name)
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
+      name,
       requestPath,
       0,
       0,
@@ -45,10 +47,12 @@ describe('builder', () => {
     })
   })
   it('sets variables to a request body', () => {
-    const requestPath = path.join(fixturePath, 'request_with_placeholders')
+    const name = 'request_with_placeholders'
+    const requestPath = path.join(fixturePath, name)
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
+      name,
       requestPath,
       0,
       0,
@@ -68,13 +72,15 @@ describe('builder', () => {
     assert.equal(request.data.propertyWithPlaceholder, 'testValue')
   })
   it('sets variables to a request header', () => {
+    const name = 'request_with_header_placeholder'
     const requestPath = path.join(
       fixturePath,
-      'request_with_header_placeholder',
+      name,
     )
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
+      name,
       requestPath,
       0,
       0,
@@ -94,10 +100,12 @@ describe('builder', () => {
     assert.equal(request.headers['X-Custom'], 'testValue')
   })
   it('raises if a variable is missing', () => {
-    const requestPath = path.join(fixturePath, 'request_with_placeholders')
+    const name = 'request_with_placeholders'
+    const requestPath = path.join(fixturePath, name)
     const environment = EnvironmentLoader.load(environmentsPath, 'full_env')
     const context = buildContext(environment)
     const preparedRequest = RequestBuilder.prepare(
+      name,
       requestPath,
       0,
       0,

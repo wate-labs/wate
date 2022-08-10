@@ -117,6 +117,12 @@ requests are run sequentially.
 
 > Case requests can also have a `delayed` property set which delays execution
 > in seconds. These requests are queued and executed at the end of the suite.
+> If a delayed request is found all subsequent requests (without delay) queued 
+> and run when the delayed request was performed.
+> If there are two delayed requests within a case they could "overtake" each 
+> other if request 1 has a lower `delayed` value than request 2. The reference 
+> for the delay is the case and not the previous request. That is subject
+> to change in the future though.
 > The captures defined are evaluated at runtime.
 
 > If you have requests that need polling you can use the `retries` property to

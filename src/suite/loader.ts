@@ -218,6 +218,7 @@ export default class SuiteLoader {
     context: Context,
   ): Request {
     return RequestBuilder.prepare(
+      request,
       path.join(context.requestsLocation, request),
       delayed,
       retries,
