@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2 (2022-08-11)
+
+- Change retries to take delay into account
+
 ## 0.8.1 (2022-08-10)
 
 - Change behavior of delayed requests to push back subsequent (not delayed) 
