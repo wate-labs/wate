@@ -352,14 +352,20 @@ export default class SuiteCommand extends Command {
   ): Promise<Response> {
     let attempt = 0
     if (request.retries && request.retries > 0) {
-      this.log(`Retrying request for ${request.retries} times in case of an error.`)
+      this.log(`Retrying request ${request.name} for ${request.retries} times in case of an error.`)
       while (attempt < request.retries && (response.hasError || response.status === 0)) {
         attempt++
+        this.log(`Waiting ${request.delayed} ticks for attempt ${attempt} of ${request.retries} for request ${request.name}`)
+
+        let counter = 0
+        while (counter < request.delayed) {
+          counter = await this.tick(counter)
+        }
+
         response = await this.runRequest(caseName, request, context, {
           printCaptures: flags.captures,
           printAssertions: flags.assertions,
         })
-        this.log(`Attempt ${attempt} of ${request.retries} for request`)
         if (flags.verbose) {
           this.log(Printer.response(response))
         }

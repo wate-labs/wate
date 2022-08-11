@@ -97,7 +97,7 @@ Cases acting as matrix test cases need to be annotated with the property
 `matrix: true`.
 
 > Note: complete replacements still need to match the overall schema. Hence
-> those might need prefixing of the special propery name `_`, e.g. 
+> those might need prefixing of the special property name `_`, e.g. 
 > `_: $matrix.captures`.
 
 All matrix defintions are run sequentially, one after another.
@@ -127,7 +127,8 @@ requests are run sequentially.
 
 > If you have requests that need polling you can use the `retries` property to
 > set the number of attempts until a response is valid. This can be helpful
-> when the server is doing some asynchronous work and you need to poll.
+> when the server is doing some asynchronous work and you need to poll. The 
+> retry mechanism will take the `delayed` property into account.
 
 ###### Params
 
@@ -250,7 +251,7 @@ EXAMPLES
   $ wate create:environment
 ```
 
-_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/create/environment.ts)_
+_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -273,7 +274,7 @@ EXAMPLES
   $ wate create:request
 ```
 
-_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/create/request.ts)_
+_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -296,7 +297,7 @@ EXAMPLES
   $ wate create:suite
 ```
 
-_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/create/suite.ts)_
+_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
@@ -336,7 +337,7 @@ EXAMPLES
   $ wate init
 ```
 
-_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/init.ts)_
+_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -356,7 +357,7 @@ EXAMPLES
   $ wate list:environments
 ```
 
-_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/list/environments.ts)_
+_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -376,7 +377,7 @@ EXAMPLES
   $ wate list:requests
 ```
 
-_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/list/requests.ts)_
+_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -396,7 +397,7 @@ EXAMPLES
   $ wate list:suites
 ```
 
-_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/list/suites.ts)_
+_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -425,7 +426,7 @@ EXAMPLES
   $ wate run:request test ping
 ```
 
-_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/run/request.ts)_
+_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -456,5 +457,5 @@ EXAMPLES
   $ wate run:suite test suite
 ```
 
-_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.8.1/dist/commands/run/suite.ts)_
+_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.8.2/dist/commands/run/suite.ts)_
 <!-- commandsstop -->
