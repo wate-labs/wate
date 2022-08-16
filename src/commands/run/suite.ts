@@ -1,28 +1,28 @@
 import {CliUx, Command, Flags} from '@oclif/core'
 import * as Chalk from 'chalk'
+import {cloneDeep, isArray, isObject} from 'lodash'
+import {Assertion, AssertionBag} from '../../assertion'
+import Asserter from '../../assertion/asserter'
+import {Capture} from '../../capture'
 import Context from '../../context'
+import ExcelReport from '../../data/excel-report'
 import EnvironmentLoader from '../../environment/loader'
-import SuiteLoader from '../../suite/loader'
-import Request from '../../request'
-import Response from '../../response'
-import RequestRunner from '../../request/runner'
-import {Case} from '../../suite'
+import JsonExport from '../../exporter/json'
 import Printer from '../../helpers/printer'
 import ResponseHelper from '../../helpers/response'
-import {Capture} from '../../capture'
+import Request from '../../request'
 import RequestBuilder from '../../request/builder'
-import Asserter from '../../assertion/asserter'
-import {Assertion, AssertionBag} from '../../assertion'
-import ExcelReport from '../../data/excel-report'
-import JsonExport from '../../exporter/json'
-import {isArray, isObject} from 'lodash'
+import RequestRunner from '../../request/runner'
+import Response from '../../response'
+import {Case} from '../../suite'
+import SuiteLoader from '../../suite/loader'
 
 const {bold, dim} = Chalk
 
 export default class SuiteCommand extends Command {
   static args = [
     {name: 'environment', description: 'environment to use', required: true},
-    {name: 'suite', description: 'name of the suite', required: true},
+    {name: 'suite', description: 'name of the suite to run', required: true},
   ];
 
   static flags = {
@@ -56,7 +56,7 @@ export default class SuiteCommand extends Command {
       char: 'e',
       description: 'export the request and response bodies',
     }),
-  };
+  }
 
   static description = 'run an existing suite';
 
@@ -94,33 +94,83 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
-    let delayed: [string, Request[]][] = []
-    for await (const suiteCase of suite.cases) {
-      const delayedRequests = await this.runCase(suiteCase, context, flags)
-      if (delayedRequests.length > 0) {
-        delayed.push([
-          suiteCase.name,
-          delayedRequests,
-        ])
-      }
-    }
 
-    if (delayed.length > 0) {
-      CliUx.ux.action.start('Waiting for delayed processing')
-      let counter = 0
-      let processed = false
-      /* eslint-disable no-await-in-loop */
-      while (!processed) {
-        counter = await this.tick(counter)
-        delayed = await this.runDelayed(delayed, counter, context, flags)
-        if (delayed.length === 0) {
-          this.log('Finished delayed processing')
-          processed = true
+    const casePromises = Object.values(suite.cases).map(async suiteCase => {
+      this.log(dim(`[${suiteCase.name}] Starting case`))
+      const startTime = Date.now()
+      const responses: Response[] = []
+      // Run all requests including the delay sequentially
+      for await (const request of suiteCase.requests) {
+        this.log(dim(`[${suiteCase.name}] Queued ${request.name} with a delay of ${request.delayed ?? 0} ticks`))
+        // Create a stub response for dry runs
+        let response = ResponseHelper.emptyResponse(request)
+
+        await this.waitFor(request.delayed)
+
+        this.log(dim(`[${suiteCase.name}] Running ${request.name} (${request.url})`))
+
+        if (!flags.dry) {
+          let attempt = 0
+          const retries = request.retries ?? 0
+
+          /* eslint-disable no-await-in-loop */
+          let doRetry = true
+          while (doRetry) {
+            const renderedRequest = RequestBuilder.render(suiteCase.name, cloneDeep(request), context)
+            if (flags.verbose && attempt === 0) {
+              this.log(Printer.request(renderedRequest))
+            }
+
+            ++attempt
+            response = await RequestRunner.run(renderedRequest)
+            this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
+
+            // If a single request or the maximum retries (+1) is reqched do not retry.
+            if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
+              doRetry = false
+            }
+
+            if (doRetry && (response.hasError || response.status === 0)) {
+              await this.waitFor(renderedRequest.delayed ?? 0)
+              this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} (${renderedRequest.url}) retry ${attempt} of ${retries}`))
+              continue
+            }
+
+            // If there was no error or no retry is required leave the loop.
+            doRetry = false
+
+            if (flags.verbose && !response.hasError) {
+              this.log(Printer.response(response))
+            }
+
+            await this.extract(suiteCase, renderedRequest, response, context, flags)
+          }
+          /* eslint-ensable no-await-in-loop */
+
+          if (flags.export) {
+            this.exportRequestAndResponse(suiteCase.name, request, response)
+          }
+
+          if (response.hasError) {
+            this.error(
+              [
+                `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
+                Printer.requestAndResponse(request, response, false),
+              ].join('\n'),
+            )
+          }
+
+          responses.push(response)
+          this.log(dim(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`))
         }
       }
 
-      CliUx.ux.action.stop()
-    }
+      const durationInMs = Date.now() - startTime
+      this.log(dim(`[${suiteCase.name}] Finished case in ${durationInMs}ms`))
+
+      return responses
+    })
+    await Promise.all(casePromises)
 
     const durationInMs = Date.now() - startTime
     this.log(
@@ -158,83 +208,6 @@ export default class SuiteCommand extends Command {
     }
   }
 
-  private async runDelayed(
-    delayedQueue: [string, Request[]][],
-    counter: number,
-    context: Context,
-    flags: {
-      captures: boolean;
-      assertions: boolean;
-      verbose: boolean;
-      dry: boolean;
-    },
-  ): Promise<[string, Request[]][]> {
-    const remainingQueue: [string, Request[]][] = []
-
-    for (const [caseName, requests] of delayedQueue) {
-      const remainingRequests: Request[] = []
-      /* eslint-disable no-await-in-loop */
-      for await (let request of requests) {
-        if (request.delayed !== undefined && request.delayed <= counter) {
-          let response: Response = ResponseHelper.emptyResponse(request)
-
-          this.log(dim(`[${caseName}] Running ${request.name} (${request.url})`))
-          request = RequestBuilder.render(caseName, request, context)
-
-          if (flags.verbose) {
-            this.log(Printer.request(request))
-          }
-
-          if (!flags.dry) {
-            response = await this.runRequestWithRetries(caseName, request, response, context, flags)
-          }
-
-          if (flags.verbose) {
-            this.log(Printer.response(response))
-          }
-
-          if (response.hasError) {
-            this.error(
-              [
-                `[${caseName}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
-                Printer.requestAndResponse(request, response, false),
-              ].join('\n'),
-            )
-          }
-
-          this.log(
-            [
-              dim(
-                `[${caseName}] Finished request ${request.name} with status ${response.status} in ${response.durationInMs}ms`,
-              ),
-            ].join('\n'),
-          )
-        } else {
-          if (request.delayed === undefined) {
-            request = this.determineDelayedRequests(remainingRequests, request)
-          }
-
-          remainingRequests.push(request)
-        }
-      }
-
-      if (remainingRequests.length > 0) {
-        remainingQueue.push([caseName, remainingRequests])
-      }
-    }
-
-    return remainingQueue
-  }
-
-  private determineDelayedRequests(remainingRequests: Request[], request: Request) {
-    const delayedRequestsLeft = remainingRequests.filter(request => request.delayed)
-    if (delayedRequestsLeft.length === 0) {
-      request.delayed = 0
-    }
-
-    return request
-  }
-
   private buildContext(
     flags: { parameters?: string[] },
     envName: string,
@@ -256,174 +229,25 @@ export default class SuiteCommand extends Command {
     return context
   }
 
-  private async runCase(
-    suiteCase: Case,
-    context: Context,
-    flags: {
-      verbose: boolean;
-      dry: boolean;
-      captures: boolean;
-      assertions: boolean;
-      export: boolean;
-    },
-  ): Promise<Request[]> {
-    const startTime = Date.now()
-    this.log(`Starting case ${suiteCase.name}`)
-    const delayed: Request[] = []
-    let hasDelayed = false
-    for await (let request of suiteCase.requests) {
-      let response: Response = ResponseHelper.emptyResponse(request)
+  private async waitFor(delay: number) {
+    let counter = 0
 
-      this.log(dim(`[${suiteCase.name}] Running (${request.url})`))
-
-      if (request.delayed) {
-        this.log(
-          dim(
-            `[${suiteCase.name}] Put request to queue. Will be run in ${request.delayed}s.`,
-          ),
-        )
-        delayed.push(request)
-        hasDelayed = true
-        continue
-      }
-
-      // Put all subsequent requests after a delayed one to queue as well.
-      if (hasDelayed) {
-        this.log(
-          dim(
-            `[${suiteCase.name}] Put request to queue. Will be run after delayed predecessor.`,
-          ),
-        )
-        delayed.push(request)
-        continue
-      }
-
-      request = RequestBuilder.render(suiteCase.name, request, context)
-
-      if (flags.verbose) {
-        this.log(Printer.request(request))
-      }
-
-      if (!flags.dry) {
-        response = await this.runRequest(suiteCase.name, request, context, {
-          printCaptures: flags.captures,
-          printAssertions: flags.assertions,
-        })
-      }
-
-      if (flags.verbose) {
-        this.log(Printer.response(response))
-      }
-
-      if (flags.export) {
-        this.exportRequestAndResponse(suiteCase.name, request, response)
-      }
-
-      if (response.hasError) {
-        this.error(
-          [
-            `[${suiteCase.name}] Finished request with an error: ${response.error.reason} on ${request.url}`,
-            Printer.requestAndResponse(request, response, false),
-          ].join('\n'),
-        )
-      }
-
-      this.log(
-        [
-          dim(
-            `[${suiteCase.name}] Finished request with status ${response.status} in ${response.durationInMs}ms`,
-          ),
-        ].join('\n'),
-      )
+    /* eslint-disable no-await-in-loop */
+    while (counter < delay) {
+      counter = await this.tick(counter)
     }
-
-    const durationInMs = Date.now() - startTime
-    this.log(`Finished case ${suiteCase.name} in ${durationInMs}ms`, '\n')
-
-    return delayed
+    /* eslint-enable no-await-in-loop */
   }
 
-  private async runRequestWithRetries(
-    caseName: string,
-    request: Request,
-    response: Response,
-    context: Context,
-    flags: { captures: boolean, assertions: boolean, verbose: boolean },
-  ): Promise<Response> {
-    let attempt = 0
-    if (request.retries && request.retries > 0) {
-      this.log(`Retrying request ${request.name} for ${request.retries} times in case of an error.`)
-      while (attempt < request.retries && (response.hasError || response.status === 0)) {
-        attempt++
-        this.log(`Waiting ${request.delayed} ticks for attempt ${attempt} of ${request.retries} for request ${request.name}`)
-
-        let counter = 0
-        while (counter < request.delayed) {
-          counter = await this.tick(counter)
-        }
-
-        response = await this.runRequest(caseName, request, context, {
-          printCaptures: flags.captures,
-          printAssertions: flags.assertions,
-        })
-        if (flags.verbose) {
-          this.log(Printer.response(response))
-        }
-      }
-
-      return response
-    }
-
-    response = await this.runRequest(caseName, request, context, {
-      printCaptures: flags.captures,
-      printAssertions: flags.assertions,
-    })
-
-    return response
+  private async tick(counter: number): Promise<number> {
+    await this.sleep(1000)
+    return counter + 1
   }
 
-  private async runRequest(
-    caseName: string,
-    request: Request,
-    context: Context,
-    flags: {
-      printCaptures: boolean;
-      printAssertions: boolean;
-    },
-  ): Promise<Response> {
-    const response = await RequestRunner.run(request)
-    const captures = response.captures.map((capture: Capture) => {
-      capture.caseName = caseName
-
-      return capture
+  private sleep(ms: number) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms)
     })
-    context.captures = [...context.captures, ...captures]
-    if (response.captures.length > 0 && flags.printCaptures) {
-      this.printCaptures(response.captures)
-    }
-
-    let assertions: Assertion[] = []
-    if (request.assertions.length > 0) {
-      if (!response.hasError) {
-        assertions = Asserter.assert(
-          caseName,
-          request.assertions,
-          context.captures,
-        )
-      }
-
-      if (!context.assertions[caseName]) {
-        context.assertions[caseName] = [] as Assertion[]
-      }
-
-      context.assertions[caseName] = [...context.assertions[caseName], ...assertions]
-
-      if (flags.printAssertions) {
-        this.printAssertions(assertions)
-      }
-    }
-
-    return response
   }
 
   private printCaptures(captures: Capture[], title?: string) {
@@ -483,6 +307,30 @@ export default class SuiteCommand extends Command {
     }
   }
 
+  private generateMarker(assertion: Assertion): string {
+    let marker = ''
+
+    if (!(assertion.expected === '###' && assertion.expected !== assertion.actual && assertion.matched)) {
+      marker = assertion.matched ? '✓' : '⨯'
+    }
+
+    return marker
+  }
+
+  private prettify(value: any): any {
+    if (isObject(value) || isArray(value)) {
+      return Printer.prettify(value)
+    }
+
+    return value
+  }
+
+  private hasAssertions(assertionBag: AssertionBag): boolean {
+    const assertions = Object.values(assertionBag).flat()
+
+    return assertions.length > 0
+  }
+
   private async export(
     name: string,
     assertions: Assertion[],
@@ -519,45 +367,43 @@ export default class SuiteCommand extends Command {
 
   private exportRequestAndResponse(caseName: string, request: Request, response: Response) {
     const pattern = /\//g
-    const name = request.url.replace(pattern, '_')
+    const name = request.name.replace(pattern, '_')
     const requestFilename = JsonExport.write(`${name}_rq`, request.data, caseName)
     const responseFilename = JsonExport.write(`${name}_rs`, response.data, caseName)
 
     this.log(`Exported request to ${requestFilename} and response to ${responseFilename}`)
   }
 
-  private async tick(counter: number): Promise<number> {
-    await this.sleep(1000)
-    return counter + 1
-  }
+  private async extract(suiteCase: Case, request: Request, response: Response, context: Context, flags: {captures: boolean, assertions: boolean}) {
+    const captures = response.captures.map((capture: Capture) => {
+      capture.caseName = suiteCase.name
 
-  private sleep(ms: number) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms)
+      return capture
     })
-  }
-
-  private hasAssertions(assertionBag: AssertionBag): boolean {
-    const assertions = Object.values(assertionBag).flat()
-
-    return assertions.length > 0
-  }
-
-  private generateMarker(assertion: Assertion): string {
-    let marker = ''
-
-    if (!(assertion.expected === '###' && assertion.expected !== assertion.actual && assertion.matched)) {
-      marker = assertion.matched ? '✓' : '⨯'
+    context.captures = [...context.captures, ...captures]
+    if (response.captures.length > 0 && flags.captures) {
+      this.printCaptures(response.captures)
     }
 
-    return marker
-  }
+    let assertions: Assertion[] = []
+    if (request.assertions.length > 0) {
+      if (!response.hasError) {
+        assertions = Asserter.assert(
+          suiteCase.name,
+          request.assertions,
+          context.captures,
+        )
+      }
 
-  private prettify(value: any): any {
-    if (isObject(value) || isArray(value)) {
-      return Printer.prettify(value)
+      if (!context.assertions[suiteCase.name]) {
+        context.assertions[suiteCase.name] = [] as Assertion[]
+      }
+
+      context.assertions[suiteCase.name] = [...context.assertions[suiteCase.name], ...assertions]
+
+      if (flags.assertions) {
+        this.printAssertions(assertions)
+      }
     }
-
-    return value
   }
 }
