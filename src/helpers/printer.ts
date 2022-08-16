@@ -12,6 +12,7 @@ export default class Printer {
     const request = Printer.parse(rawRequest)
     return [
       '',
+      dim(`Name: ${rawRequest.name}`),
       dim(`URL: ${rawRequest.url}`),
       '',
       bold('REQUEST'),
