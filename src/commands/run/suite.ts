@@ -144,21 +144,21 @@ export default class SuiteCommand extends Command {
             }
 
             await this.extract(suiteCase, renderedRequest, response, context, flags)
+
+            if (flags.export) {
+              this.exportRequestAndResponse(suiteCase.name, request, response)
+            }
+
+            if (response.hasError) {
+              this.error(
+                [
+                  `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
+                  Printer.requestAndResponse(renderedRequest, response, false),
+                ].join('\n'),
+              )
+            }
           }
           /* eslint-ensable no-await-in-loop */
-
-          if (flags.export) {
-            this.exportRequestAndResponse(suiteCase.name, request, response)
-          }
-
-          if (response.hasError) {
-            this.error(
-              [
-                `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
-                Printer.requestAndResponse(request, response, false),
-              ].join('\n'),
-            )
-          }
 
           responses.push(response)
           this.log(dim(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`))
