@@ -12,6 +12,7 @@ export interface SuiteDefinition {
 interface Matrix {
   name: string
   caseName: string
+  delayed: number
   params: ParamKeyValue
   captures: CaptureKeyValue
   assertions: AssertionKeyValue
@@ -25,6 +26,7 @@ export interface KeyValueBag {
 
 export interface CaseDefinition {
   name: string
+  delayed?: number
   matrix?: boolean
   requests: RequestDefinition[]
 }
@@ -36,6 +38,7 @@ export interface Suite {
 
 export interface Case {
   name: string
+  delayed?: number
   requests: Request[]
 }
 

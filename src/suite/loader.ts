@@ -41,6 +41,7 @@ export default class SuiteLoader {
         type: 'object',
         properties: {
           name: {type: 'string'},
+          delayed: {type: 'number'},
           caseName: {type: 'string'},
           description: {type: 'string'},
           params: {
@@ -122,20 +123,20 @@ export default class SuiteLoader {
     if (suiteDefinition.matrix) {
       const matrixTestCases = cases.filter(({matrix}) => matrix === true)
       cases = cases.filter(({matrix}) => matrix !== true)
-      suiteDefinition.matrix.forEach(({name, caseName, params, captures, assertions}) => {
+      suiteDefinition.matrix.forEach(({name, caseName, delayed, params, captures, assertions}) => {
         const caseDefinition = cloneDeep(matrixTestCases.filter(caseDefinition => caseDefinition.name === caseName).pop())
         if (!caseDefinition) {
           throw new Error(`No test case found with name "${caseName}" or it is not annotated as matrix test case`)
         }
 
-        cases.push(SuiteLoader.prepareMatrixCase(caseDefinition, name, {params, captures, assertions}))
+        cases.push(SuiteLoader.prepareMatrixCase(caseDefinition, name, delayed, {params, captures, assertions}))
       })
     }
 
     return {
       name: suiteDefinition.name,
-      cases: cases.map(({name, requests}) =>
-        SuiteLoader.prepareCase(name, requests, context),
+      cases: cases.map(({name, delayed, requests}) =>
+        SuiteLoader.prepareCase(name, delayed, requests, context),
       ),
     }
   }
@@ -152,8 +153,8 @@ export default class SuiteLoader {
     }
   }
 
-  private static prepareMatrixCase({requests}: CaseDefinition, caseName: string, kvBag: KeyValueBag): CaseDefinition {
-    return {name: caseName, requests: requests.map(({request, delayed, retries, params, captures, assertions}) => {
+  private static prepareMatrixCase({requests}: CaseDefinition, caseName: string, delayed: number | undefined, kvBag: KeyValueBag): CaseDefinition {
+    return {name: caseName, delayed, requests: requests.map(({request, delayed, retries, params, captures, assertions}) => {
       params = SuiteLoader.setMatrixValues(params, kvBag.params)
       captures = SuiteLoader.setMatrixValues(captures, kvBag.captures) as CaptureKeyValue
       assertions = SuiteLoader.setMatrixValues(assertions, kvBag.assertions) as AssertionKeyValue
@@ -183,11 +184,13 @@ export default class SuiteLoader {
 
   private static prepareCase(
     name: string,
+    delayed: number | undefined,
     requests: RequestDefinition[],
     context: Context,
   ): Case {
     return {
-      name: name,
+      name,
+      delayed,
       requests: requests.map(
         ({request, delayed, retries, params, captures, assertions}) => {
           return SuiteLoader.prepareRequest(

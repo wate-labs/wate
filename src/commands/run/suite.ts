@@ -96,6 +96,11 @@ export default class SuiteCommand extends Command {
     )
 
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
+      if (suiteCase.delayed) {
+        this.log(dim(`[${suiteCase.name}] Queued with a delay of ${suiteCase.delayed ?? 0} ticks`))
+        await this.waitFor(suiteCase.delayed)
+      }
+
       this.log(dim(`[${suiteCase.name}] Starting case`))
       const startTime = Date.now()
       const responses: Response[] = []
@@ -107,7 +112,7 @@ export default class SuiteCommand extends Command {
 
         await this.waitFor(request.delayed)
 
-        this.log(dim(`[${suiteCase.name}] Running ${request.name} (${request.url})`))
+        this.log(dim(`[${suiteCase.name}] Running ${request.name}`))
 
         if (!flags.dry) {
           let attempt = 0
@@ -132,7 +137,7 @@ export default class SuiteCommand extends Command {
 
             if (doRetry && (response.hasError || response.status === 0)) {
               await this.waitFor(renderedRequest.delayed ?? 0)
-              this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} (${renderedRequest.url}) retry ${attempt} of ${retries}`))
+              this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
               continue
             }
 
