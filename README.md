@@ -100,7 +100,9 @@ Cases acting as matrix test cases need to be annotated with the property
 > those might need prefixing of the special property name `_`, e.g. 
 > `_: $matrix.captures`.
 
-All matrix defintions are run sequentially, one after another.
+All matrix defintions are run concurrently like cases. A matrix can have a
+`delayed` property which will delay the case by `n` ticks (approximately 1 
+second).
 
 #### Cases
 
@@ -108,6 +110,9 @@ A suite consists of one or more cases. The cases have one or more requests
 defined.
 
 Cases have a name and one or more requests.
+
+A case can have a `delayed` property set to start running the case after `n`
+ticks to not bombard the system under test. A tick is approximately 1 second.
 
 > Cases are run concurrently to each other but the requests contained run
 > sequentially.

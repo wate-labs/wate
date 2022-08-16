@@ -6,6 +6,7 @@
 - Change case running to concurrent
 - Change file naming for RQ/RS JSON exports to files
 - Improve output of printed RQs
+- Add possibility to delay cases as a whole
 
 ## 0.8.2 (2022-08-11)
 
