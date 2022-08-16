@@ -3,7 +3,7 @@ import * as path from 'node:path'
 import {format} from 'date-fns/fp'
 
 export default class JsonExport {
-  static dateTimeFormat = format('yyyy-MM-dd-HHmm');
+  static dateTimeFormat = format('yyyyMMddHHmmssSS');
 
   public static write(name: string, data: any, dirname = ''): string {
     const folderpath = path.join('exports', dirname)
