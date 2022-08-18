@@ -3,6 +3,7 @@
 ## 0.8.4 (TBD)
 
 - Change and align file naming to contain environment name
+- Add rendering responses on retries when in verbose mode
 
 ## 0.8.3 (2022-08-16)
 
