@@ -151,7 +151,7 @@ export default class SuiteCommand extends Command {
             await this.extract(suiteCase, renderedRequest, response, context, flags)
 
             if (flags.export) {
-              this.exportRequestAndResponse(suiteCase.name, request, response)
+              this.exportRequestAndResponse(envName, suiteCase.name, request, response)
             }
 
             if (response.hasError) {
@@ -200,7 +200,7 @@ export default class SuiteCommand extends Command {
       if (flags.report) {
         const assertions = Object.values(context.assertions).flat()
 
-        exportFilepath = await this.export(suite.name, assertions, context.captures)
+        exportFilepath = await this.export(envName, suite.name, assertions, context.captures)
       }
 
       const assertions = Object.values(context.assertions).flat()
@@ -337,11 +337,14 @@ export default class SuiteCommand extends Command {
   }
 
   private async export(
+    envName: string,
     name: string,
     assertions: Assertion[],
     captures: Capture[],
   ): Promise<string> {
-    this.log(`Generating export for ${name}`)
+    this.log(`Generating export for ${name} on ${envName}`)
+    const pattern = /\//g
+    name = `${envName.replace(pattern, '_')}_${name}`
     const printableAssertions = assertions.map(assertion => {
       return {
         matched: this.generateMarker(assertion),
@@ -370,9 +373,9 @@ export default class SuiteCommand extends Command {
     return printableCaptures.join('\n')
   }
 
-  private exportRequestAndResponse(caseName: string, request: Request, response: Response) {
+  private exportRequestAndResponse(envName:string, caseName: string, request: Request, response: Response) {
     const pattern = /\//g
-    const name = request.name.replace(pattern, '_')
+    const name = `${envName.replace(pattern, '_')}_${request.name.replace(pattern, '_')}`
     const requestFilename = JsonExport.write(`${name}_rq`, request.data, caseName)
     const responseFilename = JsonExport.write(`${name}_rs`, response.data, caseName)
 
