@@ -136,6 +136,10 @@ export default class SuiteCommand extends Command {
             }
 
             if (doRetry && (response.hasError || response.status === 0)) {
+              if (flags.verbose) {
+                this.log(Printer.response(response))
+              }
+
               await this.waitFor(renderedRequest.delayed ?? 0)
               this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
               continue
