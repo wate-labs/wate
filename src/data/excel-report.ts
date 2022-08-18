@@ -3,7 +3,7 @@ import {format} from 'date-fns/fp'
 import * as ExcelJS from 'exceljs'
 
 export default class ExcelReport {
-  static dateTimeFormat = format('yyyy-MM-dd-HHmm');
+  static dateTimeFormat = format('yyyyMMddHHmmssSS');
 
   public static async write(
     name: string,

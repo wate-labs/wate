@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.4 (TBD)
+
+- Change and align file naming to contain environment name
+
 ## 0.8.3 (2022-08-16)
 
 - Change running order of case requests to sequential
