@@ -72,13 +72,12 @@ export default class SuiteCommand extends Command {
     const {args, flags} = await this.parse(SuiteCommand)
     const envName = args.environment
     const suiteName = args.suite
-    const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
     this.log(
       [
-        `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
+        `Running suite "${suite.name}" with environment "${envName}" against "${context.environment.host}"`,
         '',
         bold(`Cases to be run for ${suite.name}`.toUpperCase()),
         ...suite.cases.map(({name}) => {
