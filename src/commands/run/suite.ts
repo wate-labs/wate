@@ -14,7 +14,7 @@ import Request from '../../request'
 import RequestBuilder from '../../request/builder'
 import RequestRunner from '../../request/runner'
 import Response from '../../response'
-import {Case} from '../../suite'
+import {Case, Suite} from '../../suite'
 import SuiteLoader from '../../suite/loader'
 
 const {bold, dim} = Chalk
@@ -68,125 +68,39 @@ export default class SuiteCommand extends Command {
 
   static suiteDir = 'suites';
 
+  // Init counters for spinner display
+  totalCases = 0
+  pendingCases = 0
+  finishedCases = 0
+  totalRequests = 0
+  concurrentRunningRequests = 0
+
   async run() {
     const {args, flags} = await this.parse(SuiteCommand)
     const envName = args.environment
     const suiteName = args.suite
-    const environment = EnvironmentLoader.load(SuiteCommand.envDir, envName)
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
-    this.log(
-      [
-        `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
-        '',
-        bold(`Cases to be run for ${suite.name}`.toUpperCase()),
-        ...suite.cases.map(({name}) => {
-          return `  ${name}`
-        }),
-      ].join('\n'),
-      '\n',
-    )
-    const caseCount = suite.cases.length
-    const requestCount = suite.cases.reduce(
+
+    this.printIntro(suite, envName, context)
+
+    // Deterime suite statistics for printing out
+    this.totalCases = suite.cases.length
+    this.totalRequests = suite.cases.reduce(
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
-    let pendingCases = 0
-    let finishedCases = 0
-    let concurrentRunningRequests = 0
-    CliUx.ux.action.start(`Running suite with ${caseCount} cases`)
+
+    CliUx.ux.action.start(`Running suite with ${this.totalCases} cases`)
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
+      // Wait if case has a delay configured
       if (suiteCase.delayed) {
         this.log(dim(`[${suiteCase.name}] Queued with a delay of ${suiteCase.delayed ?? 0} ticks`))
         await this.waitFor(suiteCase.delayed)
       }
 
-      this.log(bold(`[${suiteCase.name}] Starting case`))
-      pendingCases++
-      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
-      const startTime = Date.now()
-      const responses: Response[] = []
-      // Run all requests including the delay sequentially
-      for await (const request of suiteCase.requests) {
-        // Create a stub response for dry runs
-        let response = ResponseHelper.emptyResponse(request)
-
-        await this.waitFor(request.delayed)
-
-        this.log(`[${suiteCase.name}] Running ${request.name}`)
-
-        if (!flags.dry) {
-          let attempt = 0
-          const retries = request.retries ?? 0
-
-          /* eslint-disable no-await-in-loop */
-          let doRetry = true
-          while (doRetry) {
-            const renderedRequest = RequestBuilder.render(suiteCase.name, cloneDeep(request), context)
-            if (flags.verbose && attempt === 0) {
-              this.log(Printer.request(renderedRequest))
-            }
-
-            attempt++
-            concurrentRunningRequests++
-            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
-            response = await RequestRunner.run(renderedRequest)
-            concurrentRunningRequests--
-            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
-            this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
-
-            // If a single request or the maximum retries (+1) is reqched do not retry.
-            if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
-              doRetry = false
-            }
-
-            if (doRetry && (response.hasError || response.status === 0)) {
-              if (flags.verbose) {
-                this.log(Printer.response(response))
-              }
-
-              await this.waitFor(renderedRequest.delayed ?? 0)
-              this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
-              continue
-            }
-
-            // If there was no error or no retry is required leave the loop.
-            doRetry = false
-
-            if (flags.verbose && !response.hasError) {
-              this.log(Printer.response(response))
-            }
-
-            await this.extract(suiteCase, renderedRequest, response, context, flags)
-
-            if (flags.export) {
-              this.exportRequestAndResponse(envName, suiteCase.name, request, response)
-            }
-
-            if (response.hasError) {
-              this.error(
-                [
-                  `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
-                  Printer.requestAndResponse(renderedRequest, response, false),
-                ].join('\n'),
-              )
-            }
-          }
-          /* eslint-ensable no-await-in-loop */
-
-          responses.push(response)
-          this.log(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`)
-        }
-      }
-
-      const durationInMs = Date.now() - startTime
-      pendingCases--
-      finishedCases++
-      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
-      this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
-
-      return responses
+      return this.runSuiteCase(suiteCase, context, flags)
     })
     await Promise.all(casePromises)
 
@@ -196,10 +110,12 @@ export default class SuiteCommand extends Command {
     this.log(
       [
         dim(
-          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${this.formatDuration(durationInMs)}`,
+          `Suite "${suite.name}" contains ${this.totalCases} test cases with ${this.totalRequests} requests and was run in ${this.formatDuration(durationInMs)}`,
         ),
       ].join('\n'),
     )
+
+    // Print captures
     if (
       context.captures.length > 0 &&
       (!this.hasAssertions(context.assertions) || flags.verbose)
@@ -210,6 +126,7 @@ export default class SuiteCommand extends Command {
       )
     }
 
+    // Print and export assertions
     if (this.hasAssertions(context.assertions)) {
       let exportFilepath
       if (flags.report) {
@@ -247,6 +164,116 @@ export default class SuiteCommand extends Command {
     }
 
     return context
+  }
+
+  private printIntro(suite: Suite, envName: string, context: Context): void {
+    this.log(
+      [
+        `Running suite "${suite.name}" with environment "${envName}" against "${context.environment.host}"`,
+        '',
+        bold(`Cases to be run for ${suite.name}`.toUpperCase()),
+        ...suite.cases.map(({name}) => {
+          return `  ${name}`
+        }),
+        '',
+        `There are overall ${this.totalCases} cases with ${this.totalRequests} requests to be run.`,
+      ].join('\n'),
+      '\n',
+    )
+  }
+
+  private async runSuiteCase(suiteCase: Case,  context: Context, flags: {dry: boolean, verbose: boolean, export: boolean, captures: boolean, assertions: boolean}): Promise<Response[]> {
+    this.log(bold(`[${suiteCase.name}] Starting case`))
+    this.pendingCases++
+    this.updateSpinnerStatus()
+    const startTime = Date.now()
+    const responses: Response[] = []
+    // Run all requests including the delay sequentially
+    for await (const request of suiteCase.requests) {
+      const response = await this.runRequest(suiteCase, request, context, flags)
+      responses.push(response)
+    }
+
+    const durationInMs = Date.now() - startTime
+    this.pendingCases--
+    this.finishedCases++
+    this.updateSpinnerStatus()
+    this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
+
+    return responses
+  }
+
+  private async runRequest(suiteCase: Case, request: Request, context: Context, flags: {dry: boolean, verbose: boolean, captures: boolean, assertions: boolean, export: boolean}): Promise<Response> {
+    // Create a stub response for dry runs
+    let response = ResponseHelper.emptyResponse(request)
+
+    await this.waitFor(request.delayed)
+
+    this.log(`[${suiteCase.name}] Running ${request.name}`)
+
+    if (!flags.dry) {
+      let attempt = 0
+      const retries = request.retries ?? 0
+
+      /* eslint-disable no-await-in-loop */
+      let doRetry = true
+      while (doRetry) {
+        const renderedRequest = RequestBuilder.render(suiteCase.name, cloneDeep(request), context)
+        if (flags.verbose && attempt === 0) {
+          this.log(Printer.request(renderedRequest))
+        }
+
+        attempt++
+        this.concurrentRunningRequests++
+        this.updateSpinnerStatus()
+        response = await RequestRunner.run(renderedRequest)
+        this.concurrentRunningRequests--
+        this.updateSpinnerStatus()
+        this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
+
+        // If a single request or the maximum retries (+1) is reqched do not retry.
+        if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
+          doRetry = false
+        }
+
+        if (doRetry && (response.hasError || response.status === 0)) {
+          if (flags.verbose) {
+            this.log(Printer.response(response))
+          }
+
+          await this.waitFor(renderedRequest.delayed ?? 0)
+          this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
+          continue
+        }
+
+        // If there was no error or no retry is required leave the loop.
+        doRetry = false
+
+        if (flags.verbose && !response.hasError) {
+          this.log(Printer.response(response))
+        }
+
+        await this.extract(suiteCase, renderedRequest, response, {context, flags})
+
+        if (flags.export) {
+          this.exportRequestAndResponse(context.environment.name, suiteCase.name, request, response)
+        }
+
+        if (response.hasError) {
+          this.error(
+            [
+              `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
+              Printer.requestAndResponse(renderedRequest, response, false),
+            ].join('\n'),
+          )
+        }
+      }
+      /* eslint-ensable no-await-in-loop */
+    }
+
+    this.log(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`)
+
+    return response
   }
 
   private async waitFor(delay: number) {
@@ -397,7 +424,17 @@ export default class SuiteCommand extends Command {
     this.log(`Exported request to ${requestFilename} and response to ${responseFilename}`)
   }
 
-  private async extract(suiteCase: Case, request: Request, response: Response, context: Context, flags: {captures: boolean, assertions: boolean}) {
+  private async extract(
+    suiteCase: Case,
+    request: Request,
+    response: Response,
+    meta: {
+      context: Context,
+      flags: {captures: boolean, assertions: boolean}
+    },
+  ) {
+    const context = meta.context
+    const flags = meta.flags
     const captures = response.captures.map((capture: Capture) => {
       capture.caseName = suiteCase.name
 
@@ -430,7 +467,7 @@ export default class SuiteCommand extends Command {
     }
   }
 
-  formatDuration(ms: number): string {
+  private formatDuration(ms: number): string {
     const d = new Date(Date.UTC(0, 0, 0, 0, 0, 0, ms))
     const formatted = [
       d.getUTCHours(),
@@ -439,5 +476,9 @@ export default class SuiteCommand extends Command {
     ].map(s => String(s).padStart(2, '0')).join(':')
 
     return `${formatted}.${d.getUTCMilliseconds()}`
+  }
+
+  private updateSpinnerStatus() {
+    CliUx.ux.action.status = `pending cases: ${this.pendingCases} finished cases: ${this.finishedCases} pending requests: ${this.concurrentRunningRequests}`
   }
 }
