@@ -78,9 +78,7 @@ export default class SuiteCommand extends Command {
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
     this.log(
       [
-        dim(
-          `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
-        ),
+        `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
         '',
         bold(`Cases to be run for ${suite.name}`.toUpperCase()),
         ...suite.cases.map(({name}) => {
@@ -101,18 +99,17 @@ export default class SuiteCommand extends Command {
         await this.waitFor(suiteCase.delayed)
       }
 
-      this.log(dim(`[${suiteCase.name}] Starting case`))
+      this.log(bold(`[${suiteCase.name}] Starting case`))
       const startTime = Date.now()
       const responses: Response[] = []
       // Run all requests including the delay sequentially
       for await (const request of suiteCase.requests) {
-        this.log(dim(`[${suiteCase.name}] Queued ${request.name} with a delay of ${request.delayed ?? 0} ticks`))
         // Create a stub response for dry runs
         let response = ResponseHelper.emptyResponse(request)
 
         await this.waitFor(request.delayed)
 
-        this.log(dim(`[${suiteCase.name}] Running ${request.name}`))
+        this.log(`[${suiteCase.name}] Running ${request.name}`)
 
         if (!flags.dry) {
           let attempt = 0
@@ -170,12 +167,12 @@ export default class SuiteCommand extends Command {
           /* eslint-ensable no-await-in-loop */
 
           responses.push(response)
-          this.log(dim(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`))
+          this.log(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`)
         }
       }
 
       const durationInMs = Date.now() - startTime
-      this.log(dim(`[${suiteCase.name}] Finished case in ${durationInMs}ms`))
+      this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
 
       return responses
     })
@@ -185,7 +182,7 @@ export default class SuiteCommand extends Command {
     this.log(
       [
         dim(
-          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${durationInMs}ms`,
+          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${this.formatDuration(durationInMs)}`,
         ),
       ].join('\n'),
     )
@@ -417,5 +414,16 @@ export default class SuiteCommand extends Command {
         this.printAssertions(assertions)
       }
     }
+  }
+
+  formatDuration(ms: number): string {
+    const d = new Date(Date.UTC(0, 0, 0, 0, 0, 0, ms))
+    const formatted = [
+      d.getUTCHours(),
+      d.getUTCMinutes(),
+      d.getUTCSeconds(),
+    ].map(s => String(s).padStart(2, '0')).join(':')
+
+    return `${formatted}.${d.getUTCMilliseconds()}`
   }
 }
