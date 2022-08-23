@@ -14,7 +14,7 @@ import Request from '../../request'
 import RequestBuilder from '../../request/builder'
 import RequestRunner from '../../request/runner'
 import Response from '../../response'
-import {Case} from '../../suite'
+import {Case, Suite} from '../../suite'
 import SuiteLoader from '../../suite/loader'
 
 const {bold, dim} = Chalk
@@ -75,17 +75,9 @@ export default class SuiteCommand extends Command {
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
-    this.log(
-      [
-        `Running suite "${suite.name}" with environment "${envName}" against "${context.environment.host}"`,
-        '',
-        bold(`Cases to be run for ${suite.name}`.toUpperCase()),
-        ...suite.cases.map(({name}) => {
-          return `  ${name}`
-        }),
-      ].join('\n'),
-      '\n',
-    )
+
+    this.printIntro(suite, envName, context)
+
     const caseCount = suite.cases.length
     const requestCount = suite.cases.reduce(
       (acc, suiteCase) => acc + suiteCase.requests.length,
@@ -246,6 +238,20 @@ export default class SuiteCommand extends Command {
     }
 
     return context
+  }
+
+  private printIntro(suite: Suite, envName: string, context: Context): void {
+    this.log(
+      [
+        `Running suite "${suite.name}" with environment "${envName}" against "${context.environment.host}"`,
+        '',
+        bold(`Cases to be run for ${suite.name}`.toUpperCase()),
+        ...suite.cases.map(({name}) => {
+          return `  ${name}`
+        }),
+      ].join('\n'),
+      '\n',
+    )
   }
 
   private async waitFor(delay: number) {
