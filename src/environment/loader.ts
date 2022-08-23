@@ -35,6 +35,7 @@ export default class EnvironmentLoader {
       }
 
       return {
+        name,
         scheme,
         host,
       }
