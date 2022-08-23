@@ -92,7 +92,10 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
-
+    let pendingCases = 0
+    let finishedCases = 0
+    let concurrentRequests = 0
+    CliUx.ux.action.start(`Running suite with ${caseCount} cases`)
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
       if (suiteCase.delayed) {
         this.log(dim(`[${suiteCase.name}] Queued with a delay of ${suiteCase.delayed ?? 0} ticks`))
@@ -100,6 +103,8 @@ export default class SuiteCommand extends Command {
       }
 
       this.log(bold(`[${suiteCase.name}] Starting case`))
+      pendingCases++
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
       const startTime = Date.now()
       const responses: Response[] = []
       // Run all requests including the delay sequentially
@@ -124,7 +129,11 @@ export default class SuiteCommand extends Command {
             }
 
             ++attempt
+            concurrentRequests++
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
             response = await RequestRunner.run(renderedRequest)
+            concurrentRequests--
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
             this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
 
             // If a single request or the maximum retries (+1) is reqched do not retry.
@@ -172,11 +181,16 @@ export default class SuiteCommand extends Command {
       }
 
       const durationInMs = Date.now() - startTime
+      pendingCases--
+      finishedCases++
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
       this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
 
       return responses
     })
     await Promise.all(casePromises)
+
+    CliUx.ux.action.stop('finished')
 
     const durationInMs = Date.now() - startTime
     this.log(
