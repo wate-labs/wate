@@ -94,7 +94,7 @@ export default class SuiteCommand extends Command {
     )
     let pendingCases = 0
     let finishedCases = 0
-    let concurrentRequests = 0
+    let concurrentRunningRequests = 0
     CliUx.ux.action.start(`Running suite with ${caseCount} cases`)
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
       if (suiteCase.delayed) {
@@ -104,7 +104,7 @@ export default class SuiteCommand extends Command {
 
       this.log(bold(`[${suiteCase.name}] Starting case`))
       pendingCases++
-      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
       const startTime = Date.now()
       const responses: Response[] = []
       // Run all requests including the delay sequentially
@@ -128,12 +128,12 @@ export default class SuiteCommand extends Command {
               this.log(Printer.request(renderedRequest))
             }
 
-            ++attempt
-            concurrentRequests++
-            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
+            attempt++
+            concurrentRunningRequests++
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
             response = await RequestRunner.run(renderedRequest)
-            concurrentRequests--
-            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
+            concurrentRunningRequests--
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
             this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
 
             // If a single request or the maximum retries (+1) is reqched do not retry.
@@ -183,7 +183,7 @@ export default class SuiteCommand extends Command {
       const durationInMs = Date.now() - startTime
       pendingCases--
       finishedCases++
-      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRequests}`
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
       this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
 
       return responses
