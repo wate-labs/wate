@@ -78,9 +78,7 @@ export default class SuiteCommand extends Command {
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
     this.log(
       [
-        dim(
-          `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
-        ),
+        `Running suite "${suite.name}" with environment "${envName}" against "${environment.host}"`,
         '',
         bold(`Cases to be run for ${suite.name}`.toUpperCase()),
         ...suite.cases.map(({name}) => {
@@ -94,25 +92,29 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
-
+    let pendingCases = 0
+    let finishedCases = 0
+    let concurrentRunningRequests = 0
+    CliUx.ux.action.start(`Running suite with ${caseCount} cases`)
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
       if (suiteCase.delayed) {
         this.log(dim(`[${suiteCase.name}] Queued with a delay of ${suiteCase.delayed ?? 0} ticks`))
         await this.waitFor(suiteCase.delayed)
       }
 
-      this.log(dim(`[${suiteCase.name}] Starting case`))
+      this.log(bold(`[${suiteCase.name}] Starting case`))
+      pendingCases++
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
       const startTime = Date.now()
       const responses: Response[] = []
       // Run all requests including the delay sequentially
       for await (const request of suiteCase.requests) {
-        this.log(dim(`[${suiteCase.name}] Queued ${request.name} with a delay of ${request.delayed ?? 0} ticks`))
         // Create a stub response for dry runs
         let response = ResponseHelper.emptyResponse(request)
 
         await this.waitFor(request.delayed)
 
-        this.log(dim(`[${suiteCase.name}] Running ${request.name}`))
+        this.log(`[${suiteCase.name}] Running ${request.name}`)
 
         if (!flags.dry) {
           let attempt = 0
@@ -126,8 +128,12 @@ export default class SuiteCommand extends Command {
               this.log(Printer.request(renderedRequest))
             }
 
-            ++attempt
+            attempt++
+            concurrentRunningRequests++
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
             response = await RequestRunner.run(renderedRequest)
+            concurrentRunningRequests--
+            CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
             this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
 
             // If a single request or the maximum retries (+1) is reqched do not retry.
@@ -170,22 +176,27 @@ export default class SuiteCommand extends Command {
           /* eslint-ensable no-await-in-loop */
 
           responses.push(response)
-          this.log(dim(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`))
+          this.log(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`)
         }
       }
 
       const durationInMs = Date.now() - startTime
-      this.log(dim(`[${suiteCase.name}] Finished case in ${durationInMs}ms`))
+      pendingCases--
+      finishedCases++
+      CliUx.ux.action.status = `pending cases: ${pendingCases} finished cases: ${finishedCases} pending requests: ${concurrentRunningRequests}`
+      this.log(bold(`[${suiteCase.name}] Finished case in ${this.formatDuration(durationInMs)}`))
 
       return responses
     })
     await Promise.all(casePromises)
 
+    CliUx.ux.action.stop('finished')
+
     const durationInMs = Date.now() - startTime
     this.log(
       [
         dim(
-          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${durationInMs}ms`,
+          `Suite "${suite.name}" contains ${caseCount} test cases with ${requestCount} requests and was run in ${this.formatDuration(durationInMs)}`,
         ),
       ].join('\n'),
     )
@@ -417,5 +428,16 @@ export default class SuiteCommand extends Command {
         this.printAssertions(assertions)
       }
     }
+  }
+
+  formatDuration(ms: number): string {
+    const d = new Date(Date.UTC(0, 0, 0, 0, 0, 0, ms))
+    const formatted = [
+      d.getUTCHours(),
+      d.getUTCMinutes(),
+      d.getUTCSeconds(),
+    ].map(s => String(s).padStart(2, '0')).join(':')
+
+    return `${formatted}.${d.getUTCMilliseconds()}`
   }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5 (TBD)
+
+- Improve suite output for CLI
+
 ## 0.8.4 (2022-08-18)
 
 - Change and align file naming to contain environment name
