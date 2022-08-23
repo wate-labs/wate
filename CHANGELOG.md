@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.5 (TBD)
+## 0.8.5 (2022-08-23)
 
 - Refactor suite command
 - Improve suite output for CLI
