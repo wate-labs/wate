@@ -2,6 +2,7 @@
 
 ## 0.8.5 (TBD)
 
+- Refactor suite command
 - Improve suite output for CLI
 
 ## 0.8.4 (2022-08-18)

@@ -114,6 +114,8 @@ export default class SuiteCommand extends Command {
         ),
       ].join('\n'),
     )
+
+    // Print captures
     if (
       context.captures.length > 0 &&
       (!this.hasAssertions(context.assertions) || flags.verbose)
@@ -124,6 +126,7 @@ export default class SuiteCommand extends Command {
       )
     }
 
+    // Print and export assertions
     if (this.hasAssertions(context.assertions)) {
       let exportFilepath
       if (flags.report) {
