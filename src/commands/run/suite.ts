@@ -83,8 +83,6 @@ export default class SuiteCommand extends Command {
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
 
-    this.printIntro(suite, envName, context)
-
     // Deterime suite statistics for printing out
     this.totalCases = suite.cases.length
     this.totalRequests = suite.cases.reduce(
@@ -92,7 +90,9 @@ export default class SuiteCommand extends Command {
       0,
     )
 
-    CliUx.ux.action.start(`Running suite with ${this.totalCases} cases`)
+    this.printIntro(suite, context)
+
+    CliUx.ux.action.start(`Running suite with ${this.totalCases} cases and ${this.totalRequests} requests`)
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
       // Wait if case has a delay configured
       if (suiteCase.delayed) {
@@ -166,10 +166,10 @@ export default class SuiteCommand extends Command {
     return context
   }
 
-  private printIntro(suite: Suite, envName: string, context: Context): void {
+  private printIntro(suite: Suite, context: Context): void {
     this.log(
       [
-        `Running suite "${suite.name}" with environment "${envName}" against "${context.environment.host}"`,
+        `Running suite "${suite.name}" with environment "${context.environment.name}" against "${context.environment.host}"`,
         '',
         bold(`Cases to be run for ${suite.name}`.toUpperCase()),
         ...suite.cases.map(({name}) => {

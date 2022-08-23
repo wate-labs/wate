@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.6 (2022-08-23)
+
+- Fix display of overall cases and requests
+- Add display of overall requests to spinner
+
 ## 0.8.5 (2022-08-23)
 
 - Refactor suite command
