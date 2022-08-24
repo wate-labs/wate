@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.7 (TBD)
+## 0.8.7 (2022-08-24)
 
 - Fix order of exported assertions
 - Fix order of exported Excel reports
