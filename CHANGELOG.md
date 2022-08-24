@@ -4,6 +4,7 @@
 
 - Fix order of exported assertions
 - Fix order of exported Excel reports
+- Add displaying pending overall requests to spinner
 
 ## 0.8.6 (2022-08-23)
 
