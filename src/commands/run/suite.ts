@@ -129,13 +129,15 @@ export default class SuiteCommand extends Command {
     // Print and export assertions
     if (this.hasAssertions(context.assertions)) {
       let exportFilepath
-      if (flags.report) {
-        const assertions = Object.values(context.assertions).flat()
 
-        exportFilepath = await this.export(envName, suite.name, assertions, context.captures)
-      }
+      context.assertions = this.sortByCases(suite.cases, context.assertions)
 
+      // Flatten assertions and sort
       const assertions = Object.values(context.assertions).flat()
+
+      if (flags.report) {
+        exportFilepath = await this.export(context.environment.name, suite.name, assertions, context.captures)
+      }
 
       this.printAssertions(
         assertions,
@@ -480,5 +482,20 @@ export default class SuiteCommand extends Command {
 
   private updateSpinnerStatus() {
     CliUx.ux.action.status = `pending cases: ${this.pendingCases} finished cases: ${this.finishedCases} pending requests: ${this.concurrentRunningRequests}`
+  }
+
+  private sortByCases(cases: Case[], assertions: AssertionBag): AssertionBag {
+    const order = cases.map(({name}) => {
+      return name
+    })
+    const orderedAssertions: AssertionBag = {}
+
+    order.forEach(caseName => {
+      if (assertions[caseName]) {
+        orderedAssertions[caseName] = assertions[caseName]
+      }
+    })
+
+    return orderedAssertions
   }
 }

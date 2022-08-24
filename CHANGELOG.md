@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.7 (TBD)
+
+- Fix order of exported assertions
+- Fix order of exported Excel reports
+
 ## 0.8.6 (2022-08-23)
 
 - Fix display of overall cases and requests
