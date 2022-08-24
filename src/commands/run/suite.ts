@@ -73,6 +73,7 @@ export default class SuiteCommand extends Command {
   pendingCases = 0
   finishedCases = 0
   totalRequests = 0
+  remainingRequests = 0
   concurrentRunningRequests = 0
 
   async run() {
@@ -89,6 +90,7 @@ export default class SuiteCommand extends Command {
       (acc, suiteCase) => acc + suiteCase.requests.length,
       0,
     )
+    this.remainingRequests = this.totalRequests
 
     this.printIntro(suite, context)
 
@@ -247,6 +249,9 @@ export default class SuiteCommand extends Command {
           this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
           continue
         }
+
+        this.remainingRequests--
+        this.updateSpinnerStatus()
 
         // If there was no error or no retry is required leave the loop.
         doRetry = false
@@ -481,7 +486,7 @@ export default class SuiteCommand extends Command {
   }
 
   private updateSpinnerStatus() {
-    CliUx.ux.action.status = `pending cases: ${this.pendingCases} finished cases: ${this.finishedCases} pending requests: ${this.concurrentRunningRequests}`
+    CliUx.ux.action.status = `\nCASES: ${this.pendingCases} pending ${this.finishedCases} finished\nREQUESTS: ${this.concurrentRunningRequests} running ${this.remainingRequests} remaining`
   }
 
   private sortByCases(cases: Case[], assertions: AssertionBag): AssertionBag {
