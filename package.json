@@ -40,7 +40,7 @@
     "eslint-plugin-unicorn": "^43.0.2",
     "globby": "^11",
     "mocha": "^10",
-    "mock-fs": "^5.1.2",
+    "mock-fs": "^5.1.4",
     "oclif": "^3",
     "shx": "^0.3.3",
     "ts-node": "^10.9.1",
