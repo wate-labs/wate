@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0 (TBD)
+## 0.9.0 (2022-09-13)
 
 - Add assertion for error responses like `4xx` response codes
 
