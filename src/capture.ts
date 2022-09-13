@@ -5,7 +5,7 @@ export default interface CaptureDefinition {
 
 export interface Capture {
   caseName?: string;
-  _id?: number;
+  order?: number;
   name: string;
   value: any;
 }

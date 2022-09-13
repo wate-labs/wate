@@ -16,5 +16,5 @@ export default interface Request {
   params: Param[]
   captures: CaptureDefinition[]
   assertions: AssertionDefinition[]
-  _id?: number
+  order?: number
 }

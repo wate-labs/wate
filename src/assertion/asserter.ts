@@ -4,27 +4,25 @@ import {Capture} from '../capture'
 
 export default class Asserter {
   public static assert(
-    caseName: string,
     assertions: AssertionDefinition[],
     captures: Capture[],
-    _id?: number,
+    metadata: {case: string, order?: number},
   ): Assertion[] {
     return assertions.map(definition =>
-      Asserter.apply(caseName, definition, captures, _id),
+      Asserter.apply(metadata, definition, captures),
     )
   }
 
   private static apply(
-    caseName: string,
+    metadata: {case: string, order?: number},
     definition: AssertionDefinition,
     captures: Capture[],
-    _id?: number,
   ): Assertion {
-    const matchingCapture = Asserter.matchingCapture(definition, caseName, captures, _id)
+    const matchingCapture = Asserter.matchingCapture(definition, captures, metadata)
     const expected = Asserter.expectedValue(definition, captures)
 
     return {
-      caseName: caseName,
+      caseName: metadata.case,
       name: definition.name,
       expected,
       actual: matchingCapture.value,
@@ -32,18 +30,14 @@ export default class Asserter {
     }
   }
 
-  private static matchingCapture(definition: AssertionDefinition, caseName: string, captures: Capture[], _id?: number): any {
+  private static matchingCapture(definition: AssertionDefinition, captures: Capture[], metadata: {case: string, order?: number}): any {
     const matchingCaptures = captures.filter(
       capture =>
-        capture.caseName === caseName && capture.name === definition.name && capture._id === _id,
+        capture.caseName === metadata.case && capture.name === definition.name && (metadata.order === undefined || capture.order === undefined || capture.order === metadata.order),
     )
     if (matchingCaptures.length !== 1) {
       throw new Error(
-        `Capture "${
-          definition.name
-        }" does not exist or is ambiguous for asserting: ${JSON.stringify(
-          captures,
-        )}`,
+        `Capture "${definition.name}" does not exist or is ambiguous for asserting:\n${JSON.stringify(captures)}\n${JSON.stringify(matchingCaptures)}`,
       )
     }
 

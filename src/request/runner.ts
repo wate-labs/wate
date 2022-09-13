@@ -88,8 +88,12 @@ export default class RequestRunner {
     return [
       ...RequestRunner.captureFromRequestBody(request.data, RequestRunner.prepareRequestCaptures(request.captures)),
       ...RequestRunner.captureFromBody(response.data, RequestRunner.prepareResponseCaptures(request.captures)),
-      {name: '$status', value: response.status, _id: request._id},
+      RequestRunner.addStatus(request, response),
     ]
+  }
+
+  private static addStatus(request: Request, response: {status: number}): Capture {
+    return {name: '$status', value: response.status, order: request.order}
   }
 
   private static prepareRequestCaptures(captures: CaptureDefinition[]): CaptureDefinition[] {
