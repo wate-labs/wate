@@ -1,3 +1,4 @@
 {
-  "host": "postman-echo.com"
+  "host": "postman-echo.com",
+  "scheme": "https"
 }

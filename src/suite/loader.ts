@@ -83,6 +83,7 @@ export default class SuiteLoader {
           request: {type: 'string'},
           delayed: {type: 'number'},
           retries: {type: 'number'},
+          allowError: {type: 'boolean'},
           params: {
             type: 'object',
             additionalProperties: true,
@@ -154,7 +155,7 @@ export default class SuiteLoader {
   }
 
   private static prepareMatrixCase({requests}: CaseDefinition, caseName: string, delayed: number | undefined, kvBag: KeyValueBag): CaseDefinition {
-    return {name: caseName, delayed, requests: requests.map(({request, delayed, retries, params, captures, assertions}) => {
+    return {name: caseName, delayed, requests: requests.map(({request, delayed, retries, allowError, params, captures, assertions}) => {
       params = SuiteLoader.setMatrixValues(params, kvBag.params)
       captures = SuiteLoader.setMatrixValues(captures, kvBag.captures) as CaptureKeyValue
       assertions = SuiteLoader.setMatrixValues(assertions, kvBag.assertions) as AssertionKeyValue
@@ -163,6 +164,7 @@ export default class SuiteLoader {
         request,
         delayed,
         retries,
+        allowError,
         params,
         captures,
         assertions,
@@ -192,11 +194,12 @@ export default class SuiteLoader {
       name,
       delayed,
       requests: requests.map(
-        ({request, delayed, retries, params, captures, assertions}) => {
+        ({request, delayed, retries, allowError, params, captures, assertions}) => {
           return SuiteLoader.prepareRequest(
             request,
             delayed,
             retries,
+            allowError,
             DataHelper.toParam(params),
             {
               captures: DataHelper.toCapture(captures),
@@ -213,6 +216,7 @@ export default class SuiteLoader {
     request: string,
     delayed: number,
     retries: number,
+    allowError: boolean,
     params: Param[],
     definitions: {
       captures: CaptureDefinition[]
@@ -225,6 +229,7 @@ export default class SuiteLoader {
       path.join(context.requestsLocation, request),
       delayed,
       retries,
+      allowError,
       context,
       params,
       {

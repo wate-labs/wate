@@ -123,17 +123,29 @@ Requests as descibe above are the building block of suite cases. Used in the
 context of a case requests have some additional functionality. All case 
 requests are run sequentially.
 
-> Case requests can also have a `delayed` property set which delays execution
-> in seconds. These requests are queued and executed at the end of the suite.
-> If a delayed request is found all subsequent requests (without delay) queued 
-> and run when the delayed request was performed.
-> The reference for the delay is the previous request.
-> The captures defined are evaluated at runtime.
+###### Delayed requests
 
-> If you have requests that need polling you can use the `retries` property to
-> set the number of attempts until a response is valid. This can be helpful
-> when the server is doing some asynchronous work and you need to poll. The 
-> retry mechanism will take the `delayed` property into account.
+Case requests can also have a `delayed` property set which delays execution
+in seconds. These requests are queued and executed at the end of the suite.
+If a delayed request is found all subsequent requests (without delay) queued 
+and run when the delayed request was performed.
+The reference for the delay is the previous request.
+The captures defined are evaluated at runtime.
+
+###### Retries
+
+If you have requests that need polling you can use the `retries` property to
+set the number of attempts until a response is valid. This can be helpful
+when the server is doing some asynchronous work and you need to poll. The 
+retry mechanism will take the `delayed` property into account.
+
+###### Evaluate errors
+
+Usually wate handles requests with `4xx` responses as failed. If you have the
+case to check for especially such a response status code you can use the 
+property `allowError` set to `true` for the respective request. There is a
+special capture called `$status` scoped to the current request that allows
+asserting for the response code.
 
 ###### Params
 

@@ -6,6 +6,7 @@ export default interface Request {
   name: string
   delayed: number
   retries: number
+  allowError: boolean
   path: string
   url: string
   baseURL: string
@@ -15,4 +16,5 @@ export default interface Request {
   params: Param[]
   captures: CaptureDefinition[]
   assertions: AssertionDefinition[]
+  _id?: number
 }

@@ -7,9 +7,10 @@ export default class Asserter {
     caseName: string,
     assertions: AssertionDefinition[],
     captures: Capture[],
+    _id?: number,
   ): Assertion[] {
     return assertions.map(definition =>
-      Asserter.apply(caseName, definition, captures),
+      Asserter.apply(caseName, definition, captures, _id),
     )
   }
 
@@ -17,8 +18,9 @@ export default class Asserter {
     caseName: string,
     definition: AssertionDefinition,
     captures: Capture[],
+    _id?: number,
   ): Assertion {
-    const matchingCapture = Asserter.matchingCapture(definition, caseName, captures)
+    const matchingCapture = Asserter.matchingCapture(definition, caseName, captures, _id)
     const expected = Asserter.expectedValue(definition, captures)
 
     return {
@@ -30,10 +32,10 @@ export default class Asserter {
     }
   }
 
-  private static matchingCapture(definition: AssertionDefinition, caseName: string, captures: Capture[]): any {
+  private static matchingCapture(definition: AssertionDefinition, caseName: string, captures: Capture[], _id?: number): any {
     const matchingCaptures = captures.filter(
       capture =>
-        capture.caseName === caseName && capture.name === definition.name,
+        capture.caseName === caseName && capture.name === definition.name && capture._id === _id,
     )
     if (matchingCaptures.length !== 1) {
       throw new Error(
