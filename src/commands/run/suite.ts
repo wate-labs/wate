@@ -192,13 +192,13 @@ export default class SuiteCommand extends Command {
     this.updateSpinnerStatus()
     const startTime = Date.now()
     const responses: Response[] = []
-    let _id = 0
+    let order = 0
     // Run all requests including the delay sequentially
     for await (const request of suiteCase.requests) {
-      request._id = _id
+      request.order = order
       const response = await this.runRequest(suiteCase, request, context, flags)
       responses.push(response)
-      _id++
+      order++
     }
 
     const durationInMs = Date.now() - startTime
@@ -458,11 +458,11 @@ export default class SuiteCommand extends Command {
     let assertions: Assertion[] = []
     if (request.assertions.length > 0) {
       if (!response.hasError || request.allowError) {
+        const metadata = {case: suiteCase.name, order: request.order}
         assertions = Asserter.assert(
-          suiteCase.name,
           request.assertions,
           context.captures,
-          request._id,
+          metadata,
         )
       }
 
