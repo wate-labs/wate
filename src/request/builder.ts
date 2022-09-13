@@ -16,6 +16,7 @@ export default class RequestBuilder {
     requestPath: string,
     delayed: number,
     retries: number,
+    allowError: boolean,
     context: Context,
     params: Param[],
     definitons: {
@@ -30,6 +31,7 @@ export default class RequestBuilder {
       name,
       delayed,
       retries,
+      allowError,
       path: requestPath,
       url: request.uri,
       baseURL: context.environment.scheme + '://' + host,

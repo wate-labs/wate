@@ -192,10 +192,13 @@ export default class SuiteCommand extends Command {
     this.updateSpinnerStatus()
     const startTime = Date.now()
     const responses: Response[] = []
+    let _id = 0
     // Run all requests including the delay sequentially
     for await (const request of suiteCase.requests) {
+      request._id = _id
       const response = await this.runRequest(suiteCase, request, context, flags)
       responses.push(response)
+      _id++
     }
 
     const durationInMs = Date.now() - startTime
@@ -235,7 +238,7 @@ export default class SuiteCommand extends Command {
         this.updateSpinnerStatus()
         this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
 
-        // If a single request or the maximum retries (+1) is reqched do not retry.
+        // If it is a single request or the maximum retries (+1) is reached do not retry.
         if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
           doRetry = false
         }
@@ -256,7 +259,7 @@ export default class SuiteCommand extends Command {
         // If there was no error or no retry is required leave the loop.
         doRetry = false
 
-        if (flags.verbose && !response.hasError) {
+        if (flags.verbose && (!response.hasError || request.allowError)) {
           this.log(Printer.response(response))
         }
 
@@ -266,7 +269,7 @@ export default class SuiteCommand extends Command {
           this.exportRequestAndResponse(context.environment.name, suiteCase.name, request, response)
         }
 
-        if (response.hasError) {
+        if (response.hasError && !request.allowError) {
           this.error(
             [
               `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
@@ -454,11 +457,12 @@ export default class SuiteCommand extends Command {
 
     let assertions: Assertion[] = []
     if (request.assertions.length > 0) {
-      if (!response.hasError) {
+      if (!response.hasError || request.allowError) {
         assertions = Asserter.assert(
           suiteCase.name,
           request.assertions,
           context.captures,
+          request._id,
         )
       }
 

@@ -46,6 +46,7 @@ export interface RequestDefinition {
   request: string
   delayed: number
   retries: number
+  allowError: boolean
   params: ParamKeyValue
   captures: CaptureKeyValue
   assertions: AssertionKeyValue

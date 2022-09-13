@@ -97,6 +97,7 @@ export default class RequestCommand extends Command {
       path.join(RequestCommand.reqDir, reqName),
       0,
       0,
+      false,
       context,
       params,
       {

@@ -2,6 +2,8 @@
 
 ## 0.9.0 (TBD)
 
+- Add assertion for error responses like `4xx` response codes
+
 ## 0.8.7 (2022-08-24)
 
 - Fix order of exported assertions

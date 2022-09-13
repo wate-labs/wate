@@ -6,7 +6,7 @@ import CaptureDefinition, {Capture} from '../capture'
 
 export default class RequestRunner {
   public static async run(request: Request): Promise<Response> {
-    let headers = null
+    let headers: any = null
     let data: any = null
     let durationInMs = 0
     let status = -1
@@ -44,17 +44,18 @@ export default class RequestRunner {
       ({headers, data, status, durationInMs} = await axios.request(
         RequestRunner.prepare(request),
       ))
-      captures = [
-        ...RequestRunner.captureFromRequestBody(request.data, RequestRunner.prepareRequestCaptures(request.captures)),
-        ...RequestRunner.captureFromBody(data, RequestRunner.prepareResponseCaptures(request.captures)),
-      ]
+      captures = RequestRunner.capture({headers, data, status}, request)
     } catch (error: Error | unknown) {
       hasError = true
       if (axios.isAxiosError(error) && error.response?.status) {
         headers = error.response.headers
         data = error.response.data
+        status = error.response.status
         errorObject = {
           reason: `Status code: ${error.response.status} (${error.response.statusText})`,
+        }
+        if (request.allowError) {
+          captures = RequestRunner.capture({headers, data, status}, request)
         }
       } else if (axios.isAxiosError(error) && error.code) {
         errorObject = {
@@ -81,6 +82,14 @@ export default class RequestRunner {
       durationInMs,
       captures,
     }
+  }
+
+  private static capture(response: {headers: any, data: any, status: number}, request: Request): Capture[] {
+    return [
+      ...RequestRunner.captureFromRequestBody(request.data, RequestRunner.prepareRequestCaptures(request.captures)),
+      ...RequestRunner.captureFromBody(response.data, RequestRunner.prepareResponseCaptures(request.captures)),
+      {name: '$status', value: response.status, _id: request._id},
+    ]
   }
 
   private static prepareRequestCaptures(captures: CaptureDefinition[]): CaptureDefinition[] {
@@ -130,7 +139,7 @@ export default class RequestRunner {
       )
     }
 
-    throw new Error('Passed `data` is not an object')
+    return []
   }
 
   private static captureValue(capture: CaptureDefinition, data: any): Capture {
