@@ -268,7 +268,7 @@ EXAMPLES
   $ wate create:environment
 ```
 
-_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/create/environment.ts)_
+_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -291,7 +291,7 @@ EXAMPLES
   $ wate create:request
 ```
 
-_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/create/request.ts)_
+_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -314,7 +314,7 @@ EXAMPLES
   $ wate create:suite
 ```
 
-_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/create/suite.ts)_
+_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
@@ -354,7 +354,7 @@ EXAMPLES
   $ wate init
 ```
 
-_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/init.ts)_
+_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -374,7 +374,7 @@ EXAMPLES
   $ wate list:environments
 ```
 
-_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/list/environments.ts)_
+_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -394,7 +394,7 @@ EXAMPLES
   $ wate list:requests
 ```
 
-_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/list/requests.ts)_
+_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -414,7 +414,7 @@ EXAMPLES
   $ wate list:suites
 ```
 
-_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/list/suites.ts)_
+_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -443,7 +443,7 @@ EXAMPLES
   $ wate run:request test ping
 ```
 
-_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/run/request.ts)_
+_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -475,5 +475,5 @@ EXAMPLES
   $ wate run:suite test suite
 ```
 
-_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.0/dist/commands/run/suite.ts)_
+_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/run/suite.ts)_
 <!-- commandsstop -->
