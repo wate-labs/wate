@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.10.0 (TBD)
+## 0.10.0 (2022-09-27)
 
-- Add CLI quiet mode for improved output
+- Add suppressing the progress display for improved output in CI
 
 ## 0.9.0 (2022-09-13)
 
