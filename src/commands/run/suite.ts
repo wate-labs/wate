@@ -56,6 +56,11 @@ export default class SuiteCommand extends Command {
       char: 'e',
       description: 'export the request and response bodies',
     }),
+    quiet: Flags.boolean({
+      char: 'q',
+      description: 'quiet mode for CLI',
+      default: false,
+    }),
   }
 
   static description = 'run an existing suite';
@@ -94,7 +99,10 @@ export default class SuiteCommand extends Command {
 
     this.printIntro(suite, context)
 
-    CliUx.ux.action.start(`Running suite with ${this.totalCases} cases and ${this.totalRequests} requests`)
+    if (!flags.quiet) {
+      CliUx.ux.action.start(`Running suite with ${this.totalCases} cases and ${this.totalRequests} requests`)
+    }
+
     const casePromises = Object.values(suite.cases).map(async suiteCase => {
       // Wait if case has a delay configured
       if (suiteCase.delayed) {
@@ -106,7 +114,9 @@ export default class SuiteCommand extends Command {
     })
     await Promise.all(casePromises)
 
-    CliUx.ux.action.stop('finished')
+    if (!flags.quiet) {
+      CliUx.ux.action.stop('finished')
+    }
 
     const durationInMs = Date.now() - startTime
     this.log(

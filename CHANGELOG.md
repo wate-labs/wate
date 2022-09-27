@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 (TBD)
+
+- Add CLI quiet mode for improved output
+
 ## 0.9.0 (2022-09-13)
 
 - Add assertion for error responses like `4xx` response codes
