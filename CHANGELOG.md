@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 (2022-09-27)
+
+- Add suppressing the progress display for improved output in CI
+
 ## 0.9.0 (2022-09-13)
 
 - Add assertion for error responses like `4xx` response codes
