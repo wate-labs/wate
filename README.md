@@ -451,7 +451,7 @@ run an existing suite
 
 ```
 USAGE
-  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r] [-e]
+  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r] [-e] [--no-progress]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -466,6 +466,7 @@ FLAGS
   -p, --parameters=<value>...  use given parameter name and value in request
   -r, --report                 write report to file
   -v, --verbose                print the raw response headers and body
+  --no-progress                do not display progress (f.e. while in CI)
 
 DESCRIPTION
   run an existing suite
