@@ -56,9 +56,8 @@ export default class SuiteCommand extends Command {
       char: 'e',
       description: 'export the request and response bodies',
     }),
-    quiet: Flags.boolean({
-      char: 'q',
-      description: 'quiet mode for CLI',
+    'no-progress': Flags.boolean({
+      description: 'do not display progress (f.e. while in CI)',
       default: false,
     }),
   }
@@ -99,7 +98,7 @@ export default class SuiteCommand extends Command {
 
     this.printIntro(suite, context)
 
-    if (!flags.quiet) {
+    if (!flags['no-progress']) {
       CliUx.ux.action.start(`Running suite with ${this.totalCases} cases and ${this.totalRequests} requests`)
     }
 
@@ -114,7 +113,7 @@ export default class SuiteCommand extends Command {
     })
     await Promise.all(casePromises)
 
-    if (!flags.quiet) {
+    if (!flags['no-progress']) {
       CliUx.ux.action.stop('finished')
     }
 
