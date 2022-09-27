@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1 (2022-09-27)
+
+- Fix dry run
+
 ## 0.10.0 (2022-09-27)
 
 - Add suppressing the progress display for improved output in CI

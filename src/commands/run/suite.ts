@@ -227,68 +227,69 @@ export default class SuiteCommand extends Command {
 
     this.log(`[${suiteCase.name}] Running ${request.name}`)
 
-    if (!flags.dry) {
-      let attempt = 0
-      const retries = request.retries ?? 0
+    let attempt = 0
+    const retries = request.retries ?? 0
 
-      /* eslint-disable no-await-in-loop */
-      let doRetry = true
-      while (doRetry) {
-        const renderedRequest = RequestBuilder.render(suiteCase.name, cloneDeep(request), context)
-        if (flags.verbose && attempt === 0) {
-          this.log(Printer.request(renderedRequest))
-        }
+    /* eslint-disable no-await-in-loop */
+    let doRetry = true
+    while (doRetry) {
+      const renderedRequest = RequestBuilder.render(suiteCase.name, cloneDeep(request), context)
+      if (flags.verbose && attempt === 0) {
+        this.log(Printer.request(renderedRequest))
+      }
 
-        attempt++
-        this.concurrentRunningRequests++
-        this.updateSpinnerStatus()
+      attempt++
+      this.concurrentRunningRequests++
+      this.updateSpinnerStatus()
+      if (!flags.dry) {
         response = await RequestRunner.run(renderedRequest)
-        this.concurrentRunningRequests--
-        this.updateSpinnerStatus()
-        this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
+      }
 
-        // If it is a single request or the maximum retries (+1) is reached do not retry.
-        if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
-          doRetry = false
-        }
+      this.concurrentRunningRequests--
+      this.updateSpinnerStatus()
+      this.log(dim(`[${suiteCase.name}] Ran ${renderedRequest.name} in ${response.durationInMs}ms`))
 
-        if (doRetry && (response.hasError || response.status === 0)) {
-          if (flags.verbose) {
-            this.log(Printer.response(response))
-          }
-
-          await this.waitFor(renderedRequest.delayed ?? 0)
-          this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
-          continue
-        }
-
-        this.remainingRequests--
-        this.updateSpinnerStatus()
-
-        // If there was no error or no retry is required leave the loop.
+      // If it is a single request or the maximum retries (+1) is reached do not retry.
+      if ((attempt === 1 && retries === 0) || (attempt === retries + 1)) {
         doRetry = false
+      }
 
-        if (flags.verbose && (!response.hasError || request.allowError)) {
+      if (doRetry && (response.hasError || response.status === 0)) {
+        if (flags.verbose) {
           this.log(Printer.response(response))
         }
 
-        await this.extract(suiteCase, renderedRequest, response, {context, flags})
-
-        if (flags.export) {
-          this.exportRequestAndResponse(context.environment.name, suiteCase.name, request, response)
-        }
-
-        if (response.hasError && !request.allowError) {
-          this.error(
-            [
-              `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
-              Printer.requestAndResponse(renderedRequest, response, false),
-            ].join('\n'),
-          )
-        }
+        await this.waitFor(renderedRequest.delayed ?? 0)
+        this.log(dim(`[${suiteCase.name}] Running ${renderedRequest.name} retry ${attempt} of ${retries}`))
+        continue
       }
-      /* eslint-ensable no-await-in-loop */
+
+      this.remainingRequests--
+      this.updateSpinnerStatus()
+
+      // If there was no error or no retry is required leave the loop.
+      doRetry = false
+
+      if (flags.verbose && (!response.hasError || request.allowError)) {
+        this.log(Printer.response(response))
+      }
+
+      await this.extract(suiteCase, renderedRequest, response, {context, flags})
+
+      if (flags.export) {
+        this.exportRequestAndResponse(context.environment.name, suiteCase.name, request, response)
+      }
+
+      if (response.hasError && !request.allowError) {
+        this.error(
+          [
+            `[${suiteCase.name}] Finished request ${request.name} with an error: ${response.error.reason} on ${request.url}`,
+            Printer.requestAndResponse(renderedRequest, response, false),
+          ].join('\n'),
+        )
+      }
     }
+    /* eslint-ensable no-await-in-loop */
 
     this.log(`[${suiteCase.name}] Finished ${request.name} with status ${response.status} in ${response.durationInMs}ms`)
 
