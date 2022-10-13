@@ -36,6 +36,10 @@ export default class SuiteCommand extends Command {
       description: 'use given parameter name and value in request',
       multiple: true,
     }),
+    filter: Flags.string({
+      char: 'f',
+      description: 'filter cases by name',
+    }),
     dry: Flags.boolean({
       char: 'd',
       description: 'perform a dry run without emitting requests',
@@ -87,6 +91,11 @@ export default class SuiteCommand extends Command {
     const context = this.buildContext(flags, envName)
     const startTime = Date.now()
     const suite = SuiteLoader.load(SuiteCommand.suiteDir, suiteName, context)
+    let summaryPrefix = 'Suite'
+    if (flags.filter) {
+      suite.cases = suite.cases.filter(({name}) => name.match(new RegExp(flags.filter!)) !== null)
+      summaryPrefix = 'Filtered suite'
+    }
 
     // Deterime suite statistics for printing out
     this.totalCases = suite.cases.length
@@ -121,7 +130,7 @@ export default class SuiteCommand extends Command {
     this.log(
       [
         dim(
-          `Suite "${suite.name}" contains ${this.totalCases} test cases with ${this.totalRequests} requests and was run in ${this.formatDuration(durationInMs)}`,
+          `${summaryPrefix} "${suite.name}" contains ${this.totalCases} test cases with ${this.totalRequests} requests and was run in ${this.formatDuration(durationInMs)}`,
         ),
       ].join('\n'),
     )

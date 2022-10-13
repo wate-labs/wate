@@ -2,6 +2,8 @@
 
 ## 0.11.0 (TBD)
 
+- Add filter for cases in suites
+
 ## 0.10.1 (2022-09-27)
 
 - Fix dry run
