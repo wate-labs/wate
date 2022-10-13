@@ -8,7 +8,7 @@ jobs:
     name: Release tarballs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3.5.1
         with:
           node-version: '16'
@@ -29,7 +29,7 @@ jobs:
   #    name: Release deb
   #    runs-on: ubuntu-latest
   #    steps:
-  #      - uses: actions/checkout@v2
+  #      - uses: actions/checkout@v3
   #      - uses: actions/setup-node@v3.5.1
   #        with:
   #          node-version: '16'
@@ -43,7 +43,7 @@ jobs:
     name: Release macOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3.5.1
         with:
           node-version: '16'
