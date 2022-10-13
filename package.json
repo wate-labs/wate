@@ -30,7 +30,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.8.5",
     "@types/nunjucks": "^3.2.0",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
     "chai": "^4",
     "eslint": "^8.25.0",
     "eslint-config-oclif": "^4",
