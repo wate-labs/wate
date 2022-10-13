@@ -245,7 +245,7 @@ EXAMPLES
   $ wate autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v1.3.0/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v1.3.2/src/commands/autocomplete/index.ts)_
 
 ## `wate create:environment NAME`
 
@@ -268,7 +268,7 @@ EXAMPLES
   $ wate create:environment
 ```
 
-_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/environment.ts)_
+_See code: [dist/commands/create/environment.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/create/environment.ts)_
 
 ## `wate create:request REQUESTNAME`
 
@@ -291,7 +291,7 @@ EXAMPLES
   $ wate create:request
 ```
 
-_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/request.ts)_
+_See code: [dist/commands/create/request.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/create/request.ts)_
 
 ## `wate create:suite SUITENAME`
 
@@ -314,7 +314,7 @@ EXAMPLES
   $ wate create:suite
 ```
 
-_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/create/suite.ts)_
+_See code: [dist/commands/create/suite.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/create/suite.ts)_
 
 ## `wate help [COMMAND]`
 
@@ -334,7 +334,7 @@ DESCRIPTION
   Display help for wate.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.12/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.14/src/commands/help.ts)_
 
 ## `wate init`
 
@@ -354,7 +354,7 @@ EXAMPLES
   $ wate init
 ```
 
-_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/init.ts)_
+_See code: [dist/commands/init.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/init.ts)_
 
 ## `wate list:environments`
 
@@ -374,7 +374,7 @@ EXAMPLES
   $ wate list:environments
 ```
 
-_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/environments.ts)_
+_See code: [dist/commands/list/environments.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/list/environments.ts)_
 
 ## `wate list:requests`
 
@@ -394,7 +394,7 @@ EXAMPLES
   $ wate list:requests
 ```
 
-_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/requests.ts)_
+_See code: [dist/commands/list/requests.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/list/requests.ts)_
 
 ## `wate list:suites`
 
@@ -414,7 +414,7 @@ EXAMPLES
   $ wate list:suites
 ```
 
-_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/list/suites.ts)_
+_See code: [dist/commands/list/suites.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/list/suites.ts)_
 
 ## `wate run:request ENVIRONMENT REQUEST`
 
@@ -443,7 +443,7 @@ EXAMPLES
   $ wate run:request test ping
 ```
 
-_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/run/request.ts)_
+_See code: [dist/commands/run/request.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/run/request.ts)_
 
 ## `wate run:suite ENVIRONMENT SUITE`
 
@@ -451,7 +451,8 @@ run an existing suite
 
 ```
 USAGE
-  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-d] [-c] [-a] [-r] [-e] [--no-progress]
+  $ wate run:suite [ENVIRONMENT] [SUITE] [-h] [-v] [-p <value>] [-f <value>] [-d] [-c] [-a] [-r] [-e]
+    [--no-progress]
 
 ARGUMENTS
   ENVIRONMENT  environment to use
@@ -462,6 +463,7 @@ FLAGS
   -c, --captures               print captured values for each request
   -d, --dry                    perform a dry run without emitting requests
   -e, --export                 export the request and response bodies
+  -f, --filter=<value>         filter cases by name
   -h, --help                   Show CLI help.
   -p, --parameters=<value>...  use given parameter name and value in request
   -r, --report                 write report to file
@@ -475,5 +477,5 @@ EXAMPLES
   $ wate run:suite test suite
 ```
 
-_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.10.1/dist/commands/run/suite.ts)_
+_See code: [dist/commands/run/suite.ts](https://github.com/wate-labs/wate/blob/v0.11.0/dist/commands/run/suite.ts)_
 <!-- commandsstop -->

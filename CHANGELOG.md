@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.11.0 (TBD)
+## 0.11.0 (2022-10-13)
 
 - Add filter for cases in suites
 
