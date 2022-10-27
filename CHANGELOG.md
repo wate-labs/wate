@@ -2,6 +2,8 @@
 
 ## 0.12.0 (TBD)
 
+- Fix schema with required properties
+
 ## 0.11.0 (2022-10-13)
 
 - Add filter for cases in suites

@@ -57,7 +57,7 @@ export default class SuiteLoader {
             additionalProperties: true,
           },
         },
-        required: ['name'],
+        required: ['name', 'caseName'],
         additionalProperties: false,
       },
       case: {
