@@ -34,7 +34,7 @@ export default class SuiteLoader {
         minItems: 1,
       },
     },
-    required: ['name'],
+    required: ['name', 'cases'],
     additionalProperties: false,
     definitions: {
       matrix: {
@@ -57,7 +57,7 @@ export default class SuiteLoader {
             additionalProperties: true,
           },
         },
-        required: ['name'],
+        required: ['name', 'caseName'],
         additionalProperties: false,
       },
       case: {
