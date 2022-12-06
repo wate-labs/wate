@@ -27,7 +27,7 @@
     "@oclif/test": "^2",
     "@types/chai": "^4",
     "@types/js-yaml": "^4.0.5",
-    "@types/mocha": "^10.0.0",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.10",
     "@types/nunjucks": "^3.2.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
