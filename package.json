@@ -13,7 +13,7 @@
     "@oclif/plugin-help": "^5.1.17",
     "@types/http-string-parser": "0.0.30",
     "@types/mock-fs": "^4.13.1",
-    "ajv": "^8.11.2",
+    "ajv": "^8.12.0",
     "axios": "1.2.1",
     "date-fns": "^2.29.3",
     "exceljs": "^4.3.0",
