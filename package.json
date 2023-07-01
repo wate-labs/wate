@@ -38,7 +38,7 @@
     "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-unicorn": "^45.0.2",
-    "globby": "^11",
+    "globby": "^13",
     "mocha": "^10",
     "mock-fs": "^5.2.0",
     "oclif": "^3",
